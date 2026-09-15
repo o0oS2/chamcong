@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // === Khởi tạo select tháng, năm[cite: 4] ===
+  // === Khởi tạo select tháng, năm ===
   const thangSelect = document.getElementById("thang");
   const namSelect = document.getElementById("nam");
 
@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
     namSelect.appendChild(option);
   }
 
-  // === Định dạng số cho tất cả input tiền[cite: 4] ===
+  // === Định dạng số cho tất cả input tiền ===
   function formatNumber(num) {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
@@ -226,14 +226,12 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // =========================================================================
-  // === LỊCH CHẤM CÔNG CẬP NHẬT: CHỌN DỄ HIỂU, KHÔNG PHÉP NĂM VÀO CN ===
+  // === LỊCH CHẤM CÔNG CẬP NHẬT ĐẦY ĐỦ VÀ TRỰC QUAN ===
   // =========================================================================
 
-  // Mốc bắt đầu: Thứ Hai 07/09/2026 bắt đầu ca ĐÊM
   const MOC_CA_DEM = new Date(2026, 8, 7);
   let isDaoCa = false;
 
-  // Danh mục đầy đủ: Lựa chọn ghi "giờ", hiển thị ra ô ngắn gọn, rõ ràng
   const DSHanhChinhFull = [
     { label: "Đi làm đủ", short: "", deduct: 0, allowSunday: true },
     { label: "Nghỉ", short: "Nghỉ", deduct: 8, allowSunday: true },
@@ -249,8 +247,8 @@ document.addEventListener("DOMContentLoaded", function () {
     { label: "Về sớm 2.5 giờ", short: "V 2.5", deduct: 2.5, allowSunday: true },
     { label: "Về sớm 3 giờ", short: "V 3", deduct: 3, allowSunday: true },
     { label: "Về sớm 3.5 giờ", short: "V 3.5", deduct: 3.5, allowSunday: true },
-    { label: "Nghỉ buổi sáng", short: "Nghỉ sáng", deduct: 4, allowSunday: true },
-    { label: "Nghỉ buổi chiều", short: "Nghỉ chiều", deduct: 4, allowSunday: true },
+    { label: "Nghỉ buổi sáng", short: "Nghỉ S", deduct: 4, allowSunday: true },
+    { label: "Nghỉ buổi chiều", short: "Nghỉ Chiều", deduct: 4, allowSunday: true },
     { label: "Phép năm", short: "PN", deduct: 8, allowSunday: false },
     { label: "1/2 phép năm", short: "½PN", deduct: 4, allowSunday: false }
   ];
@@ -393,7 +391,6 @@ document.addEventListener("DOMContentLoaded", function () {
       title.textContent = `Ngày ${day}: Giờ hành chính`;
       body.className = "picker-body list-mode";
       
-      // Lọc bỏ phép năm nếu là Chủ Nhật
       const filteredList = DSHanhChinhFull.filter(item => {
         if (isSunday && !item.allowSunday) return false;
         return true;
@@ -483,7 +480,6 @@ document.addEventListener("DOMContentLoaded", function () {
     if (elMidOt) elMidOt.textContent = data.midOt;
   }
 
-  // Tự động bù trừ công và tăng ca đẩy sang bảng lương[cite: 4]
   function dongBoVaoBangLuong() {
     let tongGioCongThuc = 0;
     let tongGioTC150 = 0;
@@ -537,7 +533,6 @@ document.addEventListener("DOMContentLoaded", function () {
     tinhLuong();
   }
 
-  // Render lưới lịch chấm công
   function renderLichChamCong() {
     const thang = +document.getElementById("thang")?.value || 1;
     const nam = +document.getElementById("nam")?.value || new Date().getFullYear();
@@ -575,7 +570,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const lunar = convertSolar2Lunar(dayCounter, thang, nam, TZ);
         const lunarLabel = (lunar.day === 1) ? `${lunar.day}/${lunar.month}` : `${lunar.day}`;
 
-        // Chủ Nhật mặc định là "Nghỉ", ngày thường mặc định là "Đi làm đủ"
         if (!chamCongData[dayCounter]) {
           const defaultHc = (ca === "nghi") 
             ? { label: "Nghỉ", short: "Nghỉ", deduct: 8, allowSunday: true }
@@ -598,7 +592,6 @@ document.addEventListener("DOMContentLoaded", function () {
           <div class="input-cell-val cell-ot" id="ot_val_${dayCounter}" onclick="openPicker(${dayCounter}, 'ot')" title="Tăng ca">${data.ot}</div>
         `;
 
-        // Chỉ ca đêm mới hiện ô tăng ca giữa giờ đêm
         if (ca === "dem") {
           htmlInner += `
             <div class="input-cell-val cell-mid-ot" id="mid_ot_val_${dayCounter}" onclick="openPicker(${dayCounter}, 'mid-ot')" title="Tăng ca giữa giờ đêm">${data.midOt}</div>
