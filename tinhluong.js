@@ -226,47 +226,57 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // =========================================================================
-  // === LỊCH CHẤM CÔNG: BỎ CHỮ, MÀU Ô KHÁC NHAU TINH TẾ, CA ĐÊM XÁM NHẸ ===
+  // === LỊCH CHẤM CÔNG: VIẾT TẮT M 1.5, V 1.5, CHỈ HIỆN SỐ GỌN GÀNG ===
   // =========================================================================
 
-  const DSHanhChinh = [
-    "Đi làm đủ",
-    "Muộn 1h", "Muộn 1.5h", "Muộn 2h", "Muộn 2.5h", "Muộn 3h", "Muộn 3.5h",
-    "Về sớm 1h", "Về sớm 1.5h", "Về sớm 2h", "Về sớm 2.5h", "Về sớm 3h", "Về sớm 3.5h",
-    "1/2 phép năm", "Phép năm", "Nghỉ buổi sáng", "Nghỉ buổi chiều"
-  ];
-
-  const DSTangCa = ["0"];
-  for (let h = 0.5; h <= 10; h += 0.5) {
-    DSTangCa.push(h.toString());
-  }
-
-  const DSTangCaGiuaGio = ["0", "0.5", "1", "1.5", "2"];
-
-  // Mốc bắt đầu: Thứ Hai ngày 07/09/2026 bắt đầu ca ĐÊM
+  // Mốc bắt đầu: Thứ Hai 07/09/2026 bắt đầu ca ĐÊM
   const MOC_CA_DEM = new Date(2026, 8, 7);
   let isDaoCa = false;
+
+  // Cập nhật viết tắt: M 1, M 1.5 ..., V 1, V 1.5 ...
+  const DSHanhChinhFull = [
+    { label: "Đi làm đủ", short: "", deduct: 0 },
+    { label: "Nghỉ", short: "Nghỉ", deduct: 8 },
+    { label: "Muộn 1h", short: "M 1", deduct: 1 },
+    { label: "Muộn 1.5h", short: "M 1.5", deduct: 1.5 },
+    { label: "Muộn 2h", short: "M 2", deduct: 2 },
+    { label: "Muộn 2.5h", short: "M 2.5", deduct: 2.5 },
+    { label: "Muộn 3h", short: "M 3", deduct: 3 },
+    { label: "Muộn 3.5h", short: "M 3.5", deduct: 3.5 },
+    { label: "Về sớm 1h", short: "V 1", deduct: 1 },
+    { label: "Về sớm 1.5h", short: "V 1.5", deduct: 1.5 },
+    { label: "Về sớm 2h", short: "V 2", deduct: 2 },
+    { label: "Về sớm 2.5h", short: "V 2.5", deduct: 2.5 },
+    { label: "Về sớm 3h", short: "V 3", deduct: 3 },
+    { label: "Về sớm 3.5h", short: "V 3.5", deduct: 3.5 },
+    { label: "1/2 phép năm", short: "½PN", deduct: 4 },
+    { label: "Phép năm", short: "PN", deduct: 8 },
+    { label: "Nghỉ buổi sáng", short: "NS", deduct: 4 },
+    { label: "Nghỉ buổi chiều", short: "NC", deduct: 4 }
+  ];
+
+  const DSTangCaFull = [];
+  for (let h = 0; h <= 10; h += 0.5) {
+    DSTangCaFull.push(h.toString());
+  }
+
+  const DSMidOtFull = ["0", "0.5", "1", "1.5", "2"];
+  const chamCongData = {};
 
   function xacDinhCa(y, m, d) {
     const curDate = new Date(y, m - 1, d);
     const dayOfWeek = curDate.getDay();
 
-    if (dayOfWeek === 0) {
-      return "nghi"; // Chủ nhật nghỉ
-    }
+    if (dayOfWeek === 0) return "nghi"; // Chủ nhật
 
     const diffTime = curDate.getTime() - MOC_CA_DEM.getTime();
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     
-    // Chu kỳ 28 ngày: 14 ngày ca đêm (0-13) và 14 ngày ca ngày (14-27)
     let mod = diffDays % 28;
     if (mod < 0) mod += 28;
 
     let ca = (mod < 14) ? "dem" : "ngay";
-
-    if (isDaoCa) {
-      ca = (ca === "dem") ? "ngay" : "dem";
-    }
+    if (isDaoCa) ca = (ca === "dem") ? "ngay" : "dem";
     return ca;
   }
 
@@ -363,7 +373,161 @@ document.addEventListener("DOMContentLoaded", function () {
     return { day: lunarDay, month: lunarMonth, year: lunarYear, leap: lunarLeap === 1 };
   }
 
-  // Render lịch chấm công tinh giản
+  // Quản lý Modal chọn giá trị
+  let currentPickContext = null;
+
+  window.openPicker = function(day, type) {
+    currentPickContext = { day, type };
+    const overlay = document.getElementById("pickerOverlay");
+    const title = document.getElementById("pickerTitle");
+    const body = document.getElementById("pickerBody");
+
+    body.innerHTML = "";
+    overlay.style.display = "flex";
+
+    if (type === "hc") {
+      title.textContent = `Ngày ${day}: Giờ hành chính`;
+      body.className = "picker-body list-mode";
+      DSHanhChinhFull.forEach(item => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "picker-btn";
+        btn.textContent = item.label;
+        btn.onclick = () => selectPickValue(item);
+        body.appendChild(btn);
+      });
+    } else if (type === "ot") {
+      title.textContent = `Ngày ${day}: Tăng ca (giờ)`;
+      body.className = "picker-body";
+      DSTangCaFull.forEach(val => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "picker-btn";
+        btn.textContent = val;
+        btn.onclick = () => selectPickValue(val);
+        body.appendChild(btn);
+      });
+    } else if (type === "mid-ot") {
+      title.textContent = `Ngày ${day}: TC giữa giờ đêm`;
+      body.className = "picker-body";
+      DSMidOtFull.forEach(val => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "picker-btn";
+        btn.textContent = val;
+        btn.onclick = () => selectPickValue(val);
+        body.appendChild(btn);
+      });
+    }
+  };
+
+  function selectPickValue(val) {
+    if (!currentPickContext) return;
+    const { day, type } = currentPickContext;
+
+    const thang = +document.getElementById("thang")?.value || 1;
+    const nam = +document.getElementById("nam")?.value || new Date().getFullYear();
+    const ca = xacDinhCa(nam, thang, day);
+
+    if (!chamCongData[day]) {
+      const defaultHc = (ca === "nghi") 
+        ? { label: "Nghỉ", short: "Nghỉ", deduct: 8 }
+        : { label: "Đi làm đủ", short: "", deduct: 0 };
+
+      chamCongData[day] = { hc: defaultHc, ot: "0", midOt: "0" };
+    }
+
+    if (type === "hc") {
+      chamCongData[day].hc = val;
+    } else if (type === "ot") {
+      chamCongData[day].ot = val;
+    } else if (type === "mid-ot") {
+      chamCongData[day].midOt = val;
+    }
+
+    forceClosePicker();
+    updateDayDisplay(day);
+    dongBoVaoBangLuong();
+  }
+
+  window.closePicker = function(e) {
+    if (e.target.id === "pickerOverlay") forceClosePicker();
+  };
+
+  window.forceClosePicker = function() {
+    document.getElementById("pickerOverlay").style.display = "none";
+    currentPickContext = null;
+  };
+
+  function updateDayDisplay(day) {
+    const data = chamCongData[day];
+    if (!data) return;
+
+    const elHc = document.getElementById(`hc_val_${day}`);
+    const elOt = document.getElementById(`ot_val_${day}`);
+    const elMidOt = document.getElementById(`mid_ot_val_${day}`);
+
+    if (elHc) elHc.textContent = data.hc.short;
+    if (elOt) elOt.textContent = data.ot;
+    if (elMidOt) elMidOt.textContent = data.midOt;
+  }
+
+  // Tự động bù trừ và đẩy sang bảng tính lương[cite: 4]
+  function dongBoVaoBangLuong() {
+    let tongGioCongThuc = 0;
+    let tongGioTC150 = 0;
+    let tongGioTCDem200 = 0;
+    let tongGioTroCapDem30 = 0;
+    let tongPhepNam = 0;
+
+    const thang = +document.getElementById("thang")?.value || 1;
+    const nam = +document.getElementById("nam")?.value || new Date().getFullYear();
+    const totalDays = new Date(nam, thang, 0).getDate();
+
+    for (let d = 1; d <= totalDays; d++) {
+      const ca = xacDinhCa(nam, thang, d);
+      
+      const defaultHc = (ca === "nghi") 
+        ? { label: "Nghỉ", short: "Nghỉ", deduct: 8 }
+        : { label: "Đi làm đủ", short: "", deduct: 0 };
+
+      const data = chamCongData[d] || { hc: defaultHc, ot: "0", midOt: "0" };
+      const deductHours = data.hc.deduct || 0;
+      const otHours = parseFloat(data.ot) || 0;
+      const midOtHours = parseFloat(data.midOt) || 0;
+
+      // Tính giờ công chuẩn: ngày thường 8h, Chủ Nhật mặc định Nghỉ là 8-8=0h công
+      const gioChuanNgay = Math.max(0, 8 - deductHours);
+      tongGioCongThuc += gioChuanNgay;
+
+      if (ca === "dem") {
+        tongGioTroCapDem30 += (gioChuanNgay > 0) ? 6 : 0;
+        tongGioTCDem200 += midOtHours;
+        tongGioTC150 += otHours;
+      } else {
+        tongGioTC150 += otHours;
+      }
+
+      if (data.hc.label === "Phép năm") tongPhepNam += 1;
+      if (data.hc.label === "1/2 phép năm") tongPhepNam += 0.5;
+    }
+
+    const inpNgayCong = document.getElementById("ngayCong");
+    const inpTc150 = document.getElementById("tc150");
+    const inpTc200 = document.getElementById("tc200");
+    const inpTcDem30 = document.getElementById("tcDem30");
+    const inpPhepNam = document.getElementById("phepNam");
+
+    if (inpNgayCong) inpNgayCong.value = (tongGioCongThuc / 8).toFixed(1).replace(".0", "");
+    if (inpTc150) inpTc150.value = tongGioTC150.toString();
+    if (inpTc200) inpTc200.value = tongGioTCDem200.toString();
+    if (inpTcDem30) inpTcDem30.value = tongGioTroCapDem30.toString();
+    if (inpPhepNam) inpPhepNam.value = tongPhepNam.toString();
+
+    tinhLuong();
+  }
+
+  // Render lịch chấm công
   function renderLichChamCong() {
     const thang = +document.getElementById("thang")?.value || 1;
     const nam = +document.getElementById("nam")?.value || new Date().getFullYear();
@@ -374,7 +538,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const firstDate = new Date(nam, thang - 1, 1);
     const totalDays = new Date(nam, thang, 0).getDate();
 
-    // Thứ Hai = 0 ... Chủ Nhật = 6
     let startDay = firstDate.getDay() - 1;
     if (startDay === -1) startDay = 6;
 
@@ -402,25 +565,33 @@ document.addEventListener("DOMContentLoaded", function () {
         const lunar = convertSolar2Lunar(dayCounter, thang, nam, TZ);
         const lunarLabel = (lunar.day === 1) ? `${lunar.day}/${lunar.month}` : `${lunar.day}`;
 
+        // Chủ Nhật mặc định Nghỉ (hiển thị chữ 'Nghỉ', trừ 8h công), ngày thường mặc định Đi làm đủ (để trống)
+        if (!chamCongData[dayCounter]) {
+          const defaultHc = (ca === "nghi") 
+            ? { label: "Nghỉ", short: "Nghỉ", deduct: 8 }
+            : { label: "Đi làm đủ", short: "", deduct: 0 };
+
+          chamCongData[dayCounter] = {
+            hc: defaultHc,
+            ot: "0",
+            midOt: "0"
+          };
+        }
+        const data = chamCongData[dayCounter];
+
         let htmlInner = `
           <div class="day-top">
             <span class="solar-num">${dayCounter}</span>
             <span class="lunar-num">${lunarLabel}</span>
           </div>
-          <select class="select-hc" title="Giờ hành chính">
-            ${DSHanhChinh.map(item => `<option value="${item}">${item}</option>`).join('')}
-          </select>
-          <select class="select-ot" title="Tăng ca">
-            ${DSTangCa.map(item => `<option value="${item}">${item === '0' ? 'TC: 0' : item + 'h'}</option>`).join('')}
-          </select>
+          <div class="input-cell-val cell-hc" id="hc_val_${dayCounter}" onclick="openPicker(${dayCounter}, 'hc')" title="Giờ hành chính">${data.hc.short}</div>
+          <div class="input-cell-val cell-ot" id="ot_val_${dayCounter}" onclick="openPicker(${dayCounter}, 'ot')" title="Tăng ca">${data.ot}</div>
         `;
 
-        // Chỉ ca đêm mới hiển thị ô Tăng ca giữa giờ đêm
+        // Chỉ ca đêm mới hiện ô tăng ca giữa giờ đêm
         if (ca === "dem") {
           htmlInner += `
-            <select class="select-mid-ot" title="Tăng ca giữa giờ đêm">
-              ${DSTangCaGiuaGio.map(item => `<option value="${item}">${item === '0' ? 'Đêm: 0' : item + 'h'}</option>`).join('')}
-            </select>
+            <div class="input-cell-val cell-mid-ot" id="mid_ot_val_${dayCounter}" onclick="openPicker(${dayCounter}, 'mid-ot')" title="Tăng ca giữa giờ đêm">${data.midOt}</div>
           `;
         }
 

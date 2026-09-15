@@ -12,7 +12,6 @@
       padding: 15px;
       margin: 0;
     } 
-    /* Layout 2 cột cho desktop */
     .main-container {
       display: flex;
       gap: 20px;
@@ -45,7 +44,6 @@
       background: #007bff;
       color: white;
     }
-    /* CHỈNH INPUT/SELECT NẰM TRONG BẢNG TÍNH LƯƠNG */
     #tabLuong table input[type="number"],
     #tabLuong table input[type="text"],
     #tabLuong table select {
@@ -186,7 +184,7 @@
     .toast.show { opacity: 1; }
     .toast::before { content: "✓ "; margin-right: 5px; }
 
-    /* Nút Tab */
+    /* Nút Tab[cite: 2] */
     .tab-bar {
       display: flex;
       gap: 8px;
@@ -248,11 +246,10 @@
       background: #d97706;
     }
     
-    /* Chú thích màu sắc trên cùng (Legend) */
     .legend-box {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px 12px;
+      gap: 6px 12px;
       background: #fff;
       padding: 6px 10px;
       border-radius: 5px;
@@ -266,14 +263,14 @@
       gap: 4px;
     }
     .dot-sample {
-      width: 12px;
-      height: 12px;
+      width: 13px;
+      height: 13px;
       border-radius: 3px;
       display: inline-block;
-      border: 1px solid rgba(0,0,0,0.1);
+      border: 1px solid rgba(0,0,0,0.12);
     }
 
-    /* Grid Lịch 7 Cột Chuẩn Màn Hình Điện Thoại */
+    /* Grid 7 Cột */
     .calendar-grid {
       display: grid;
       grid-template-columns: repeat(7, minmax(0, 1fr));
@@ -292,7 +289,7 @@
     .day-card {
       border-radius: 4px;
       padding: 3px 2px;
-      min-height: 78px;
+      min-height: 70px;
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
@@ -301,42 +298,44 @@
       box-sizing: border-box;
     }
     .day-card.empty {
-      background: #f1f5f9;
+      background: #f8fafc;
       border: 1px dashed #cbd5e1;
       min-height: 40px;
     }
 
-    /* Ca ngày: Sáng dịu */
+    /* Ca ngày: Sáng */
     .day-card.ca-ngay {
-      background-color: #f8fafc;
+      background-color: #fffdf5;
+      border-color: #fce7b2;
+    }
+    .day-card.ca-ngay .solar-num { color: #1e293b; }
+    .day-card.ca-ngay .lunar-num { color: #b91c1c; }
+
+    /* Ca đêm: Xám nhạt tinh tế */
+    .day-card.ca-dem {
+      background-color: #e2e8f0;
       border-color: #cbd5e1;
     }
-    .day-card.ca-ngay .solar-num {
-      color: #1e293b;
-    }
-    .day-card.ca-ngay .lunar-num {
-      color: #b91c1c;
-    }
+    .day-card.ca-dem .solar-num { color: #0f172a; }
+    .day-card.ca-dem .lunar-num { color: #c2410c; }
 
-    /* Ca đêm: Màu xám nhẹ tinh tế */
-    .day-card.ca-dem {
-      background-color: #475569;
-      border-color: #334155;
-    }
-    .day-card.ca-dem .solar-num {
-      color: #ffffff;
-    }
-    .day-card.ca-dem .lunar-num {
-      color: #fde047;
-    }
-
-    /* Ngày nghỉ Chủ Nhật */
+    /* Nghỉ Chủ Nhật mặc định */
     .day-card.ca-nghi {
       background-color: #fee2e2;
       border-color: #fca5a5;
     }
     .day-card.ca-nghi .solar-num { color: #dc2626; }
     .day-card.ca-nghi .lunar-num { color: #991b1b; }
+    .nghi-cn-label {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+      color: #ef4444;
+      user-select: none;
+    }
 
     .day-top {
       display: flex;
@@ -344,7 +343,7 @@
       align-items: baseline;
       line-height: 1;
       padding: 0 1px;
-      margin-bottom: 1px;
+      margin-bottom: 2px;
     }
     .solar-num {
       font-size: 13px;
@@ -355,47 +354,109 @@
       font-weight: 600;
     }
 
-    /* Các ô chọn được phân biệt màu sắc pastel nhẹ nhàng */
-    .day-card select {
+    .input-cell-val {
       width: 100%;
-      height: 20px;
-      font-size: 10px;
-      padding: 0 1px;
+      height: 19px;
+      line-height: 17px;
+      font-size: 11px;
+      font-weight: bold;
+      text-align: center;
       border-radius: 3px;
-      outline: none;
       box-sizing: border-box;
-      font-weight: 500;
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    /* Màu ô Giờ hành chính: Xanh ngọc nhạt */
-    .select-hc {
-      background-color: #ecfdf5 !important;
-      color: #065f46 !important;
-      border: 1px solid #a7f3d0 !important;
+    .cell-hc {
+      background-color: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
     }
-    /* Màu ô Tăng ca: Cam pastel nhạt */
-    .select-ot {
-      background-color: #fff7ed !important;
-      color: #9a3412 !important;
-      border: 1px solid #fed7aa !important;
+    .cell-ot {
+      background-color: #fff7ed;
+      color: #9a3412;
+      border: 1px solid #fed7aa;
     }
-    /* Màu ô Tăng ca giữa giờ đêm: Tím lavender nhạt */
-    .select-mid-ot {
-      background-color: #f5f3ff !important;
-      color: #5b21b6 !important;
-      border: 1px solid #ddd6fe !important;
+    .cell-mid-ot {
+      background-color: #f5f3ff;
+      color: #5b21b6;
+      border: 1px solid #ddd6fe;
     }
 
-    /* Responsive */
+    /* Modal Picker */
+    .picker-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+    }
+    .picker-modal {
+      background: #fff;
+      border-radius: 8px;
+      max-width: 320px;
+      width: 100%;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      overflow: hidden;
+      animation: popIn 0.15s ease-out;
+    }
+    @keyframes popIn {
+      from { transform: scale(0.92); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .picker-header {
+      background: #007bff;
+      color: #fff;
+      font-size: 14px;
+      font-weight: bold;
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .picker-body {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      padding: 12px;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+    .picker-body.list-mode {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .picker-btn {
+      padding: 6px 2px;
+      font-size: 12px;
+      font-weight: bold;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      background: #f8fafc;
+      color: #1e293b;
+      cursor: pointer;
+      text-align: center;
+    }
+    .picker-btn:hover, .picker-btn:active {
+      background: #007bff;
+      color: #fff;
+      border-color: #007bff;
+    }
+
     @media screen and (max-width: 768px) {
       body { padding: 6px; }
       .main-container { display: block; }
       .left-column, .right-column { width: 100%; }
       .tab-bar { max-width: 100%; }
-      .day-card { min-height: 72px; padding: 2px 1px; }
+      .day-card { min-height: 65px; padding: 2px 1px; }
       .solar-num { font-size: 12px; }
       .lunar-num { font-size: 8px; }
-      .day-card select { font-size: 9.5px; height: 18px; }
+      .input-cell-val { font-size: 10px; height: 18px; line-height: 16px; }
     }
   </style>
 </head>
@@ -643,7 +704,7 @@
     </div>
   </div>
 
-  <!-- ================= TAB 2: CHẤM CÔNG (TINH TẾ & GỌN GÀNG) ================= -->
+  <!-- ================= TAB 2: CHẤM CÔNG ================= -->
   <div id="tabChamCong" class="tab-content">
     <div class="chamcong-container">
       <div class="chamcong-tools">
@@ -653,25 +714,25 @@
           </button>
         </div>
 
-        <!-- Chú thích rõ ràng các màu sắc ở trên đầu bảng -->
+        <!-- Chú thích rõ ràng các màu sắc -->
         <div class="legend-box">
           <div class="legend-item">
-            <span class="dot-sample" style="background:#f8fafc; border-color:#cbd5e1;"></span> Ca ngày
+            <span class="dot-sample" style="background:#fffdf5; border-color:#fce7b2;"></span> Sáng: Ca ngày
           </div>
           <div class="legend-item">
-            <span class="dot-sample" style="background:#475569; border-color:#334155;"></span> Ca đêm (Xám nhẹ)
+            <span class="dot-sample" style="background:#e2e8f0; border-color:#cbd5e1;"></span> Xám nhạt: Ca đêm
           </div>
           <div class="legend-item">
             <span class="dot-sample" style="background:#fee2e2; border-color:#fca5a5;"></span> Nghỉ CN
           </div>
           <div class="legend-item">
-            <span class="dot-sample" style="background:#ecfdf5; border-color:#a7f3d0;"></span> Giờ HC
+            <span class="dot-sample" style="background:#ecfdf5; border-color:#a7f3d0;"></span> Giờ HC (Trống = Đủ)
           </div>
           <div class="legend-item">
-            <span class="dot-sample" style="background:#fff7ed; border-color:#fed7aa;"></span> Tăng ca
+            <span class="dot-sample" style="background:#fff7ed; border-color:#fed7aa;"></span> Tăng ca (Số 0)
           </div>
           <div class="legend-item">
-            <span class="dot-sample" style="background:#f5f3ff; border-color:#ddd6fe;"></span> TC giữa giờ đêm
+            <span class="dot-sample" style="background:#f5f3ff; border-color:#ddd6fe;"></span> TC giữa giờ đêm (Số 0)
           </div>
         </div>
       </div>
@@ -688,6 +749,19 @@
       </div>
       <div class="calendar-grid" id="chamCongGrid" style="margin-top: 3px;">
         <!-- Tự động nạp các ngày trong tháng -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CHỌN GIÁ TRỊ NHANH -->
+  <div class="picker-overlay" id="pickerOverlay" onclick="closePicker(event)">
+    <div class="picker-modal">
+      <div class="picker-header">
+        <span id="pickerTitle">Chọn thông số</span>
+        <span style="cursor:pointer;" onclick="forceClosePicker()">✕</span>
+      </div>
+      <div class="picker-body" id="pickerBody">
+        <!-- Tự động nạp nút bấm chọn -->
       </div>
     </div>
   </div>
