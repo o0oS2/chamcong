@@ -613,6 +613,61 @@ button:hover {
     padding: 0 1px;
   }
 }
+    @media screen and (max-width: 768px) {
+  /* Ép khung chính hiển thị dạng 2 cột ngang y hệt máy tính khi xoay ngang */
+  .main-container {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 15px !important;
+    max-width: 100% !important;
+  }
+  
+  .left-column {
+    flex: 0 0 55% !important;
+    min-width: unset !important;
+  }
+  
+  .right-column {
+    flex: 1 !important;
+  }
+
+  /* Riêng ở tab Chấm công, ép layout 2 cột nằm ngang chuẩn desktop */
+  .cc-desktop-layout {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 15px !important;
+    align-items: flex-start !important;
+  }
+  .cc-col-left { 
+    flex: 1 !important; 
+  }
+  .cc-col-right {
+    flex: 0 0 420px !important;
+    margin-top: 0 !important;
+    padding: 12px !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Thu gọn lịch chấm công vừa khít màn hình điện thoại xoay ngang */
+  .calendar-grid {
+    gap: 2px;
+  }
+  .day-card {
+    min-height: 55px !important;
+    padding: 2px !important;
+  }
+  .input-cell-val {
+    font-size: 7.5px !important;
+    height: 15px !important;
+    line-height: 14px !important;
+  }
+
+  body {
+    padding: 10px;
+  }
+}
 /* BỎ KHUNG BẢNG TÍNH LƯƠNG BÊN PHẢI TAB CHẤM CÔNG */
 .cc-col-right {
   background: transparent !important;
