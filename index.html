@@ -598,13 +598,24 @@ button:hover {
     }
     .picker-btn:hover, .picker-btn:active { background: #007bff; color: #fff; border-color: #007bff; }
 
-    @media screen and (max-width: 768px) {
-      .cc-desktop-layout { display: block; }
-      .cc-col-right { margin-top: 20px; padding: 10px; }
-      .input-cell-val { font-size: 8px !important; height: 17px !important; line-height: 15px !important; }
-    }
-   @media screen and (max-width: 768px) {
-  /* Thu nhỏ chữ Đi làm đủ vừa khít ô trên điện thoại */
+    /* 1. KHI CẦM DỌC ĐIỆN THOẠI (Hiển thị 1 cột dọc, chống vỡ giao diện) */
+@media screen and (max-width: 768px) and (orientation: portrait) {
+  .main-container {
+    display: block !important;
+  }
+  .left-column, .right-column {
+    flex: none !important;
+    width: 100% !important;
+  }
+  .cc-desktop-layout {
+    display: block !important;
+  }
+  .cc-col-right {
+    margin-top: 15px !important;
+    padding: 10px !important;
+    background: #fff !important;
+    border: 1px solid #ddd !important;
+  }
   .input-cell-val {
     font-size: 7.5px !important;
     height: 17px !important;
@@ -612,26 +623,26 @@ button:hover {
     letter-spacing: -0.5px;
     padding: 0 1px;
   }
+  body {
+    padding: 10px;
+  }
 }
-    @media screen and (max-width: 768px) {
-  /* Ép khung chính hiển thị dạng 2 cột ngang y hệt máy tính khi xoay ngang */
+
+/* 2. KHI XOAY NGANG ĐIỆN THOẠI (Ép hiển thị 2 cột ngang y hệt máy tính) */
+@media screen and (max-width: 900px) and (orientation: landscape) {
   .main-container {
     display: flex !important;
     flex-direction: row !important;
     gap: 15px !important;
     max-width: 100% !important;
   }
-  
   .left-column {
     flex: 0 0 55% !important;
     min-width: unset !important;
   }
-  
   .right-column {
     flex: 1 !important;
   }
-
-  /* Riêng ở tab Chấm công, ép layout 2 cột nằm ngang chuẩn desktop */
   .cc-desktop-layout {
     display: flex !important;
     flex-direction: row !important;
@@ -642,20 +653,18 @@ button:hover {
     flex: 1 !important; 
   }
   .cc-col-right {
-    flex: 0 0 420px !important;
+    flex: 0 0 400px !important;
     margin-top: 0 !important;
-    padding: 12px !important;
+    padding: 10px !important;
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
   }
-
-  /* Thu gọn lịch chấm công vừa khít màn hình điện thoại xoay ngang */
   .calendar-grid {
     gap: 2px;
   }
   .day-card {
-    min-height: 55px !important;
+    min-height: 50px !important;
     padding: 2px !important;
   }
   .input-cell-val {
@@ -663,9 +672,8 @@ button:hover {
     height: 15px !important;
     line-height: 14px !important;
   }
-
   body {
-    padding: 10px;
+    padding: 8px;
   }
 }
 /* BỎ KHUNG BẢNG TÍNH LƯƠNG BÊN PHẢI TAB CHẤM CÔNG */
