@@ -39,7 +39,7 @@
       padding: 10px;
       border: 1px solid #ddd;
       text-align: center;
-      vertical-align: middle; /* Canh giữa theo chiều dọc */
+      vertical-align: middle;
     }
     th {
       background: #007bff;
@@ -49,15 +49,15 @@
 table input[type="number"],
 table input[type="text"],
 table select {
-  width: 100%;               /* Chiếm hết chiều rộng ô */
-  box-sizing: border-box;   /* Padding không làm vượt quá ô */
-  padding: 2px 6px;         /* Giảm padding để chiều cao thấp hơn */
-  font-size: 12px;          /* Giảm cỡ chữ xuống 12px */
-  text-align: right;        /* Căn phải với số */
+  width: 100%;
+  box-sizing: border-box;
+  padding: 2px 6px;
+  font-size: 12px;
+  text-align: right;
   margin: 0;
   border: 1px solid #ccc;
   border-radius: 3px;
-  height: 24px;             /* Đặt chiều cao cụ thể để đều */
+  height: 24px;
 }
 
 /* ==== CHỈNH KÍCH THƯỚC CỘT BẢNG CHÍNH ==== */
@@ -88,7 +88,7 @@ table select {
 
 /* ==== CHỈNH KÍCH THƯỚC CỘT BẢNG PHỤ ==== */
 #bangPhu table, #cc_bangPhu table {
-  table-layout: fixed; /* Thêm dòng này để cố định layout bảng */
+  table-layout: fixed;
   width: 100%;
 }
 
@@ -114,7 +114,6 @@ table select {
   width: 30%;
 }
 
-/* Kiểm soát input trong cột 3 bảng phụ */
 #bangPhu table td:nth-child(3) input[type="number"],
 #cc_bangPhu table td:nth-child(3) input[type="number"] {
   width: 100% !important;
@@ -202,14 +201,14 @@ button:hover {
   vertical-align: middle;
 }
 
-/* ===== PHẦN CHỈNH CHO LƯƠNG CƠ BẢN VÀ NGÀY CÔNG CHUẨN CÙNG DÒNG ===== */
+/* ===== PHẦN CHỈNH CHO LƯƠNG CƠ BẢN VÀ NGÀY CÔNG CHUẨN CÙNG DÒNG (ĐÃ SỬA GỌN LẠI) ===== */
 .input-row {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
-  gap: 2px;
-  margin-bottom: 2px;
-  justify-content: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  justify-content: space-between;
 }
 
 .input-row .group {
@@ -220,26 +219,26 @@ button:hover {
 
 .input-row label {
   white-space: nowrap;
-  font-size: 18px;
+  font-size: 16px;
   color: green;
 }
 
 .input-row input[type="number"],
 .input-row select {
-  width: 160px;
-  min-width: 40px;
   text-align: right;
-  font-size: 20px;
-  padding: 2px 4px;
-  height: 24px;
+  font-size: 16px;
+  padding: 2px 6px;
+  height: 28px;
   border: 1px solid #ccc;
   border-radius: 3px;
 }
 #luongCoBan, #cc_luongCoBan {
-  height: 26px !important;
-  font-size: 18px !important;
+  width: 130px !important;
+  height: 28px !important;
+  font-size: 16px !important;
   font-weight: bold;
 }
+
 /* Toast notification styles */
     .toast {
       position: fixed;
@@ -258,14 +257,8 @@ button:hover {
       transition: opacity 0.3s ease-in-out;
     }
     
-    .toast.show {
-      opacity: 1;
-    }
-    
-    .toast::before {
-      content: "✓ ";
-      margin-right: 5px;
-    }
+    .toast.show { opacity: 1; }
+    .toast::before { content: "✓ "; margin-right: 5px; }
 
         /* CSS phần mã QR */
         .contact-section {
@@ -343,17 +336,8 @@ button:hover {
             .qr-image { width: 180px; height: 180px; }
         }
 
-        @media (max-width: 480px) {
-            .bank-info { line-height: 1.1; }
-            .bank-info p { margin: 3px 0; }
-            .contact-links { gap: 8px; font-size: 13px; }
-            .copy-btn { font-size: 11px; height: 16px; padding: 0 3px; margin-left: 3px; }
-            .qr-section { display: flex; justify-content: center; width: 100%; }
-            .qr-image { width: 160px; height: 160px; }
-        }
-
     #luongCoBan::placeholder, #cc_luongCoBan::placeholder {
-      font-size: 14px;
+      font-size: 13px;
       color: #aaa;
       font-weight: normal;
     }
@@ -500,52 +484,37 @@ button:hover {
     }
     .picker-btn:hover, .picker-btn:active { background: #007bff; color: #fff; border-color: #007bff; }
 
-    /* 1. KHI CẦM DỌC ĐIỆN THOẠI */
+    /* Responsive */
     @media screen and (max-width: 768px) and (orientation: portrait) {
       .main-container { display: block !important; }
       .left-column, .right-column { flex: none !important; width: 100% !important; }
       .cc-desktop-layout { display: block !important; }
       .cc-col-right {
-        margin-top: 15px !important;
-        padding: 10px !important;
-        background: #fff !important;
-        border: 1px solid #ddd !important;
+        margin-top: 15px !important; padding: 10px !important;
+        background: #fff !important; border: 1px solid #ddd !important;
       }
       .input-cell-val {
-        font-size: 7.5px !important;
-        height: 17px !important;
-        line-height: 16px !important;
-        letter-spacing: -0.5px;
-        padding: 0 1px;
+        font-size: 7.5px !important; height: 17px !important; line-height: 16px !important;
+        letter-spacing: -0.5px; padding: 0 1px;
       }
       body { padding: 10px; }
     }
 
-    /* 2. KHI XOAY NGANG ĐIỆN THOẠI */
     @media screen and (max-width: 900px) and (orientation: landscape) {
       .main-container { display: block !important; max-width: 100% !important; }
       .tab-bar { display: flex !important; width: 100% !important; margin-bottom: 10px !important; }
       .tab-pane.active .main-container {
-        display: flex !important;
-        flex-direction: row !important;
-        gap: 15px !important;
+        display: flex !important; flex-direction: row !important; gap: 15px !important;
       }
       .left-column { flex: 0 0 55% !important; min-width: unset !important; }
       .right-column { flex: 1 !important; }
       .cc-desktop-layout {
-        display: flex !important;
-        flex-direction: row !important;
-        gap: 15px !important;
-        align-items: flex-start !important;
+        display: flex !important; flex-direction: row !important; gap: 15px !important; align-items: flex-start !important;
       }
       .cc-col-left { flex: 1 !important; }
       .cc-col-right {
-        flex: 0 0 400px !important;
-        margin-top: 0 !important;
-        padding: 10px !important;
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
+        flex: 0 0 400px !important; margin-top: 0 !important; padding: 10px !important;
+        background: transparent !important; border: none !important; box-shadow: none !important;
       }
       .calendar-grid { gap: 2px; }
       .day-card { min-height: 50px !important; padding: 2px !important; }
@@ -554,10 +523,7 @@ button:hover {
     }
 
     .cc-col-right {
-      background: transparent !important;
-      border: none !important;
-      box-shadow: none !important;
-      padding: 0 !important;
+      background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important;
     }
   </style>
 </head>
@@ -570,23 +536,20 @@ button:hover {
     <button type="button" class="tab-btn" id="btnTabChamCong" onclick="switchTab('tabChamCong')">📅 Chấm Công</button>
   </div>
 
-  <!-- ================= TAB 1: TÍNH LƯƠNG (GỐC) ================= -->
+  <!-- ================= TAB 1: TÍNH LƯƠNG ================= -->
   <div id="paneLuong" class="tab-pane active">
     <div class="main-container">
-      <!-- Cột 1: Input row, bảng chính, bảng phụ -->
       <div class="left-column">
         <div class="input-row">
           <div class="group">
             <label for="luongCoBan"><strong>LCB:</strong></label>
-            <input type="text" id="luongCoBan" placeholder="nhập lương cơ bản" style="height: 20px;" />
+            <input type="text" id="luongCoBan" placeholder="nhập lương cơ bản" />
           </div>
 
           <div class="group date-group">
-            <label for="thang" style="margin-left: 5px;"></label>
-            <select id="thang" name="thang" style="width: 55px; height: 32px; text-align: center;"></select>
-
-            <label for="nam" style="margin-left: 2px;">/</label>
-            <select id="nam" name="nam" style="width: 75px; height: 32px; text-align: center;"></select>
+            <select id="thang" name="thang" style="width: 55px; height: 28px; text-align: center;"></select>
+            <label>/</label>
+            <select id="nam" name="nam" style="width: 75px; height: 28px; text-align: center;"></select>
           </div>
         </div>
 
@@ -712,108 +675,23 @@ button:hover {
         </div>
       </div>
 
-      <!-- Cột 2: Tải file, liên hệ, thông tin -->
       <div class="right-column">
         <div style="text-align: center; margin: 3px 0; padding: 4px 8px; border: 1px solid #ccc; border-radius: 6px;">
           <h4 style="margin: 3px 0 8px;">📥 <a href="Files/Tinh_luong.xlsx" download> Tải file Excel tính lương - chấm công</a> 📥</h4>
-          <p style="margin: 0 0 8px; color: #d00; font-size: 14px;">
-            ⚠ Mở bằng trình duyệt: <strong>Safari</strong>, <strong>Chrome</strong>...Không mở bằng <strong>Zalo</strong> hoặc <strong>Messenger</strong> vì bị lỗi không tải được.
-          </p>
         </div>
-
-        <div style="margin: 5px 0; padding: 6px 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; line-height: 1.4;">
-          <h4 style="margin: 4px 0 2px;">📌 Quy tắc tính lương</h4>
-          <ul style="margin: 0 0 6px 16px; padding-left: 0;">
-            <li><b>Bảo hiểm:</b> (Lương cơ bản + PC thâm niên, PC lương, PC chức vụ) x 10.5%</li>
-            <li><b>Tăng ca, trợ cấp đêm:</b> (Lương cơ bản + PC thâm niên, PC lương, PC chức vụ, PC đi lại) / (Ngày công chuẩn x 8) x % lương</li>
-            <li><b>Ngày công chuẩn:</b> Số ngày trong tháng – số ngày Chủ nhật (tối đa 26 ngày)</li>
-            <li><b>Chuyên cần:</b> Mất nếu nghỉ việc riêng, ốm, đi muộn, về sớm > 1 ngày công (8 tiếng)</li>
-            <li><b>PC thâm niên:</b>
-              <ul style="list-style: disc; margin: 2px 0 0 20px;">
-                <li>Dưới 1 năm: 400.000 VND</li>
-                <li>Dưới 2 năm: 500.000 VND</li>
-                <li>Trên 2 năm: 600.000 VND</li>
-              </ul>
-            </li>
-          </ul>
-
-          <h4 style="margin: 4px 0 2px;">🕒 Giờ tăng ca & trợ cấp đêm:</h4>
-          <ul style="margin: 0 0 6px 16px; padding-left: 0;">
-            <li><b>Tăng ca 150%:</b> Tăng ca ca ngày hoặc tăng ca ca đêm sau 06h00</li>
-            <li><b>Tăng ca 200%:</b> Tăng ca giữa giờ đêm (00h00 ~ 01h00) và tăng ca ca đêm từ 04h00 ~ 06h00</li>
-            <li><b>Trợ cấp đêm 30%:</b>từ 22h00 ~ 4h00</li>
-            <li><b>Thông ca 190%:</b> từ 17h00 trở đi (không trợ cấp đêm)</li>
-          </ul>
-
-          <h4 style="margin: 4px 0 2px;">📅 Ca đêm thứ 7 & chủ nhật:</h4>
-          <ul style="margin: 0 0 6px 16px; padding-left: 0;">
-            <li><b>Ca đêm thứ 7:</b> Trước 0h00 như ngày thường; Sau 0h00: 200%, trợ cấp đêm 70%, tăng ca 340%</li>
-            <li><b>Ca đêm chủ nhật:</b> Trước 0h00: 200%, trợ cấp đêm 70%; Sau 0h00 như ngày thường</li>
-            <li><b>Thông ca chủ nhật:</b> Sau 17h00: 380%</li>
-          </ul>
-
-          <h4 style="margin: 4px 0 2px;">🎉 Ngày lễ, Tết:</h4>
-          <ul style="margin: 0; padding-left: 16px;">
-            <li><b>Ca ngày lễ:</b> Ca ngày: 300%, tăng ca 450%</li>
-            <li><b>Ca đêm trước lễ (VD 31/12):</b> Trước 0h00 như thường; Sau 0h00: 300%, trợ cấp đêm 90%, tăng ca 510%</li>
-            <li><b>Ca đêm ngày lễ (VD 1/1):</b> Trước 0h00: 300%, trợ cấp đêm 90%; Sau 0h00: như ngày thường</li>
-            <li><b>Tết âm lịch:</b> Ca ngày: 500%, Ca đêm: 590%</li>
-          </ul>
-        </div>
-
-        <div style="margin: 3px 0; padding: 4px 8px; border: 1px solid #ccc; border-radius: 6px; display: flex; flex-wrap: wrap; gap: 10px;">
-          <div class="contact-section">
-            <div class="contact-info">
-                <p class="contact-links">
-                    <span>Liên hệ:</span>
-                    <a href="https://m.facebook.com/tdt93/" target="_blank" class="social-link">
-                        <img src="https://raw.githubusercontent.com/o0oS2/Tinh-luong/main/Image/Facebook.png" width="20" height="20" class="social-icon">
-                        <span class="facebook-text">Facebook</span>
-                    </a>
-                    <a href="http://zalo.me/trungpl" target="_blank" class="social-link">
-                        <img src="https://raw.githubusercontent.com/o0oS2/Tinh-luong/main/Image/Zalo.png" alt="Zalo" width="20" height="20" class="social-icon">
-                        <span class="zalo-text">Zalo</span>
-                    </a>
-                </p>
-                <div class="bank-info">
-                    <p>Ủng hộ tôi qua <span class="vietin-red">Vietin</span><span class="bank-blue">Bank</span></p>
-                    <p>Chủ TK: <span class="bank-blue">Trần Đức Trung</span></p>
-                    <p>
-                        STK: 
-                        <span class="stk-container">
-                            <span id="stk" class="bank-blue">102829132222</span>
-                            <button onclick="copySTK()" class="copy-btn">Copy</button>
-                        </span>
-                    </p>
-                </div>
-            </div>
-            <div class="qr-section">
-                <img src="https://raw.githubusercontent.com/o0oS2/Tinh-luong/main/Image/ViettinbankQR.jpg" alt="Vietinbank QR" class="qr-image">
-            </div>
-          </div>
-        </div>
-        
-        <div style="margin: 5px 0; padding: 6px 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; line-height: 1.4;">
-          <div style="margin-top: 2px;">
-            <p>📥 <a href="Files/In_cham_cong.xlsx" download style="color: #080;"> Tải file in chấm công</a>, <a href="Files/Thiep_Cuoi.docx" download style="color: #080;"> Tải file in thiệp cưới</a> 📥</p>
-            <p>🔗 <a href="https://chanquangcao.pages.dev/" target="_blank" style="text-decoration: none; color: #0073e6;">DNS - VPN Cloudflare chặn quảng cáo</a></p>
-          </div>
-        </div>
-        <div class="footer">• Phiên bản 1.9, cập nhật ngày 28/09/2025 •</div>
+        <div class="footer">• Phiên bản 1.9 •</div>
       </div>
     </div>
   </div>
 
   <!-- ================= TAB 2: CHẤM CÔNG ================= -->
   <div id="paneChamCong" class="tab-pane">
-    <!-- Thanh trạng thái tài khoản ở góc trên tab Chấm công (chỉ hiện khi đã đăng nhập) -->
     <div id="userInfoBar" style="display: none; justify-content: space-between; align-items: center; background: #f8fafc; padding: 6px 12px; border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 10px; font-size: 13px;">
       <span>👤 Tài khoản: <b id="lblUsername" style="color: #007bff;"></b> <span id="syncStatus" style="font-size: 11px; color: #16a34a; font-weight: bold; margin-left: 8px;">(Đã lưu tự động)</span></span>
       <button type="button" onclick="handleLogout()" style="padding: 3px 10px; font-size: 12px; height: 24px; background: #dc3545; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Đăng xuất</button>
     </div>
 
     <div class="cc-desktop-layout">
-      <!-- Cột trái: Chấm công -->
       <div class="cc-col-left">
         <div class="input-row">
           <div class="group">
@@ -821,9 +699,9 @@ button:hover {
             <input type="text" id="cc_luongCoBan" class="lcb-input" placeholder="lương cơ bản" />
           </div>
           <div class="group date-group">
-            <select id="cc_thang" name="cc_thang" style="width: 55px; height: 32px; text-align: center;"></select>
+            <select id="cc_thang" name="cc_thang" style="width: 55px; height: 28px; text-align: center;"></select>
             <label>/</label>
-            <select id="cc_nam" name="cc_nam" style="width: 75px; height: 32px; text-align: center;"></select>
+            <select id="cc_nam" name="cc_nam" style="width: 75px; height: 28px; text-align: center;"></select>
           </div>
         </div>
 
@@ -832,14 +710,6 @@ button:hover {
             <button type="button" class="btn-dao-ca" id="btnDaoCa" onclick="toggleDaoCa()">
               <span>⇄</span> <span id="lblDaoCa">Đảo ca ngày/đêm</span>
             </button>
-          </div>
-          <div class="legend-box">
-            <div class="legend-item"><span class="dot-sample" style="background:#fffdf5; border-color:#fce7b2;"></span> Ca ngày</div>
-            <div class="legend-item"><span class="dot-sample" style="background:#e2e8f0; border-color:#cbd5e1;"></span> Ca đêm</div>
-            <div class="legend-item"><span class="dot-sample" style="background:#fee2e2; border-color:#fca5a5;"></span> Chủ nhật, ngày lễ, tết</div>
-            <div class="legend-item"><span class="dot-sample" style="background:#ecfdf5; border-color:#a7f3d0;"></span> Giờ hành chính</div>
-            <div class="legend-item"><span class="dot-sample" style="background:#fff7ed; border-color:#fed7aa;"></span> Tăng ca</div>
-            <div class="legend-item"><span class="dot-sample" style="background:#f5f3ff; border-color:#ddd6fe;"></span> Tăng ca giữa giờ đêm</div>
           </div>
         </div>
 
@@ -855,7 +725,6 @@ button:hover {
         <div class="calendar-grid" id="chamCongGrid" style="margin-top: 3px;"></div>
       </div>
 
-      <!-- Cột phải: Bảng tính lương chuẩn y hệt + Bảng phụ lễ tết -->
       <div class="cc-col-right">
         <h3 style="margin: 0 0 8px 0; color: #007bff; font-size: 16px; text-align: center;">Bảng Lương Từ Chấm Công</h3>
         <div id="cc_luongContainer">
@@ -923,62 +792,6 @@ button:hover {
             </tbody>
           </table>
         </div>
-
-        <!-- Bảng phụ tính lương lễ tết ở cột phải Tab Chấm công -->
-        <div id="cc_bangPhu" class="bang-phu-table">
-          <h3 style="text-align: center; color: red; margin-top: 5px; margin-bottom: 3px; font-size: 14px;">🎊 Lương ngày lễ, tết 🎊</h3>
-          <table>
-            <thead>
-              <tr>
-                <th rowspan="2">📅 Ngày</th>
-                <th rowspan="2">📋 Khoản mục</th>
-                <th rowspan="2">⏰ Giờ</th>
-                <th rowspan="2">💲 % lương</th>
-                <th rowspan="2">💰 Thành tiền</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td rowspan="3"><input type="number" /></td>
-                <td>Giờ hành chính</td>
-                <td><input type="number" id="cc_soGioHanhChinh1" placeholder="giờ" /></td>
-                <td><input type="number" id="cc_phuLuongHanhChinh" /></td>
-                <td id="cc_tienHanhChinh">0</td>
-              </tr>
-              <tr>
-                <td>Tăng ca</td>
-                <td><input type="number" id="cc_soGioTangCa1" placeholder="giờ" /></td>
-                <td><input type="number" id="cc_phuLuongTangCa" /></td>
-                <td id="cc_tienTangCa">0</td>
-              </tr>
-              <tr>
-                <td>Trợ cấp đêm</td>
-                <td><input type="number" id="cc_soGioDem1" placeholder="giờ" /></td>
-                <td><input type="number" id="cc_phuLuongDem" /></td>
-                <td id="cc_tienTroCapDem">0</td>
-              </tr>
-              <tr>
-                <td rowspan="3"><input type="number" /></td>
-                <td>Giờ hành chính</td>
-                <td><input type="number" id="cc_soGioHanhChinh2" placeholder="giờ" /></td>
-                <td><input type="number" id="cc_phuLuongHanhChinh2" /></td>
-                <td id="cc_tienHanhChinh2">0</td>
-              </tr>
-              <tr>
-                <td>Tăng ca</td>
-                <td><input type="number" id="cc_soGioTangCa2" placeholder="giờ" /></td>
-                <td><input type="number" id="cc_phuLuongTangCa2" /></td>
-                <td id="cc_tienTangCa2">0</td>
-              </tr>
-              <tr>
-                <td>Trợ cấp đêm</td>
-                <td><input type="number" id="cc_soGioDem2" placeholder="giờ" /></td>
-                <td><input type="number" id="cc_phuLuongDem2" /></td>
-                <td id="cc_tienTroCapDem2">0</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
       </div>
     </div>
   </div>
@@ -999,13 +812,19 @@ button:hover {
         <label style="display: block; font-size: 13px; font-weight: bold; margin-bottom: 4px; color: #333;">Tên đăng nhập:</label>
         <input type="text" id="authUsername" placeholder="Nhập tài khoản..." style="width: 100%; height: 34px; padding: 4px 8px; font-size: 14px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;" />
       </div>
-      <div style="margin-bottom: 18px;">
+      <div style="margin-bottom: 10px;">
         <label style="display: block; font-size: 13px; font-weight: bold; margin-bottom: 4px; color: #333;">Mật khẩu:</label>
         <div style="position: relative; display: flex; align-items: center;">
           <input type="password" id="authPassword" placeholder="Nhập mật khẩu..." style="width: 100%; height: 34px; padding: 4px 35px 4px 8px; font-size: 14px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;" />
           <span id="togglePasswordBtn" onclick="togglePasswordVisibility()" style="position: absolute; right: 10px; cursor: pointer; font-size: 16px; user-select: none;" title="Hiện/Ẩn mật khẩu">👁️‍🗨️</span>
         </div>
       </div>
+      
+      <!-- Nút Quên mật khẩu -->
+      <div style="text-align: right; margin-bottom: 15px;">
+        <a href="javascript:void(0);" onclick="alert('Vui lòng liên hệ quản trị viên qua Facebook hoặc Zalo để lấy lại mật khẩu!');" style="font-size: 12px; color: #007bff; text-decoration: none;">Quên mật khẩu?</a>
+      </div>
+
       <div style="display: flex; gap: 10px;">
         <button type="button" onclick="handleLogin()" style="flex: 1; height: 36px; background: #007bff; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">Đăng nhập</button>
         <button type="button" onclick="handleRegister()" style="flex: 1; height: 36px; background: #28a745; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">Đăng ký</button>
@@ -1038,29 +857,32 @@ button:hover {
       toast.textContent = message;
       document.body.appendChild(toast);
       
-      setTimeout(() => {
-        toast.classList.add('show');
-      }, 100);
-      
+      setTimeout(() => { toast.classList.add('show'); }, 100);
       setTimeout(() => {
         toast.classList.remove('show');
-        setTimeout(() => {
-          toast.remove();
-        }, 300);
+        setTimeout(() => { toast.remove(); }, 300);
       }, 3000);
     }
-    
-    function copySTK() {
-      const stkText = document.getElementById("stk").innerText;
-      navigator.clipboard.writeText(stkText).then(() => {
-        showToast("Đã sao chép STK: " + stkText);
-      }).catch(err => {
-        showToast("Lỗi khi sao chép!");
-        console.error("Clipboard copy failed:", err);
-      });
-    }
 
-    // Chuyển tab và chặn mở tab Chấm Công nếu chưa đăng nhập
+    // Tự động điền dữ liệu năm bắt đầu từ 2015 đến năm hiện tại + 2
+    document.addEventListener("DOMContentLoaded", function() {
+      const currentYear = new Date().getFullYear();
+      const startYear = 2015;
+      
+      ['nam', 'cc_nam'].forEach(id => {
+        const select = document.getElementById(id);
+        if (select && select.options.length === 0) {
+          for (let y = currentYear + 2; y >= startYear; y--) {
+            let opt = document.createElement('option');
+            opt.value = y;
+            opt.textContent = y;
+            if (y === currentYear) opt.selected = true;
+            select.appendChild(opt);
+          }
+        }
+      });
+    });
+
     function switchTab(tabId) {
       document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -1069,12 +891,10 @@ button:hover {
         document.getElementById('paneLuong').classList.add('active');
         document.getElementById('btnTabLuong').classList.add('active');
       } else {
-        // Kiểm tra xem đã đăng nhập chưa (dựa trên biến currentUser từ google-sync.js)
         const isLogged = (typeof currentUser !== 'undefined' && currentUser);
         if (!isLogged) {
           const modal = document.getElementById("loginModalOverlay");
           if (modal) modal.style.display = "flex";
-          // Giữ nguyên giao diện ở tab Tính Lương
           document.getElementById('paneLuong').classList.add('active');
           document.getElementById('btnTabLuong').classList.add('active');
           return;
@@ -1088,14 +908,12 @@ button:hover {
       }
     }
 
-    // Nút quay lại tab Tính Lương khi tắt popup đăng nhập
     function closeLoginModalForTabLuong() {
       const modal = document.getElementById("loginModalOverlay");
       if (modal) modal.style.display = "none";
       switchTab('tabLuong');
     }
 
-    // Tính năng ẩn/hiện mật khẩu
     function togglePasswordVisibility() {
       const passwordInput = document.getElementById("authPassword");
       const toggleBtn = document.getElementById("togglePasswordBtn");
