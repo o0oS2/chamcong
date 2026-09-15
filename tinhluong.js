@@ -226,33 +226,33 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // =========================================================================
-  // === LỊCH CHẤM CÔNG: VIẾT TẮT M 1.5, V 1.5, CHỈ HIỆN SỐ GỌN GÀNG ===
+  // === LỊCH CHẤM CÔNG CẬP NHẬT: CHỌN DỄ HIỂU, KHÔNG PHÉP NĂM VÀO CN ===
   // =========================================================================
 
   // Mốc bắt đầu: Thứ Hai 07/09/2026 bắt đầu ca ĐÊM
   const MOC_CA_DEM = new Date(2026, 8, 7);
   let isDaoCa = false;
 
-  // Cập nhật viết tắt: M 1, M 1.5 ..., V 1, V 1.5 ...
+  // Danh mục đầy đủ: Lựa chọn ghi "giờ", hiển thị ra ô ngắn gọn, rõ ràng
   const DSHanhChinhFull = [
-    { label: "Đi làm đủ", short: "", deduct: 0 },
-    { label: "Nghỉ", short: "Nghỉ", deduct: 8 },
-    { label: "Muộn 1h", short: "M 1", deduct: 1 },
-    { label: "Muộn 1.5h", short: "M 1.5", deduct: 1.5 },
-    { label: "Muộn 2h", short: "M 2", deduct: 2 },
-    { label: "Muộn 2.5h", short: "M 2.5", deduct: 2.5 },
-    { label: "Muộn 3h", short: "M 3", deduct: 3 },
-    { label: "Muộn 3.5h", short: "M 3.5", deduct: 3.5 },
-    { label: "Về sớm 1h", short: "V 1", deduct: 1 },
-    { label: "Về sớm 1.5h", short: "V 1.5", deduct: 1.5 },
-    { label: "Về sớm 2h", short: "V 2", deduct: 2 },
-    { label: "Về sớm 2.5h", short: "V 2.5", deduct: 2.5 },
-    { label: "Về sớm 3h", short: "V 3", deduct: 3 },
-    { label: "Về sớm 3.5h", short: "V 3.5", deduct: 3.5 },
-    { label: "1/2 phép năm", short: "½PN", deduct: 4 },
-    { label: "Phép năm", short: "PN", deduct: 8 },
-    { label: "Nghỉ buổi sáng", short: "NS", deduct: 4 },
-    { label: "Nghỉ buổi chiều", short: "NC", deduct: 4 }
+    { label: "Đi làm đủ", short: "", deduct: 0, allowSunday: true },
+    { label: "Nghỉ", short: "Nghỉ", deduct: 8, allowSunday: true },
+    { label: "Muộn 1 giờ", short: "M 1", deduct: 1, allowSunday: true },
+    { label: "Muộn 1.5 giờ", short: "M 1.5", deduct: 1.5, allowSunday: true },
+    { label: "Muộn 2 giờ", short: "M 2", deduct: 2, allowSunday: true },
+    { label: "Muộn 2.5 giờ", short: "M 2.5", deduct: 2.5, allowSunday: true },
+    { label: "Muộn 3 giờ", short: "M 3", deduct: 3, allowSunday: true },
+    { label: "Muộn 3.5 giờ", short: "M 3.5", deduct: 3.5, allowSunday: true },
+    { label: "Về sớm 1 giờ", short: "V 1", deduct: 1, allowSunday: true },
+    { label: "Về sớm 1.5 giờ", short: "V 1.5", deduct: 1.5, allowSunday: true },
+    { label: "Về sớm 2 giờ", short: "V 2", deduct: 2, allowSunday: true },
+    { label: "Về sớm 2.5 giờ", short: "V 2.5", deduct: 2.5, allowSunday: true },
+    { label: "Về sớm 3 giờ", short: "V 3", deduct: 3, allowSunday: true },
+    { label: "Về sớm 3.5 giờ", short: "V 3.5", deduct: 3.5, allowSunday: true },
+    { label: "Nghỉ buổi sáng", short: "Nghỉ sáng", deduct: 4, allowSunday: true },
+    { label: "Nghỉ buổi chiều", short: "Nghỉ chiều", deduct: 4, allowSunday: true },
+    { label: "Phép năm", short: "PN", deduct: 8, allowSunday: false },
+    { label: "1/2 phép năm", short: "½PN", deduct: 4, allowSunday: false }
   ];
 
   const DSTangCaFull = [];
@@ -373,7 +373,7 @@ document.addEventListener("DOMContentLoaded", function () {
     return { day: lunarDay, month: lunarMonth, year: lunarYear, leap: lunarLeap === 1 };
   }
 
-  // Quản lý Modal chọn giá trị
+  // Quản lý Modal Picker
   let currentPickContext = null;
 
   window.openPicker = function(day, type) {
@@ -382,13 +382,24 @@ document.addEventListener("DOMContentLoaded", function () {
     const title = document.getElementById("pickerTitle");
     const body = document.getElementById("pickerBody");
 
+    const thang = +document.getElementById("thang")?.value || 1;
+    const nam = +document.getElementById("nam")?.value || new Date().getFullYear();
+    const isSunday = (new Date(nam, thang - 1, day).getDay() === 0);
+
     body.innerHTML = "";
     overlay.style.display = "flex";
 
     if (type === "hc") {
       title.textContent = `Ngày ${day}: Giờ hành chính`;
       body.className = "picker-body list-mode";
-      DSHanhChinhFull.forEach(item => {
+      
+      // Lọc bỏ phép năm nếu là Chủ Nhật
+      const filteredList = DSHanhChinhFull.filter(item => {
+        if (isSunday && !item.allowSunday) return false;
+        return true;
+      });
+
+      filteredList.forEach(item => {
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = "picker-btn";
@@ -431,8 +442,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (!chamCongData[day]) {
       const defaultHc = (ca === "nghi") 
-        ? { label: "Nghỉ", short: "Nghỉ", deduct: 8 }
-        : { label: "Đi làm đủ", short: "", deduct: 0 };
+        ? { label: "Nghỉ", short: "Nghỉ", deduct: 8, allowSunday: true }
+        : { label: "Đi làm đủ", short: "", deduct: 0, allowSunday: true };
 
       chamCongData[day] = { hc: defaultHc, ot: "0", midOt: "0" };
     }
@@ -472,7 +483,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (elMidOt) elMidOt.textContent = data.midOt;
   }
 
-  // Tự động bù trừ và đẩy sang bảng tính lương[cite: 4]
+  // Tự động bù trừ công và tăng ca đẩy sang bảng lương[cite: 4]
   function dongBoVaoBangLuong() {
     let tongGioCongThuc = 0;
     let tongGioTC150 = 0;
@@ -488,15 +499,14 @@ document.addEventListener("DOMContentLoaded", function () {
       const ca = xacDinhCa(nam, thang, d);
       
       const defaultHc = (ca === "nghi") 
-        ? { label: "Nghỉ", short: "Nghỉ", deduct: 8 }
-        : { label: "Đi làm đủ", short: "", deduct: 0 };
+        ? { label: "Nghỉ", short: "Nghỉ", deduct: 8, allowSunday: true }
+        : { label: "Đi làm đủ", short: "", deduct: 0, allowSunday: true };
 
       const data = chamCongData[d] || { hc: defaultHc, ot: "0", midOt: "0" };
       const deductHours = data.hc.deduct || 0;
       const otHours = parseFloat(data.ot) || 0;
       const midOtHours = parseFloat(data.midOt) || 0;
 
-      // Tính giờ công chuẩn: ngày thường 8h, Chủ Nhật mặc định Nghỉ là 8-8=0h công
       const gioChuanNgay = Math.max(0, 8 - deductHours);
       tongGioCongThuc += gioChuanNgay;
 
@@ -527,7 +537,7 @@ document.addEventListener("DOMContentLoaded", function () {
     tinhLuong();
   }
 
-  // Render lịch chấm công
+  // Render lưới lịch chấm công
   function renderLichChamCong() {
     const thang = +document.getElementById("thang")?.value || 1;
     const nam = +document.getElementById("nam")?.value || new Date().getFullYear();
@@ -565,11 +575,11 @@ document.addEventListener("DOMContentLoaded", function () {
         const lunar = convertSolar2Lunar(dayCounter, thang, nam, TZ);
         const lunarLabel = (lunar.day === 1) ? `${lunar.day}/${lunar.month}` : `${lunar.day}`;
 
-        // Chủ Nhật mặc định Nghỉ (hiển thị chữ 'Nghỉ', trừ 8h công), ngày thường mặc định Đi làm đủ (để trống)
+        // Chủ Nhật mặc định là "Nghỉ", ngày thường mặc định là "Đi làm đủ"
         if (!chamCongData[dayCounter]) {
           const defaultHc = (ca === "nghi") 
-            ? { label: "Nghỉ", short: "Nghỉ", deduct: 8 }
-            : { label: "Đi làm đủ", short: "", deduct: 0 };
+            ? { label: "Nghỉ", short: "Nghỉ", deduct: 8, allowSunday: true }
+            : { label: "Đi làm đủ", short: "", deduct: 0, allowSunday: true };
 
           chamCongData[dayCounter] = {
             hc: defaultHc,

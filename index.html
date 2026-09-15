@@ -12,6 +12,7 @@
       padding: 15px;
       margin: 0;
     } 
+    /* Layout 2 cột cho desktop */
     .main-container {
       display: flex;
       gap: 20px;
@@ -44,6 +45,7 @@
       background: #007bff;
       color: white;
     }
+    /* CHỈNH INPUT/SELECT NẰM TRONG BẢNG TÍNH LƯƠNG */
     #tabLuong table input[type="number"],
     #tabLuong table input[type="text"],
     #tabLuong table select {
@@ -158,10 +160,14 @@
       border: 1px solid #ccc;
       border-radius: 3px;
     }
+    
+    /* Thu ngắn chiều dài ô nhập Lương cơ bản */
     #luongCoBan {
       height: 26px !important;
       font-size: 18px !important;
       font-weight: bold;
+      width: 125px !important; /* Đã thu ngắn lại */
+      text-align: right;
     }
 
     .toast {
@@ -184,7 +190,7 @@
     .toast.show { opacity: 1; }
     .toast::before { content: "✓ "; margin-right: 5px; }
 
-    /* Nút Tab[cite: 2] */
+    /* Nút Tab */
     .tab-bar {
       display: flex;
       gap: 8px;
@@ -326,16 +332,6 @@
     }
     .day-card.ca-nghi .solar-num { color: #dc2626; }
     .day-card.ca-nghi .lunar-num { color: #991b1b; }
-    .nghi-cn-label {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: bold;
-      color: #ef4444;
-      user-select: none;
-    }
 
     .day-top {
       display: flex;
@@ -358,7 +354,7 @@
       width: 100%;
       height: 19px;
       line-height: 17px;
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: bold;
       text-align: center;
       border-radius: 3px;
@@ -368,6 +364,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      letter-spacing: -0.2px;
     }
 
     .cell-hc {
@@ -448,6 +445,7 @@
       border-color: #007bff;
     }
 
+    /* Responsive cho điện thoại */
     @media screen and (max-width: 768px) {
       body { padding: 6px; }
       .main-container { display: block; }
@@ -456,7 +454,16 @@
       .day-card { min-height: 65px; padding: 2px 1px; }
       .solar-num { font-size: 12px; }
       .lunar-num { font-size: 8px; }
-      .input-cell-val { font-size: 10px; height: 18px; line-height: 16px; }
+      .input-cell-val { 
+        font-size: 8.5px !important;
+        height: 17px !important; 
+        line-height: 15px !important;
+        letter-spacing: -0.4px;
+        padding: 0;
+      }
+      #luongCoBan {
+        width: 100px !important; /* Thu ngắn lại trên điện thoại */
+      }
     }
   </style>
 </head>
@@ -466,7 +473,7 @@
   <div class="input-row">
     <div class="group">
       <label for="luongCoBan"><strong>LCB:</strong></label>
-      <input type="text" id="luongCoBan" placeholder="nhập lương cơ bản" style="height: 20px;" />
+      <input type="text" id="luongCoBan" placeholder="lương cơ bản" style="height: 20px;" />
     </div>
 
     <div class="group date-group">
@@ -714,7 +721,7 @@
           </button>
         </div>
 
-        <!-- Chú thích rõ ràng các màu sắc -->
+        <!-- Chú thích nhận biết màu sắc -->
         <div class="legend-box">
           <div class="legend-item">
             <span class="dot-sample" style="background:#fffdf5; border-color:#fce7b2;"></span> Sáng: Ca ngày
