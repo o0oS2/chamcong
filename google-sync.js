@@ -1,7 +1,8 @@
 // --- CẤU HÌNH API GOOGLE APPS SCRIPT ---
-const API_URL = "https://script.google.com/macros/s/AKfycbxf0muqO7ulrNdARYbwllrupFb0wwrZTwhjaax_FXZSBb1Ft9HEmnSVbuI0ALbK1ITmMQ/exec"; 
+const API_URL = "https://script.google.com/macros/s/AKfycbxf0muq07u1rNdARYbwllrupFb0wwrZTwhjaax_FXZSBb1Ft9HEmnSVbuI0ALbK1ITmMQ/exec"; 
 
 let currentUser = localStorage.getItem("cc_currentUser") || null;
+let saveTimeout = null; // Biến hỗ trợ gom lệnh lưu ngầm để chống chậm/lag
 
 document.addEventListener("DOMContentLoaded", function () {
   checkLoginState();
@@ -31,10 +32,8 @@ window.handleLogin = async function() {
   if (!u || !p) { alert("Vui lòng nhập tài khoản và mật khẩu!"); return; }
 
   try {
-    let res = await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify({ action: "login", username: u, password: p })
-    });
+    let url = `${API_URL}?action=login&username=${encodeURIComponent(u)}&password=${encodeURIComponent(p)}`;
+    let res = await fetch(url);
     let json = await res.json();
     if (json.status === "success") {
       currentUser = u;
@@ -55,10 +54,8 @@ window.handleRegister = async function() {
   if (!u || !p) { alert("Vui lòng nhập tài khoản và mật khẩu!"); return; }
 
   try {
-    let res = await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify({ action: "register", username: u, password: p })
-    });
+    let url = `${API_URL}?action=register&username=${encodeURIComponent(u)}&password=${encodeURIComponent(p)}`;
+    let res = await fetch(url);
     let json = await res.json();
     alert(json.message);
     if (json.status === "success") {
@@ -78,60 +75,70 @@ window.handleLogout = function() {
   alert("Đăng xuất thành công!");
 };
 
-// Tự động lưu dữ liệu lên Cloud
+// Lưu ngầm thông minh (Không làm gián đoạn thao tác của người dùng)
 window.autoSaveUserData = function() {
   if (!currentUser) return;
-  const year = document.getElementById("cc_nam")?.value || new Date().getFullYear();
-  const month = document.getElementById("cc_thang")?.value || 1;
-  const baseSalary = document.getElementById("cc_luongCoBan")?.value || "0";
-
-  const allowances = {
-    cc_pcABC: document.getElementById("cc_pcABC")?.value || "",
-    cc_pcChuyenCan: document.getElementById("cc_pcChuyenCan")?.value || "",
-    cc_pcThamNien: document.getElementById("cc_pcThamNien")?.value || "",
-    cc_pcChucVu: document.getElementById("cc_pcChucVu")?.value || "",
-    cc_pcDiLai: document.getElementById("cc_pcDiLai")?.value || "",
-    cc_pcDienThoai: document.getElementById("cc_pcDienThoai")?.value || "",
-    cc_pcTreEm: document.getElementById("cc_pcTreEm")?.value || "",
-    cc_pcKhac: document.getElementById("cc_pcKhac")?.value || ""
-  };
-
-  const payload = {
-    action: "saveData",
-    username: currentUser,
-    year: year,
-    month: month,
-    baseSalary: baseSalary,
-    allowancesJSON: JSON.stringify(allowances),
-    timesheetJSON: JSON.stringify(window.chamCongData || {})
-  };
 
   const statusEl = document.getElementById("syncStatus");
-  if (statusEl) statusEl.textContent = "(Đang lưu...)";
+  if (statusEl) statusEl.textContent = "(Đang thay đổi...)";
 
-  fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify(payload)
-  }).then(res => res.json()).then(json => {
-    if (json.status === "success" && statusEl) {
-      statusEl.textContent = "(Đã lưu tự động)";
-    }
-  }).catch(err => {
-    if (statusEl) statusEl.textContent = "(Lỗi lưu dữ liệu)";
-  });
+  // Hủy lệnh chờ trước đó nếu người dùng vẫn đang thao tác liên tục
+  if (saveTimeout) clearTimeout(saveTimeout);
+
+  // Sau khi người dùng dừng tay 1.5 giây mới thực sự đẩy dữ liệu lên Google Sheet
+  saveTimeout = setTimeout(() => {
+    const year = document.getElementById("cc_nam")?.value || new Date().getFullYear();
+    const month = document.getElementById("cc_thang")?.value || 1;
+    const baseSalary = document.getElementById("cc_luongCoBan")?.value || "0";
+
+    const allowances = {
+      cc_pcABC: document.getElementById("cc_pcABC")?.value || "",
+      cc_pcChuyenCan: document.getElementById("cc_pcChuyenCan")?.value || "",
+      cc_pcThamNien: document.getElementById("cc_pcThamNien")?.value || "",
+      cc_pcChucVu: document.getElementById("cc_pcChucVu")?.value || "",
+      cc_pcDiLai: document.getElementById("cc_pcDiLai")?.value || "",
+      cc_pcDienThoai: document.getElementById("cc_pcDienThoai")?.value || "",
+      cc_pcTreEm: document.getElementById("cc_pcTreEm")?.value || "",
+      cc_pcKhac: document.getElementById("cc_pcKhac")?.value || ""
+    };
+
+    const params = new URLSearchParams({
+      action: "saveData",
+      username: currentUser,
+      year: year,
+      month: month,
+      baseSalary: baseSalary,
+      allowancesJSON: JSON.stringify(allowances),
+      timesheetJSON: JSON.stringify(window.chamCongData || {})
+    });
+
+    if (statusEl) statusEl.textContent = "(Đang đồng bộ lên mây...)";
+
+    fetch(`${API_URL}?${params.toString()}`)
+      .then(res => res.json())
+      .then(json => {
+        if (json.status === "success" && statusEl) {
+          statusEl.textContent = "(Đã lưu tự động)";
+        }
+      })
+      .catch(err => {
+        if (statusEl) statusEl.textContent = "(Lỗi đồng bộ)";
+      });
+  }, 1500); 
 };
 
-// Tải dữ liệu từ Cloud
+// Tải dữ liệu từ Cloud khi mở app hoặc đổi tháng
 window.loadUserDataFromCloud = async function() {
   if (!currentUser) return;
   const year = document.getElementById("cc_nam")?.value || new Date().getFullYear();
   const month = document.getElementById("cc_thang")?.value || 1;
 
+  const statusEl = document.getElementById("syncStatus");
+  if (statusEl) statusEl.textContent = "(Đang tải dữ liệu...)";
+
   try {
-    let res = await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify({ action: "loadData", username: currentUser, year: year, month: month })
-    });
+    let url = `${API_URL}?action=loadData&username=${encodeURIComponent(currentUser)}&year=${year}&month=${month}`;
+    let res = await fetch(url);
     let json = await res.json();
     if (json.status === "success") {
       if (document.getElementById("cc_luongCoBan")) document.getElementById("cc_luongCoBan").value = json.baseSalary || "";
@@ -153,7 +160,10 @@ window.loadUserDataFromCloud = async function() {
     }
     if (window.renderLichChamCong) window.renderLichChamCong();
     if (window.syncChamCongToTinhLuong) window.syncChamCongToTinhLuong();
+    
+    if (statusEl) statusEl.textContent = "(Đã lưu tự động)";
   } catch (err) {
     console.error("Lỗi tải dữ liệu:", err);
+    if (statusEl) statusEl.textContent = "(Lỗi kết nối)";
   }
 };
