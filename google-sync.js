@@ -1,5 +1,5 @@
 // --- CẤU HÌNH API GOOGLE APPS SCRIPT ---
-const API_URL = "https://script.google.com/macros/s/AKfycbxf0muq07u1rNdARYbwllrupFb0wwrZTwhjaax_FXZSBb1Ft9HEmnSVbuI0ALbK1ITmMQ/exec"; 
+const API_URL = "https://script.google.com/macros/s/AKfycbxf0muqO7ulrNdARYbwllrupFb0wwrZTwhjaax_FXZSBb1Ft9HEmnSVbuI0ALbK1ITmMQ/exec"; 
 
 let currentUser = localStorage.getItem("cc_currentUser") || null;
 let saveTimer = null;
