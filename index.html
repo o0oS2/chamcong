@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tính Lương</title>
+<link rel="icon" href="https://raw.githubusercontent.com/o0oS2/Tinh-luong/main/Image/Icon.png" type="image/png" />
+  <style>
+    body {
+      font-family: "Times New Roman", Times, serif;
+      background: #f4f4f4;
+      padding: 30px;
+      margin: 0;
+    } 
+    /* Layout 2 cột cho desktop */
+    .main-container {
+      display: flex;
+      gap: 20px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    
+    .left-column {
+      flex: 0 0 35%;
+      min-width: 300px;
+    }
+    
+    .right-column {
+      flex: 1;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 5px;
+      background: #fff;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: center;
+      vertical-align: middle; /* Canh giữa theo chiều dọc */
+    }
+    th {
+      background: #007bff;
+      color: white;
+    }
+    /* CHỈNH INPUT/SELECT NẰM TRONG BẢNG */
+table input[type="number"],
+table input[type="text"],
+table select {
+  width: 100%;               /* Chiếm hết chiều rộng ô */
+  box-sizing: border-box;   /* Padding không làm vượt quá ô */
+  padding: 2px 6px;         /* Giảm padding để chiều cao thấp hơn */
+  font-size: 12px;          /* Giảm cỡ chữ xuống 12px */
+  text-align: right;        /* Căn phải với số */
+  margin: 0;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  height: 24px;             /* Đặt chiều cao cụ thể để đều */
+}
+
+/* ==== CHỈNH KÍCH THƯỚC CỘT BẢNG CHÍNH ==== */
+#luongContainer table > thead > tr > th:nth-child(1),
+#luongContainer table > tbody > tr > td:nth-child(1) {
+  width: 45%;
+  text-align: left;
+  padding-left: 15px;
+}
+
+#luongContainer table > thead > tr > th:nth-child(2),
+#luongContainer table > tbody > tr > td:nth-child(2) {
+  width: 20%;
+}
+
+#luongContainer table > thead > tr > th:nth-child(3),
+#luongContainer table > tbody > tr > td:nth-child(3) {
+  width: 35%;
+  text-align: right;
+  padding-right: 15px;
+}
+
+/* ==== CHỈNH KÍCH THƯỚC CỘT BẢNG PHỤ ==== */
+#bangPhu table {
+  table-layout: fixed; /* Thêm dòng này để cố định layout bảng */
+  width: 100%;
+}
+
+#bangPhu table td:nth-child(1),
+#bangPhu table th:nth-child(1) {
+  width: 10%;
+}
+#bangPhu table td:nth-child(2),
+#bangPhu table th:nth-child(2) {
+  width: 30%;
+}
+#bangPhu table td:nth-child(3),
+#bangPhu table th:nth-child(3) {
+  width: 15%; /* Giữ nguyên 10% */
+  max-width: 60px; /* Thêm max-width để giới hạn */
+}
+#bangPhu table td:nth-child(4),
+#bangPhu table th:nth-child(4) {
+  width: 15%;
+}
+#bangPhu table td:nth-child(5),
+#bangPhu table th:nth-child(5) {
+  width: 30%; /* Giảm từ 25% xuống 15% */
+}
+
+/* Kiểm soát input trong cột 3 bảng phụ */
+#bangPhu table td:nth-child(3) input[type="number"] {
+  width: 100% !important;
+  /* max-width: 50px; /* Giới hạn chiều rộng tối đa */
+  font-size: 12px;
+  padding: 2px 4px;
+  height: 22px;
+  text-align: right;
+  box-sizing: border-box;
+}
+
+#luongContainer table th,
+#luongContainer table td {
+  padding: 1px 2px;       /* Giảm padding như bảng phụ */
+  height: 20px;           /* Chiều cao dòng tương tự bảng phụ */
+  vertical-align: middle; /* Canh giữa theo chiều dọc */
+}
+
+#luongContainer table input[type="number"],
+#luongContainer table input[type="text"],
+#luongContainer table select {
+  padding: 1px 2px;       /* Giảm padding input */
+  height: 20px;           /* Chiều cao input nhỏ gọn */
+  font-size: 13px;        /* Cỡ chữ nhỏ */
+  box-sizing: border-box;
+  text-align: right;
+}
+
+#bangPhu table td,
+#bangPhu table th {
+  padding: 2px 4px;       /* Giảm padding lại để dòng thấp hơn */
+  height: 24px;           /* Đặt chiều cao dòng thấp */
+  vertical-align: middle; /* Canh giữa theo chiều dọc */
+}
+
+#bangPhu table input[type="number"] {
+  padding: 1px 3px;       /* Giảm padding input */
+  height: 22px;           /* Giảm chiều cao input */
+  font-size: 12px;        /* Giảm cỡ chữ */
+  box-sizing: border-box;
+}
+
+table th,
+table td {
+  height: 18px; /* Bạn có thể thay đổi thành 30px, 40px, tùy ý */
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+input[type="number"],
+select {
+  padding: 4px 6px;    /* Giảm padding để ô thấp hơn */
+  font-size: 12px;     /* Giảm cỡ chữ nếu cần */
+  height: 28px;        /* Có thể thêm dòng này để kiểm soát chiều cao */
+}
+
+    /* Nếu muốn căn giữa text trong input, đổi text-align thành center */
+    /*
+    table input[type="number"],
+    table input[type="text"],
+    table select {
+      text-align: center;
+    }
+    */
+    tfoot td {
+      font-weight: bold;
+      background: #e9f7ef;
+    }
+    .center {
+      text-align: center;
+      margin-top: 5px;
+    }
+    button {
+      padding: 10px 20px;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 2px;
+    }
+    button:hover {
+      background: #218838;
+    }
+    #bangPhu {
+      margin-top: 2px;
+    }
+    #bangPhu th {
+      background: #28a745;
+    }
+    #bangPhu td, #bangPhu th {
+      padding: 8px;
+      border: 1px solid #ddd;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    /* ===== PHẦN CHỈNH CHO LƯƠNG CƠ BẢN VÀ NGÀY CÔNG CHUẨN CÙNG DÒNG ===== */
+    .input-container {
+  margin-top: 0px; /* 👈 Giảm khoảng cách bên trên toàn khối */
+}
+.input-row {
+  display: flex;
+  flex-wrap: wrap; /* Cho phép xuống dòng nếu quá nhỏ */
+  align-items: center;
+  gap: 2px; /* Khoảng cách giữa các phần tử */
+  margin-bottom: 2px;
+  justify-content: center;
+}
+
+/* Tạo nhóm cho từng phần */
+.input-row .group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.input-row label {
+  white-space: nowrap;
+  font-size: 18px;
+  color: green;
+}
+
+.input-row input[type="number"],
+.input-row select {
+  width: 160px;
+  min-width: 40px;
+  text-align: right;
+  font-size: 20px;
+  padding: 2px 4px;
+  height: 24px; /* hoặc 24px nếu muốn thấp hơn nữa */
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+#luongCoBan {
+  height: 26px !important;
+  font-size: 18px !important; /* Tăng cỡ chữ cho input Lương cơ bản */
+  font-weight: bold;
+}
+/* Toast notification styles */
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #28a745;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      font-size: 14px;
+      font-weight: 500;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    }
+    
+    .toast.show {
+      opacity: 1;
+    }
+    
+    .toast::before {
+      content: "✓ ";
+      margin-right: 5px;
+    }
+
+/* Responsive cho màn hình nhỏ - về lại layout 1 cột */
+@media screen and (max-width: 768px) {
+  .main-container {
+    display: block;
+  }
+  
+  .left-column, .right-column {
+    flex: none;
+    width: 100%;
+  }
+  
+  body {
+    padding: 10px;
+  }
+  table {
+    font-size: 14px;
+  }
+  table input[type="number"],
+  table input[type="text"],
+  table select {
+    width: 100%; /* Chiếm hết chiều rộng trên mobile */
+    font-size: 16px;
+    padding: 10px 8px;
+  }
+  label,
+  select {
+    display: block;
+    margin-top: 2px;
+    margin-bottom: 2px;
+  }
+  button {
+    width: 100%;
+    font-size: 16px;
+  }
+  th,
+  td {
+    padding: 6px;
+  }
+  h1 {
+    font-size: 22px;
+  }
+
+   .input-row label {
+    font-size: 18px;
+  }
+
+  .input-row input[type="number"],
+  .input-row select {
+    width: 90px;
+    font-size: 14px;
+    height: 18px; /* tăng chiều cao cho dễ thao tác */
+    text-align: center; /* canh giữa trên mobile */
+  }
+  #luongCoBan {
+  height: 22px !important;
+  font-size: 18px !important; /* Tăng cỡ chữ cho input Lương cơ bản */
+  font-weight: bold;
+  width: 120px !important;
+}
+  /* Chỉnh cột Time nhỏ lại trên điện thoại */
+  #luongContainer table th:nth-child(1),
+  #luongContainer table td:nth-child(1) {
+    width: 45% !important;
+  }
+
+  #luongContainer table th:nth-child(2),
+  #luongContainer table td:nth-child(2) {
+    width: 20% !important;
+  }
+
+  #luongContainer table th:nth-child(3),
+  #luongContainer table td:nth-child(3) {
+    width: 35% !important;
+  }
+  
+  /* Responsive cho màn hình nhỏ bảng phụ */
+  #bangPhu table th:nth-child(1),
+  #bangPhu table td:nth-child(1) {
+    width: 12% !important;
+  }
+  #bangPhu table th:nth-child(2),
+  #bangPhu table td:nth-child(2) {
+    width: 30% !important;
+  }
+  #bangPhu table th:nth-child(3),
+  #bangPhu table td:nth-child(3) {
+    width: 15% !important;
+    max-width: 50px;
+  }
+  #bangPhu table th:nth-child(4),
+  #bangPhu table td:nth-child(4) {
+    width: 15% !important;
+  }
+  #bangPhu table th:nth-child(5),
+  #bangPhu table td:nth-child(5) {
+    width: 28% !important;
+  }
+}
+
+       /* CSS cho máy tính (mặc định) phần mã QR */
+        .contact-section {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start; /* Đảm bảo alignment đúng cho desktop */
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .contact-info {
+            flex: 1 1 65%;
+            min-width: 250px;
+        }
+
+        .contact-links {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            margin-bottom: 0;
+            line-height: 1.5;
+        }
+
+        .bank-info {
+            text-align: center;
+            margin-top: 3px;
+            font-weight: bold;
+            line-height: 1.5;
+        }
+
+        .bank-info p {
+            margin: 8px 0;
+        }
+
+        .qr-section {
+            flex: 1 1 30%;
+            min-width: 180px;
+            text-align: center;
+            display: flex;
+            align-items: flex-start; /* Căn trên cho desktop */
+            justify-content: center;
+        }
+
+        .qr-image {
+            width: 160px;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .social-link {
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .social-icon {
+            margin-right: 4px;
+        }
+
+        .facebook-text {
+            color: #1877F2;
+            font-weight: bold;
+        }
+
+        .zalo-text {
+            color: #0068FF;
+            font-weight: bold;
+        }
+
+        .vietin-red {
+            color: red;
+        }
+
+        .bank-blue {
+            color: blue;
+        }
+
+        .copy-btn {
+            margin-left: 5px;
+            padding: 0 6px;
+            font-size: 12px;
+            height: 20px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            white-space: nowrap; /* Không cho phép xuống dòng */
+            vertical-align: middle; /* Căn giữa theo chiều dọc */
+        }
+
+        .stk-container {
+            display: inline-flex;
+            align-items: center;
+            flex-wrap: nowrap; /* Không cho phép wrap xuống dòng */
+        }
+
+        .copy-btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* CSS cho điện thoại (màn hình nhỏ hơn 768px) */
+        @media (max-width: 768px) {
+            .contact-section {
+                flex-direction: column;
+                gap: 10px;
+                align-items: center; /* Căn giữa toàn bộ section */
+            }
+
+            .contact-info {
+                min-width: unset;
+            }
+
+            .contact-links {
+                gap: 10px;
+                margin-top: 5px;
+                font-size: 14px;
+            }
+
+            .bank-info {
+                margin-top: 1px;
+                line-height: 1.2; /* Giảm line-height cho điện thoại */
+            }
+
+            .bank-info p {
+                margin: 4px 0; /* Giảm khoảng cách giữa các dòng */
+            }
+
+            .copy-btn {
+                font-size: 13px;
+                height: 18px;
+                padding: 0 4px;
+            }
+
+            .qr-section {
+                min-width: unset;
+                margin-top: 1px;
+                display: flex;
+                justify-content: center; /* Căn giữa ảnh QR */
+                width: 100%;
+            }
+
+            .qr-image {
+                width: 180px;
+                height: 180px;
+            }
+        }
+
+        /* CSS cho điện thoại rất nhỏ (dưới 480px) */
+        @media (max-width: 480px) {
+            .bank-info {
+                line-height: 1.1; /* Line-height rất nhỏ cho màn hình rất nhỏ */
+            }
+
+            .bank-info p {
+                margin: 3px 0; /* Khoảng cách rất nhỏ */
+            }
+
+            .contact-links {
+                gap: 8px;
+                font-size: 13px;
+            }
+
+            .copy-btn {
+                font-size: 11px;
+                height: 16px;
+                padding: 0 3px;
+                margin-left: 3px;
+            }
+
+            .qr-section {
+                display: flex;
+                justify-content: center; /* Đảm bảo căn giữa cho màn hình nhỏ */
+                width: 100%;
+            }
+
+            .qr-image {
+                width: 160px;
+                height: 160px;
+            }
+        }
+    #luongCoBan::placeholder { /* chỉnh chữ mờ lương cơ bản */
+  font-size: 14px; /* Cỡ chữ nhỏ cho placeholder */
+  color: #aaa;     /* Màu mờ (tùy chọn) */
+  font-weight: normal;   /* Tắt in đậm */
+}
+  
+    .footer { /* ngày cập nhật phiên bản */
+    text-align: center;
+    font-size: 14px;
+    color: #555;
+    margin-top: 20px;
+    padding: 10px 0;
+    border-top: 1px solid #ccc;
+}
+  </style>
+</head>
+<body>
+<div class="main-container">
+  <!-- Cột 1: Input row, bảng chính, bảng phụ -->
+  <div class="left-column">
+    <div class="input-row">
+      <div class="group">
+        <label for="luongCoBan"><strong>LCB:</strong></label>
+        <input type="text" id="luongCoBan" placeholder="nhập lương cơ bản" style="height: 20px;" />
+      </div>
+
+      <div class="group date-group">
+        <label for="thang" style="margin-left: 5px;">
+          
+        </label>
+        <select id="thang" name="thang" style="width: 55px; height: 32px; text-align: center;"></select>
+
+        <label for="nam" style="margin-left: 2px;">/</label>
+        <select id="nam" name="nam" style="width: 75px; height: 32px; text-align: center;"></select>
+      </div>
+    </div>
+
+    <div id="luongContainer">
+      <table>
+        <thead>
+          <tr>
+            <th>📋 Khoản mục</th>
+            <th>⏰ Time</th>
+            <th>💰 Thành tiền</th>
+          </tr>
+        </thead>
+        <tbody id="luongTable">
+          <tr><td>Ngày công 100%</td><td><input type="number" id="ngayCong" placeholder="ngày" /></td><td id="tienNgayCong">0</td></tr>
+          <tr><td>Tăng ca 150%</td><td><input type="number" id="tc150" placeholder="giờ" /></td><td id="tienTC150">0</td></tr>
+          <tr><td>Tăng ca 200%</td><td><input type="number" id="tc200" placeholder="giờ" /></td><td id="tienTC200">0</td></tr>
+          <tr><td>Trợ cấp đêm 30%</td><td><input type="number" id="tcDem30" placeholder="giờ" /></td><td id="tienDem30">0</td></tr>
+          <tr style="color:red;"><td>Ngày công 200%</td><td><input type="number" id="ngayCong200" placeholder="ngày" /></td><td id="tienCong200">0</td></tr>
+          <tr style="color:red;"><td>Tăng ca 300%</td><td><input type="number" id="tc300" placeholder="giờ" /></td><td id="tienTC300">0</td></tr>
+          <tr style="color:red;"><td>Tăng ca 340%</td><td><input type="number" id="tc340" placeholder="giờ" /></td><td id="tienTC340">0</td></tr>
+          <tr style="color:red;"><td>Trợ cấp đêm 70%</td><td><input type="number" id="tcDem70" placeholder="giờ" /></td><td id="tienDem70">0</td></tr>
+          <tr style="color:red;"><td>Thông ca 380%</td><td><input type="number" id="thongca380" placeholder="giờ" /></td><td id="tienthongca380">0</td></tr>
+          <tr><td>Phép năm</td><td><input type="number" id="phepNam" placeholder="ngày" /></td><td id="tienPhepNam">0</td></tr>
+          <tr><td>Ngày lễ</td><td><input type="number" id="le" placeholder="ngày" /></td><td id="tienLe">0</td></tr>
+          <tr><td colspan="2">Phụ cấp kỹ năng ABC</td><td><input type="text" id="pcABC" /></td></tr>
+          <tr><td colspan="2">Phụ cấp Chuyên cần</td><td>
+            <select id="pcChuyenCan">
+              <option text="0">0</option>
+              <option text="200.000" selected>200.000</option>
+            </select>
+          </td></tr>
+          <tr><td colspan="2">Phụ cấp thâm niên</td><td>
+            <select id="pcThamNien">
+              <option text="400.000">400.000</option>
+              <option text="500.000">500.000</option>
+              <option text="600.000">600.000</option>
+            </select>
+          </td></tr>
+          <tr><td colspan="2">Phụ cấp lương, chức vụ</td><td><input type="text" id="pcChucVu" /></td></tr>
+          <tr><td colspan="2">Hỗ trợ đi lại</td><td><input type="text" id="pcDiLai" /></td></tr>
+          <tr><td colspan="2">Hỗ trợ điện thoại</td><td>
+            <select id="pcDienThoai">
+              <option text="0">0</option>
+              <option text="1.500.000">1.500.000</option>
+              <option text="2.500.000">2.500.000</option>
+              <option text="3.000.000">3.000.000</option>
+              <option text="4.000.000">4.000.000</option>
+              <option text="5.000.000">5.000.000</option>
+            </select>
+          </td></tr>
+          <tr><td colspan="2">Hỗ trợ trẻ em dưới 6 tuổi</td><td>
+            <select id="pcTreEm">
+              <option text="0">0</option>
+              <option text="50.000">50.000</option>
+              <option text="100.000">100.000</option>
+              <option text="150.000">150.000</option>
+              <option text="200.000">200.000</option>
+            </select>
+          </td></tr>
+          <tr><td colspan="2">Phụ cấp khác (ngoại ngữ, kỹ thuật...)</td><td><input type="text" id="pcKhac" /></td></tr>
+          <tr><td colspan="2">Tổng lương ngày lễ, tết</td><td id="tienNgayLeTet">0</td></tr>
+          <tr style="background-color: yellow;"><td colspan="2">💰 Tổng thu nhập</td><td id="tongLuong">0</td></tr>
+          <tr style="color:red;"><td colspan="2">Khấu trừ BHXH 10.5%</td><td id="tienTruBHXH">0</td></tr>
+          <tr style="color:red;"><td colspan="2">Khấu trừ Công đoàn 0.5%</td><td id="tienTruCD">0</td></tr>
+          <tr style="background-color: #cce5ff; font-weight: bold;"><td colspan="2">💵 Thực lĩnh (chưa tính thuế)</td><td id="thucLinh">0</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="bangPhu">
+      <h3 style="text-align: center; color: red; margin-top: 3px; margin-bottom: 3px;">🎊 Lương ngày lễ, tết 🎊</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th rowspan="2">📅 Ngày</th>
+            <th rowspan="2">📋 Khoản mục</th>
+            <th rowspan="2">⏰ Giờ</th>
+            <th rowspan="2">💲 % lương</th>
+            <th rowspan="2">💰 Thành tiền</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td rowspan="3"><input type="number" /></td>
+            <td>Giờ hành chính</td>
+            <td><input type="number" id="soGioHanhChinh1" placeholder="giờ" /></td>
+            <td><input type="number" id="phuLuongHanhChinh" /></td>
+            <td id="tienHanhChinh">0</td>
+          </tr>
+          <tr>
+            <td>Tăng ca</td>
+            <td><input type="number" id="soGioTangCa1" placeholder="giờ" /></td>
+            <td><input type="number" id="phuLuongTangCa" /></td>
+            <td id="tienTangCa">0</td>
+          </tr>
+          <tr>
+            <td>Trợ cấp đêm</td>
+            <td><input type="number" id="soGioDem1" placeholder="giờ" /></td>
+            <td><input type="number" id="phuLuongDem" /></td>
+            <td id="tienTroCapDem">0</td>
+          </tr>
+          <tr>
+            <td rowspan="3"><input type="number" /></td>
+            <td>Giờ hành chính</td>
+            <td><input type="number" id="soGioHanhChinh2" placeholder="giờ" /></td>
+            <td><input type="number" id="phuLuongHanhChinh2" /></td>
+            <td id="tienHanhChinh2">0</td>
+          </tr>
+          <tr>
+            <td>Tăng ca</td>
+            <td><input type="number" id="soGioTangCa2" placeholder="giờ" /></td>
+            <td><input type="number" id="phuLuongTangCa2" /></td>
+            <td id="tienTangCa2">0</td>
+          </tr>
+          <tr>
+            <td>Trợ cấp đêm</td>
+            <td><input type="number" id="soGioDem2" placeholder="giờ" /></td>
+            <td><input type="number" id="phuLuongDem2" /></td>
+            <td id="tienTroCapDem2">0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Cột 2: Tải file, liên hệ, thông tin -->
+  <div class="right-column">
+    <div style="text-align: center; margin: 3px 0; padding: 4px 8px; border: 1px solid #ccc; border-radius: 6px;">
+      <h4 style="margin: 3px 0 8px;">📥 <a href="Files/Tinh_luong.xlsx" download> Tải file Excel tính lương - chấm công</a> 📥</h4>
+      <p style="margin: 0 0 8px; color: #d00; font-size: 14px;">
+        ⚠ Mở bằng trình duyệt: <strong>Safari</strong>, <strong>Chrome</strong>...Không mở bằng <strong>Zalo</strong> hoặc <strong>Messenger</strong> vì bị lỗi không tải được.
+      </p>
+      
+    </div>
+
+  <div style="margin: 5px 0; padding: 6px 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; line-height: 1.4;">
+  <h4 style="margin: 4px 0 2px;">📌 Quy tắc tính lương</h4>
+  <ul style="margin: 0 0 6px 16px; padding-left: 0;">
+    <li><b>Bảo hiểm:</b> (Lương cơ bản + PC thâm niên, PC lương, PC chức vụ) x 10.5%</li>
+    <li><b>Tăng ca, trợ cấp đêm:</b> (Lương cơ bản + PC thâm niên, PC lương, PC chức vụ, PC đi lại) / (Ngày công chuẩn x 8) x % lương</li>
+    <li><b>Ngày công chuẩn:</b> Số ngày trong tháng – số ngày Chủ nhật (tối đa 26 ngày)</li>
+    <li><b>Chuyên cần:</b> Mất nếu nghỉ việc riêng, ốm, đi muộn, về sớm > 1 ngày công (8 tiếng)</li>
+    <li><b>PC thâm niên:</b>
+      <ul style="list-style: disc; margin: 2px 0 0 20px;">
+        <li>Dưới 1 năm: 400.000 VND</li>
+        <li>Dưới 2 năm: 500.000 VND</li>
+        <li>Trên 2 năm: 600.000 VND</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h4 style="margin: 4px 0 2px;">🕒 Giờ tăng ca & trợ cấp đêm:</h4>
+  <ul style="margin: 0 0 6px 16px; padding-left: 0;">
+    <li><b>Tăng ca 150%:</b> Tăng ca ca ngày hoặc tăng ca ca đêm sau 06h00</li>
+    <li><b>Tăng ca 200%:</b> Tăng ca giữa giờ đêm (00h00 ~ 01h00) và tăng ca ca đêm từ 04h00 ~ 06h00</li>
+    <li><b>Trợ cấp đêm 30%:</b>từ 22h00 ~ 4h00</li>
+    <li><b>Thông ca 190%:</b> từ 17h00 trở đi (không trợ cấp đêm)</li>
+  </ul>
+
+  <h4 style="margin: 4px 0 2px;">📅 Ca đêm thứ 7 & chủ nhật:</h4>
+  <ul style="margin: 0 0 6px 16px; padding-left: 0;">
+    <li><b>Ca đêm thứ 7:</b> Trước 0h00 như ngày thường; Sau 0h00: 200%, trợ cấp đêm 70%, tăng ca 340%</li>
+    <li><b>Ca đêm chủ nhật:</b> Trước 0h00: 200%, trợ cấp đêm 70%; Sau 0h00 như ngày thường</li>
+    <li><b>Thông ca chủ nhật:</b> Sau 17h00: 380%</li>
+  </ul>
+
+  <h4 style="margin: 4px 0 2px;">🎉 Ngày lễ, Tết:</h4>
+  <ul style="margin: 0; padding-left: 16px;">
+    <li><b>Ca ngày lễ:</b> Ca ngày: 300%, tăng ca 450%</li>
+    <li><b>Ca đêm trước lễ (VD 31/12):</b> Trước 0h00 như thường; Sau 0h00: 300%, trợ cấp đêm 90%, tăng ca 510%</li>
+    <li><b>Ca đêm ngày lễ (VD 1/1):</b> Trước 0h00: 300%, trợ cấp đêm 90%; Sau 0h00: như ngày thường</li>
+    <li><b>Tết âm lịch:</b> Ca ngày: 500%, Ca đêm: 590%</li>
+  </ul>
+</div>
+
+<div style="margin: 3px 0; padding: 4px 8px; border: 1px solid #ccc; border-radius: 6px; display: flex; flex-wrap: wrap; gap: 10px;">
+<div class="contact-section">
+        <!-- Cột 1: Thông tin liên hệ -->
+        <div class="contact-info">
+            <p class="contact-links">
+                <span>Liên hệ:</span>
+                <a href="https://m.facebook.com/tdt93/" target="_blank" class="social-link">
+                    <img src="https://raw.githubusercontent.com/o0oS2/Tinh-luong/main/Image/Facebook.png" width="20" height="20" class="social-icon">
+                    <span class="facebook-text">Facebook</span>
+                </a>
+                <a href="http://zalo.me/trungpl" target="_blank" class="social-link">
+                    <img src="https://raw.githubusercontent.com/o0oS2/Tinh-luong/main/Image/Zalo.png" alt="Zalo" width="20" height="20" class="social-icon">
+                    <span class="zalo-text">Zalo</span>
+                </a>
+            </p>
+            <div class="bank-info">
+                <p>Ủng hộ tôi qua <span class="vietin-red">Vietin</span><span class="bank-blue">Bank</span></p>
+                <p>Chủ TK: <span class="bank-blue">Trần Đức Trung</span></p>
+                <p>
+                    STK: 
+                    <span class="stk-container">
+                        <span id="stk" class="bank-blue">102829132222</span>
+                        <button onclick="copySTK()" class="copy-btn">Copy</button>
+                    </span>
+                </p>
+            </div>
+        </div>
+        
+        <!-- Cột 2: Ảnh QR -->
+        <div class="qr-section">
+            <img src="https://raw.githubusercontent.com/o0oS2/Tinh-luong/main/Image/ViettinbankQR.jpg" alt="Vietinbank QR" class="qr-image">
+        </div>
+    </div>
+    </div>
+    
+<div style="margin: 5px 0; padding: 6px 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; line-height: 1.4;">
+  <div style="margin-top: 2px;">
+    <p>📥 <a href="Files/In_cham_cong.xlsx" download style="color: #080;"> Tải file in chấm công</a>, <a href="Files/Thiep_Cuoi.docx" download style="color: #080;"> Tải file in thiệp cưới</a> 📥</p>
+    <p>🔗 <a href="https://chanquangcao.pages.dev/" target="_blank" style="text-decoration: none; color: #0073e6;">DNS - VPN Cloudflare chặn quảng cáo</a></p>
+  </div>
+</div>
+<div class="footer">
+    • Phiên bản 1.9, cập nhật ngày 28/09/2025 • 
+</div>
+
+<script>
+  function showToast(message) {
+      // Remove existing toast if any
+      const existingToast = document.querySelector('.toast');
+      if (existingToast) {
+        existingToast.remove();
+      }
+      
+      // Create new toast
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      // Show toast with animation
+      setTimeout(() => {
+        toast.classList.add('show');
+      }, 100);
+      
+      // Hide and remove toast after 3 seconds
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+          toast.remove();
+        }, 300);
+      }, 3000);
+    }
+    
+    function copySTK() {
+      const stkText = document.getElementById("stk").innerText;
+      navigator.clipboard.writeText(stkText).then(() => {
+        showToast("Đã sao chép STK: " + stkText);
+      }).catch(err => {
+        showToast("Lỗi khi sao chép!");
+        console.error("Clipboard copy failed:", err);
+      });
+    }
+</script>
+  <script src="tinhluong.js"></script>
+</body>
+</html>
