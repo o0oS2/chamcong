@@ -627,22 +627,37 @@ button:hover {
     padding: 10px;
   }
 }
-
-/* 2. KHI XOAY NGANG ĐIỆN THOẠI (Ép hiển thị 2 cột ngang y hệt máy tính) */
+/* KHI XOAY NGANG ĐIỆN THOẠI: GIỮ TAB Ở TRÊN, NỘI DUNG BÊN DƯỚI CHIA 2 CỘT */
 @media screen and (max-width: 900px) and (orientation: landscape) {
+  /* 1. Thanh tab giữ nguyên bề ngang, nằm trọn trên cùng */
   .main-container {
+    display: block !important;
+    max-width: 100% !important;
+  }
+  
+  .tab-bar {
+    display: flex !important;
+    width: 100% !important;
+    margin-bottom: 10px !important;
+  }
+
+  /* 2. Chỉ phần nội dung bên trong mỗi tab (pane) mới chia thành 2 cột */
+  .tab-pane.active .main-container {
     display: flex !important;
     flex-direction: row !important;
     gap: 15px !important;
-    max-width: 100% !important;
   }
+
   .left-column {
     flex: 0 0 55% !important;
     min-width: unset !important;
   }
+  
   .right-column {
     flex: 1 !important;
   }
+
+  /* 3. Riêng tab Chấm công giữ chuẩn 2 cột ngang */
   .cc-desktop-layout {
     display: flex !important;
     flex-direction: row !important;
@@ -660,6 +675,7 @@ button:hover {
     border: none !important;
     box-shadow: none !important;
   }
+
   .calendar-grid {
     gap: 2px;
   }
