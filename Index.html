@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Tính Lương & Chấm Công</title>
+<link rel="icon" href="https://raw.githubusercontent.com/o0oS2/Tinh-luong/main/Image/Icon.png" type="image/png" />
+  <style>
+    body {
+      font-family: "Times New Roman", Times, serif;
+      background: #f4f4f4;
+      padding: 15px;
+      margin: 0;
+    } 
+    /* Layout 2 cột cho desktop */
+    .main-container {
+      display: flex;
+      gap: 20px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    
+    .left-column {
+      flex: 0 0 35%;
+      min-width: 300px;
+    }
+    
+    .right-column {
+      flex: 1;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 5px;
+      background: #fff;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: center;
+      vertical-align: middle;
+    }
+    th {
+      background: #007bff;
+      color: white;
+    }
+    /* CHỈNH INPUT/SELECT NẰM TRONG BẢNG TÍNH LƯƠNG */
+    #tabLuong table input[type="number"],
+    #tabLuong table input[type="text"],
+    #tabLuong table select {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 2px 6px;
+      font-size: 12px;
+      text-align: right;
+      margin: 0;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      height: 24px;
+    }
+
+    #luongContainer table > thead > tr > th:nth-child(1),
+    #luongContainer table > tbody > tr > td:nth-child(1) {
+      width: 45%;
+      text-align: left;
+      padding-left: 15px;
+    }
+
+    #luongContainer table > thead > tr > th:nth-child(2),
+    #luongContainer table > tbody > tr > td:nth-child(2) {
+      width: 20%;
+    }
+
+    #luongContainer table > thead > tr > th:nth-child(3),
+    #luongContainer table > tbody > tr > td:nth-child(3) {
+      width: 35%;
+      text-align: right;
+      padding-right: 15px;
+    }
+
+    #bangPhu table {
+      table-layout: fixed;
+      width: 100%;
+    }
+
+    #bangPhu table td:nth-child(1), #bangPhu table th:nth-child(1) { width: 10%; }
+    #bangPhu table td:nth-child(2), #bangPhu table th:nth-child(2) { width: 30%; }
+    #bangPhu table td:nth-child(3), #bangPhu table th:nth-child(3) { width: 15%; max-width: 60px; }
+    #bangPhu table td:nth-child(4), #bangPhu table th:nth-child(4) { width: 15%; }
+    #bangPhu table td:nth-child(5), #bangPhu table th:nth-child(5) { width: 30%; }
+
+    #bangPhu table td:nth-child(3) input[type="number"] {
+      width: 100% !important;
+      font-size: 12px;
+      padding: 2px 4px;
+      height: 22px;
+      text-align: right;
+      box-sizing: border-box;
+    }
+
+    #luongContainer table th, #luongContainer table td {
+      padding: 1px 2px;
+      height: 20px;
+      vertical-align: middle;
+    }
+
+    #luongContainer table input[type="number"],
+    #luongContainer table input[type="text"],
+    #luongContainer table select {
+      padding: 1px 2px;
+      height: 20px;
+      font-size: 13px;
+      box-sizing: border-box;
+      text-align: right;
+    }
+
+    #bangPhu table td, #bangPhu table th {
+      padding: 2px 4px;
+      height: 24px;
+      vertical-align: middle;
+    }
+
+    #bangPhu table input[type="number"] {
+      padding: 1px 3px;
+      height: 22px;
+      font-size: 12px;
+      box-sizing: border-box;
+    }
+
+    .input-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 2px;
+      margin-bottom: 2px;
+      justify-content: center;
+    }
+
+    .input-row .group {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .input-row label {
+      white-space: nowrap;
+      font-size: 18px;
+      color: green;
+    }
+
+    .input-row input[type="number"],
+    .input-row select {
+      width: 160px;
+      min-width: 40px;
+      text-align: right;
+      font-size: 20px;
+      padding: 2px 4px;
+      height: 24px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+    }
+    #luongCoBan {
+      height: 26px !important;
+      font-size: 18px !important;
+      font-weight: bold;
+    }
+
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #28a745;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      font-size: 14px;
+      font-weight: 500;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    }
+    
+    .toast.show { opacity: 1; }
+    .toast::before { content: "✓ "; margin-right: 5px; }
+
+    /* Nút Tab */
+    .tab-bar {
+      display: flex;
+      gap: 8px;
+      margin: 10px auto 14px;
+      justify-content: center;
+      max-width: 500px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 7px 12px;
+      font-size: 14px;
+      font-weight: bold;
+      border: 1.5px solid #007bff;
+      border-radius: 5px;
+      background: #fff;
+      color: #007bff;
+      cursor: pointer;
+      text-align: center;
+    }
+    .tab-btn.active {
+      background: #007bff;
+      color: #fff;
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* ================= GIAO DIỆN LỊCH CHẤM CÔNG TỐI ƯU MOBILE ================= */
+    .chamcong-container {
+      max-width: 100%;
+      margin: 0 auto;
+    }
+    .chamcong-tools {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .btn-dao-ca {
+      background: #3E4B7A;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .btn-dao-ca.active {
+      background: #c8862a;
+    }
+    .ca-legend {
+      display: flex;
+      gap: 10px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .ca-legend span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .badge-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      display: inline-block;
+    }
+
+    /* Grid Lịch 7 Cột Chuẩn Điện Thoại */
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 3px;
+      width: 100%;
+    }
+    .grid-header {
+      background: #007bff;
+      color: #fff;
+      font-size: 11.5px;
+      font-weight: bold;
+      text-align: center;
+      padding: 5px 1px;
+      border-radius: 3px;
+    }
+    .day-card {
+      border-radius: 4px;
+      padding: 3px 2px;
+      min-height: 96px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      border: 1px solid #ddd;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+    .day-card.empty {
+      background: #f0f0f0;
+      border: 1px dashed #e0e0e0;
+      min-height: 40px;
+    }
+
+    /* Ca ngày: Sáng */
+    .day-card.ca-ngay {
+      background-color: #fff9e6;
+      border-color: #f3d489;
+      color: #333;
+    }
+    .day-card.ca-ngay .day-sub-label {
+      color: #b86200;
+    }
+    .day-card.ca-ngay .solar-num {
+      color: #4a2800;
+    }
+    .day-card.ca-ngay .lunar-num {
+      color: #a33800;
+    }
+    .day-card.ca-ngay select {
+      background: #fff;
+      color: #222;
+      border-color: #e2c176;
+    }
+
+    /* Ca đêm: Tối */
+    .day-card.ca-dem {
+      background-color: #242e52;
+      border-color: #171d36;
+      color: #f1f3fa;
+    }
+    .day-card.ca-dem .day-sub-label {
+      color: #a5b4fc;
+    }
+    .day-card.ca-dem .solar-num {
+      color: #ffffff;
+    }
+    .day-card.ca-dem .lunar-num {
+      color: #ffd166;
+    }
+    .day-card.ca-dem select {
+      background: #18203d;
+      color: #ffffff;
+      border-color: #3b4877;
+    }
+
+    /* Ngày nghỉ CN */
+    .day-card.ca-nghi {
+      background-color: #fbebee;
+      border-color: #f3c2cb;
+      color: #555;
+    }
+    .day-card.ca-nghi .solar-num { color: #b71c1c; }
+    .day-card.ca-nghi .day-sub-label { color: #c62828; }
+
+    .day-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 2px;
+      line-height: 1;
+    }
+    .solar-num {
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .lunar-num {
+      font-size: 9.5px;
+      font-weight: 600;
+    }
+    .day-sub-label {
+      font-size: 9px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 2px;
+      line-height: 1.1;
+      text-transform: uppercase;
+    }
+
+    .form-group-mini {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 2px;
+    }
+    .day-card select {
+      width: 100%;
+      height: 20px;
+      font-size: 10.5px;
+      padding: 0 1px;
+      border-radius: 3px;
+      outline: none;
+      box-sizing: border-box;
+      line-height: 18px;
+    }
+
+    /* Responsive màn hình nhỏ */
+    @media screen and (max-width: 768px) {
+      body { padding: 6px; }
+      .main-container { display: block; }
+      .left-column, .right-column { width: 100%; }
+      .tab-bar { max-width: 100%; }
+      .day-card { min-height: 90px; padding: 2px 1px; }
+      .solar-num { font-size: 12px; }
+      .lunar-num { font-size: 8.5px; }
+      .day-card select { font-size: 10px; height: 19px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PHẦN CHỌN LƯƠNG CƠ BẢN VÀ THÁNG, NĂM -->
+  <div class="input-row">
+    <div class="group">
+      <label for="luongCoBan"><strong>LCB:</strong></label>
+      <input type="text" id="luongCoBan" placeholder="nhập lương cơ bản" style="height: 20px;" />
+    </div>
+
+    <div class="group date-group">
+      <label for="thang" style="margin-left: 5px;"></label>
+      <select id="thang" name="thang" style="width: 55px; height: 32px; text-align: center;"></select>
+
+      <label for="nam" style="margin-left: 2px;">/</label>
+      <select id="nam" name="nam" style="width: 75px; height: 32px; text-align: center;"></select>
+    </div>
+  </div>
+
+  <!-- 2 TAB ĐIỀU HƯỚNG BÊN DƯỚI THÁNG, NĂM -->
+  <div class="tab-bar">
+    <button type="button" class="tab-btn active" id="btnTabLuong" onclick="chuyenTab('tabLuong')">💰 Bảng Tính Lương</button>
+    <button type="button" class="tab-btn" id="btnTabChamCong" onclick="chuyenTab('tabChamCong')">📅 Chấm Công</button>
+  </div>
+
+  <!-- ================= TAB 1: TÍNH LƯƠNG (GIỮ NGUYÊN 100% CỦA BẠN) ================= -->
+  <div id="tabLuong" class="tab-content active">
+    <div class="main-container">
+      <div class="left-column">
+        <div id="luongContainer">
+          <table>
+            <thead>
+              <tr>
+                <th>📋 Khoản mục</th>
+                <th>⏰ Time</th>
+                <th>💰 Thành tiền</th>
+              </tr>
+            </thead>
+            <tbody id="luongTable">
+              <tr><td>Ngày công 100%</td><td><input type="number" id="ngayCong" placeholder="ngày" /></td><td id="tienNgayCong">0</td></tr>
+              <tr><td>Tăng ca 150%</td><td><input type="number" id="tc150" placeholder="giờ" /></td><td id="tienTC150">0</td></tr>
+              <tr><td>Tăng ca 200%</td><td><input type="number" id="tc200" placeholder="giờ" /></td><td id="tienTC200">0</td></tr>
+              <tr><td>Trợ cấp đêm 30%</td><td><input type="number" id="tcDem30" placeholder="giờ" /></td><td id="tienDem30">0</td></tr>
+              <tr style="color:red;"><td>Ngày công 200%</td><td><input type="number" id="ngayCong200" placeholder="ngày" /></td><td id="tienCong200">0</td></tr>
+              <tr style="color:red;"><td>Tăng ca 300%</td><td><input type="number" id="tc300" placeholder="giờ" /></td><td id="tienTC300">0</td></tr>
+              <tr style="color:red;"><td>Tăng ca 340%</td><td><input type="number" id="tc340" placeholder="giờ" /></td><td id="tienTC340">0</td></tr>
+              <tr style="color:red;"><td>Trợ cấp đêm 70%</td><td><input type="number" id="tcDem70" placeholder="giờ" /></td><td id="tienDem70">0</td></tr>
+              <tr style="color:red;"><td>Thông ca 380%</td><td><input type="number" id="thongca380" placeholder="giờ" /></td><td id="tienthongca380">0</td></tr>
+              <tr><td>Phép năm</td><td><input type="number" id="phepNam" placeholder="ngày" /></td><td id="tienPhepNam">0</td></tr>
+              <tr><td>Ngày lễ</td><td><input type="number" id="le" placeholder="ngày" /></td><td id="tienLe">0</td></tr>
+              <tr><td colspan="2">Phụ cấp kỹ năng ABC</td><td><input type="text" id="pcABC" /></td></tr>
+              <tr><td colspan="2">Phụ cấp Chuyên cần</td><td>
+                <select id="pcChuyenCan">
+                  <option text="0">0</option>
+                  <option text="200.000" selected>200.000</option>
+                </select>
+              </td></tr>
+              <tr><td colspan="2">Phụ cấp thâm niên</td><td>
+                <select id="pcThamNien">
+                  <option text="400.000">400.000</option>
+                  <option text="500.000">500.000</option>
+                  <option text="600.000">600.000</option>
+                </select>
+              </td></tr>
+              <tr><td colspan="2">Phụ cấp lương, chức vụ</td><td><input type="text" id="pcChucVu" /></td></tr>
+              <tr><td colspan="2">Hỗ trợ đi lại</td><td><input type="text" id="pcDiLai" /></td></tr>
+              <tr><td colspan="2">Hỗ trợ điện thoại</td><td>
+                <select id="pcDienThoai">
+                  <option text="0">0</option>
+                  <option text="1.500.000">1.500.000</option>
+                  <option text="2.500.000">2.500.000</option>
+                  <option text="3.000.000">3.000.000</option>
+                  <option text="4.000.000">4.000.000</option>
+                  <option text="5.000.000">5.000.000</option>
+                </select>
+              </td></tr>
+              <tr><td colspan="2">Hỗ trợ trẻ em dưới 6 tuổi</td><td>
+                <select id="pcTreEm">
+                  <option text="0">0</option>
+                  <option text="50.000">50.000</option>
+                  <option text="100.000">100.000</option>
+                  <option text="150.000">150.000</option>
+                  <option text="200.000">200.000</option>
+                </select>
+              </td></tr>
+              <tr><td colspan="2">Phụ cấp khác (ngoại ngữ, kỹ thuật...)</td><td><input type="text" id="pcKhac" /></td></tr>
+              <tr><td colspan="2">Tổng lương ngày lễ, tết</td><td id="tienNgayLeTet">0</td></tr>
+              <tr style="background-color: yellow;"><td colspan="2">💰 Tổng thu nhập</td><td id="tongLuong">0</td></tr>
+              <tr style="color:red;"><td colspan="2">Khấu trừ BHXH 10.5%</td><td id="tienTruBHXH">0</td></tr>
+              <tr style="color:red;"><td colspan="2">Khấu trừ Công đoàn 0.5%</td><td id="tienTruCD">0</td></tr>
+              <tr style="background-color: #cce5ff; font-weight: bold;"><td colspan="2">💵 Thực lĩnh (chưa tính thuế)</td><td id="thucLinh">0</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div id="bangPhu">
+          <h3 style="text-align: center; color: red; margin-top: 3px; margin-bottom: 3px;">🎊 Lương ngày lễ, tết 🎊</h3>
+
+          <table>
+            <thead>
+              <tr>
+                <th rowspan="2">📅 Ngày</th>
+                <th rowspan="2">📋 Khoản mục</th>
+                <th rowspan="2">⏰ Giờ</th>
+                <th rowspan="2">💲 % lương</th>
+                <th rowspan="2">💰 Thành tiền</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td rowspan="3"><input type="number" /></td>
+                <td>Giờ hành chính</td>
+                <td><input type="number" id="soGioHanhChinh1" placeholder="giờ" /></td>
+                <td><input type="number" id="phuLuongHanhChinh" /></td>
+                <td id="tienHanhChinh">0</td>
+              </tr>
+              <tr>
+                <td>Tăng ca</td>
+                <td><input type="number" id="soGioTangCa1" placeholder="giờ" /></td>
+                <td><input type="number" id="phuLuongTangCa" /></td>
+                <td id="tienTangCa">0</td>
+              </tr>
+              <tr>
+                <td>Trợ cấp đêm</td>
+                <td><input type="number" id="soGioDem1" placeholder="giờ" /></td>
+                <td><input type="number" id="phuLuongDem" /></td>
+                <td id="tienTroCapDem">0</td>
+              </tr>
+              <tr>
+                <td rowspan="3"><input type="number" /></td>
+                <td>Giờ hành chính</td>
+                <td><input type="number" id="soGioHanhChinh2" placeholder="giờ" /></td>
+                <td><input type="number" id="phuLuongHanhChinh2" /></td>
+                <td id="tienHanhChinh2">0</td>
+              </tr>
+              <tr>
+                <td>Tăng ca</td>
+                <td><input type="number" id="soGioTangCa2" placeholder="giờ" /></td>
+                <td><input type="number" id="phuLuongTangCa2" /></td>
+                <td id="tienTangCa2">0</td>
+              </tr>
+              <tr>
+                <td>Trợ cấp đêm</td>
+                <td><input type="number" id="soGioDem2" placeholder="giờ" /></td>
+                <td><input type="number" id="phuLuongDem2" /></td>
+                <td id="tienTroCapDem2">0</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="right-column">
+        <div style="text-align: center; margin: 3px 0; padding: 4px 8px; border: 1px solid #ccc; border-radius: 6px;">
+          <h4 style="margin: 3px 0 8px;">📥 <a href="Files/Tinh_luong.xlsx" download> Tải file Excel tính lương - chấm công</a> 📥</h4>
+          <p style="margin: 0 0 8px; color: #d00; font-size: 14px;">
+            ⚠ Mở bằng trình duyệt: <strong>Safari</strong>, <strong>Chrome</strong>...Không mở bằng <strong>Zalo</strong> hoặc <strong>Messenger</strong> vì bị lỗi không tải được.
+          </p>
+        </div>
+
+        <div style="margin: 5px 0; padding: 6px 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; line-height: 1.4;">
+          <h4 style="margin: 4px 0 2px;">📌 Quy tắc tính lương</h4>
+          <ul style="margin: 0 0 6px 16px; padding-left: 0;">
+            <li><b>Bảo hiểm:</b> (Lương cơ bản + PC thâm niên, PC lương, PC chức vụ) x 10.5%</li>
+            <li><b>Tăng ca, trợ cấp đêm:</b> (Lương cơ bản + PC thâm niên, PC lương, PC chức vụ, PC đi lại) / (Ngày công chuẩn x 8) x % lương</li>
+            <li><b>Ngày công chuẩn:</b> Số ngày trong tháng – số ngày Chủ nhật (tối đa 26 ngày)</li>
+            <li><b>Chuyên cần:</b> Mất nếu nghỉ việc riêng, ốm, đi muộn, về sớm > 1 ngày công (8 tiếng)</li>
+            <li><b>PC thâm niên:</b>
+              <ul style="list-style: disc; margin: 2px 0 0 20px;">
+                <li>Dưới 1 năm: 400.000 VND</li>
+                <li>Dưới 2 năm: 500.000 VND</li>
+                <li>Trên 2 năm: 600.000 VND</li>
+              </ul>
+            </li>
+          </ul>
+
+          <h4 style="margin: 4px 0 2px;">🕒 Giờ tăng ca & trợ cấp đêm:</h4>
+          <ul style="margin: 0 0 6px 16px; padding-left: 0;">
+            <li><b>Tăng ca 150%:</b> Tăng ca ca ngày hoặc tăng ca ca đêm sau 06h00</li>
+            <li><b>Tăng ca 200%:</b> Tăng ca giữa giờ đêm (00h00 ~ 01h00) và tăng ca ca đêm từ 04h00 ~ 06h00</li>
+            <li><b>Trợ cấp đêm 30%:</b>từ 22h00 ~ 4h00</li>
+            <li><b>Thông ca 190%:</b> từ 17h00 trở đi (không trợ cấp đêm)</li>
+          </ul>
+
+          <h4 style="margin: 4px 0 2px;">📅 Ca đêm thứ 7 & chủ nhật:</h4>
+          <ul style="margin: 0 0 6px 16px; padding-left: 0;">
+            <li><b>Ca đêm thứ 7:</b> Trước 0h00 như ngày thường; Sau 0h00: 200%, trợ cấp đêm 70%, tăng ca 340%</li>
+            <li><b>Ca đêm chủ nhật:</b> Trước 0h00: 200%, trợ cấp đêm 70%; Sau 0h00 như ngày thường</li>
+            <li><b>Thông ca chủ nhật:</b> Sau 17h00: 380%</li>
+          </ul>
+
+          <h4 style="margin: 4px 0 2px;">🎉 Ngày lễ, Tết:</h4>
+          <ul style="margin: 0; padding-left: 16px;">
+            <li><b>Ca ngày lễ:</b> Ca ngày: 300%, tăng ca 450%</li>
+            <li><b>Ca đêm trước lễ (VD 31/12):</b> Trước 0h00 như thường; Sau 0h00: 300%, trợ cấp đêm 90%, tăng ca 510%</li>
+            <li><b>Ca đêm ngày lễ (VD 1/1):</b> Trước 0h00: 300%, trợ cấp đêm 90%; Sau 0h00: như ngày thường</li>
+            <li><b>Tết âm lịch:</b> Ca ngày: 500%, Ca đêm: 590%</li>
+          </ul>
+        </div>
+
+        <div style="margin: 3px 0; padding: 4px 8px; border: 1px solid #ccc; border-radius: 6px; display: flex; flex-wrap: wrap; gap: 10px;">
+          <div class="contact-section">
+            <div class="contact-info">
+              <p class="contact-links">
+                <span>Liên hệ:</span>
+                <a href="https://m.facebook.com/tdt93/" target="_blank" class="social-link">
+                  <img src="https://raw.githubusercontent.com/o0oS2/Tinh-luong/main/Image/Facebook.png" width="20" height="20" class="social-icon">
+                  <span class="facebook-text">Facebook</span>
+                </a>
+                <a href="http://zalo.me/trungpl" target="_blank" class="social-link">
+                  <img src="https://raw.githubusercontent.com/o0oS2/Tinh-luong/main/Image/Zalo.png" alt="Zalo" width="20" height="20" class="social-icon">
+                  <span class="zalo-text">Zalo</span>
+                </a>
+              </p>
+              <div class="bank-info">
+                <p>Ủng hộ tôi qua <span class="vietin-red">Vietin</span><span class="bank-blue">Bank</span></p>
+                <p>Chủ TK: <span class="bank-blue">Trần Đức Trung</span></p>
+                <p>
+                  STK: 
+                  <span class="stk-container">
+                    <span id="stk" class="bank-blue">102829132222</span>
+                    <button onclick="copySTK()" class="copy-btn">Copy</button>
+                  </span>
+                </p>
+              </div>
+            </div>
+            <div class="qr-section">
+              <img src="https://raw.githubusercontent.com/o0oS2/Tinh-luong/main/Image/ViettinbankQR.jpg" alt="Vietinbank QR" class="qr-image">
+            </div>
+          </div>
+        </div>
+            
+        <div style="margin: 5px 0; padding: 6px 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; line-height: 1.4;">
+          <div style="margin-top: 2px;">
+            <p>📥 <a href="Files/In_cham_cong.xlsx" download style="color: #080;"> Tải file in chấm công</a>, <a href="Files/Thiep_Cuoi.docx" download style="color: #080;"> Tải file in thiệp cưới</a> 📥</p>
+            <p>🔗 <a href="https://chanquangcao.pages.dev/" target="_blank" style="text-decoration: none; color: #0073e6;">DNS - VPN Cloudflare chặn quảng cáo</a></p>
+          </div>
+        </div>
+        <div class="footer">
+          • Phiên bản 1.9, cập nhật ngày 28/09/2025 • 
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TAB 2: CHẤM CÔNG (TỐI ƯU MÀN HÌNH ĐIỆN THOẠI) ================= -->
+  <div id="tabChamCong" class="tab-content">
+    <div class="chamcong-container">
+      <div class="chamcong-tools">
+        <button type="button" class="btn-dao-ca" id="btnDaoCa" onclick="toggleDaoCa()">
+          <span>⇄</span> <span id="lblDaoCa">Đảo ca ngày/đêm</span>
+        </button>
+        <div class="ca-legend">
+          <span><i class="badge-color" style="background:#fff9e6; border:1px solid #e2c176;"></i> Ca ngày</span>
+          <span><i class="badge-color" style="background:#242e52;"></i> Ca đêm</span>
+          <span><i class="badge-color" style="background:#fbebee; border:1px solid #f3c2cb;"></i> Nghỉ</span>
+        </div>
+      </div>
+
+      <!-- Lưới 7 cột theo thứ trong tuần -->
+      <div class="calendar-grid">
+        <div class="grid-header">T2</div>
+        <div class="grid-header">T3</div>
+        <div class="grid-header">T4</div>
+        <div class="grid-header">T5</div>
+        <div class="grid-header">T6</div>
+        <div class="grid-header">T7</div>
+        <div class="grid-header" style="background:#dc3545;">CN</div>
+      </div>
+      <div class="calendar-grid" id="chamCongGrid" style="margin-top: 3px;">
+        <!-- Tự động nạp các ngày trong tháng -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showToast(message) {
+      const existingToast = document.querySelector('.toast');
+      if (existingToast) existingToast.remove();
+      
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => toast.classList.add('show'), 100);
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+    
+    function copySTK() {
+      const stkText = document.getElementById("stk").innerText;
+      navigator.clipboard.writeText(stkText).then(() => {
+        showToast("Đã sao chép STK: " + stkText);
+      }).catch(err => {
+        showToast("Lỗi khi sao chép!");
+      });
+    }
+
+    function chuyenTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      
+      document.getElementById(tabId).classList.add('active');
+      if (tabId === 'tabLuong') {
+        document.getElementById('btnTabLuong').classList.add('active');
+      } else {
+        document.getElementById('btnTabChamCong').classList.add('active');
+      }
+    }
+  </script>
+  <script src="tinhluong.js"></script>
+</body>
+</html>
