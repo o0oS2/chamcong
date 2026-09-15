@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // === 1. KHỞI TẠO BỘ LỌC LCB, THÁNG, NĂM CHO TAB CHẤM CÔNG ===
   const ccThangSelect = document.getElementById("cc_thang");
   const ccNamSelect = document.getElementById("cc_nam");
 
@@ -32,26 +31,31 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     ccThangSelect.addEventListener("change", () => {
-      resetChamCongDataThangMoi();
-      renderLichChamCong();
-      syncChamCongToTinhLuong();
+      if (typeof window.loadUserDataFromCloud === "function" && localStorage.getItem("cc_currentUser")) {
+        window.loadUserDataFromCloud();
+      } else {
+        resetChamCongDataThangMoi();
+        renderLichChamCong();
+        syncChamCongToTinhLuong();
+      }
     });
     ccNamSelect.addEventListener("change", () => {
-      resetChamCongDataThangMoi();
-      renderLichChamCong();
-      syncChamCongToTinhLuong();
+      if (typeof window.loadUserDataFromCloud === "function" && localStorage.getItem("cc_currentUser")) {
+        window.loadUserDataFromCloud();
+      } else {
+        resetChamCongDataThangMoi();
+        renderLichChamCong();
+        syncChamCongToTinhLuong();
+      }
     });
   }
 
   setupCcLuongEngine();
 
-  // =========================================================================
-  // === 2. LỊCH CHẤM CÔNG & QUY TẮC NHÀ MÁY ===
-  // =========================================================================
   const MOC_CA_DEM = new Date(2026, 8, 7); // 07/09/2026 bắt đầu ca đêm
   let isDaoCa = false;
 
-const DSHanhChinhChung = [
+  const DSHanhChinhChung = [
     { label: "Đi làm đủ", short: "Đi làm đủ", type: "du", value: 0, allowSunday: true },
     { label: "Nghỉ", short: "Nghỉ", type: "nghi", value: 8, allowSunday: true },
     { label: "Nghỉ sáng", short: "Nghỉ sáng", type: "nghi_sang", value: 4, allowSunday: true },
@@ -76,6 +80,16 @@ const DSHanhChinhChung = [
   const DSMidOtFull = ["0", "1"];
   const chamCongData = {};
 
+  // Gán ra window để file google-sync.js có thể gọi tương tác
+  window.chamCongData = chamCongData;
+  window.setChamCongData = function(data) {
+    Object.keys(chamCongData).forEach(k => delete chamCongData[k]);
+    Object.assign(chamCongData, data);
+  };
+  window.clearChamCongData = function() {
+    Object.keys(chamCongData).forEach(k => delete chamCongData[k]);
+  };
+
   function xacDinhCa(y, m, d) {
     const curDate = new Date(y, m - 1, d);
     const dayOfWeek = curDate.getDay();
@@ -93,7 +107,6 @@ const DSHanhChinhChung = [
     return ca;
   }
 
-  // Khi đổi tháng/năm, reset lại dữ liệu chấm công để nạp mặc định theo ca mới
   function resetChamCongDataThangMoi() {
     Object.keys(chamCongData).forEach(k => delete chamCongData[k]);
   }
@@ -117,7 +130,6 @@ const DSHanhChinhChung = [
     syncChamCongToTinhLuong();
   };
 
-  // Thuật toán Âm lịch Jean Meeus UTC+7[cite: 3]
   const TZ = 7;
   const PI = Math.PI;
   function INT(d) { return Math.floor(d); }
@@ -208,7 +220,6 @@ const DSHanhChinhChung = [
     return false;
   }
 
-  // Modal Picker
   let currentPickContext = null;
 
   window.openPicker = function(day, type) {
@@ -310,6 +321,11 @@ const DSHanhChinhChung = [
     forceClosePicker();
     updateDayDisplay(day);
     syncChamCongToTinhLuong();
+    
+    // Tự động kích hoạt lưu sau khi thay đổi chấm công
+    if (typeof window.autoSaveUserData === "function") {
+      window.autoSaveUserData();
+    }
   }
 
   window.closePicker = function(e) {
@@ -331,6 +347,79 @@ const DSHanhChinhChung = [
     if (elOt) elOt.textContent = data.ot;
     if (elMidOt) elMidOt.textContent = data.midOt;
   }
+
+  window.renderLichChamCong = function() {
+    const thang = +document.getElementById("cc_thang")?.value || 1;
+    const nam = +document.getElementById("cc_nam")?.value || new Date().getFullYear();
+    const grid = document.getElementById("chamCongGrid");
+    if (!grid) return;
+    grid.innerHTML = "";
+
+    const firstDate = new Date(nam, thang - 1, 1);
+    const totalDays = new Date(nam, thang, 0).getDate();
+
+    let startDay = firstDate.getDay() - 1;
+    if (startDay === -1) startDay = 6;
+
+    let dayCounter = 1;
+    let totalCells = Math.ceil((startDay + totalDays) / 7) * 7;
+
+    for (let i = 0; i < totalCells; i++) {
+      if (i < startDay || dayCounter > totalDays) {
+        const emptyCell = document.createElement("div");
+        emptyCell.className = "day-card empty";
+        grid.appendChild(emptyCell);
+      } else {
+        const cell = document.createElement("div");
+        const curDate = new Date(nam, thang - 1, dayCounter);
+        const dayOfWeek = curDate.getDay();
+        const lunar = convertSolar2Lunar(dayCounter, thang, nam, TZ);
+        const holiday = isHoliday(dayCounter, thang, nam, lunar);
+        const ca = xacDinhCa(nam, thang, dayCounter);
+        
+        let caClass = "ca-ngay";
+        if (dayOfWeek === 0 || holiday) caClass = "ca-nghi";
+        else if (ca === "dem") caClass = "ca-dem";
+
+        cell.className = `day-card ${caClass}`;
+
+        const lunarLabel = (lunar.day === 1) ? `${lunar.day}/${lunar.month}` : `${lunar.day}`;
+
+        if (!chamCongData[dayCounter]) {
+          const defaultHc = (dayOfWeek === 0 || holiday) 
+            ? { label: "Nghỉ", short: "Nghỉ", type: "nghi", value: 8, allowSunday: true }
+            : { label: "Đi làm đủ", short: "Đi làm đủ", type: "du", value: 0, allowSunday: true };
+          const defaultOt = (ca === "dem" && dayOfWeek !== 0 && !holiday) ? "1" : "0";
+
+          chamCongData[dayCounter] = {
+            hc: defaultHc,
+            ot: defaultOt,
+            midOt: "0"
+          };
+        }
+        const data = chamCongData[dayCounter];
+
+        let htmlInner = `
+          <div class="day-top">
+            <span class="solar-num">${dayCounter}</span>
+            <span class="lunar-num">${lunarLabel}</span>
+          </div>
+          <div class="input-cell-val cell-hc" id="hc_val_${dayCounter}" onclick="openPicker(${dayCounter}, 'hc')" title="Giờ hành chính">${data.hc.short}</div>
+          <div class="input-cell-val cell-ot" id="ot_val_${dayCounter}" onclick="openPicker(${dayCounter}, 'ot')" title="Tăng ca">${data.ot}</div>
+        `;
+
+        if (ca === "dem") {
+          htmlInner += `
+            <div class="input-cell-val cell-mid-ot" id="mid_ot_val_${dayCounter}" onclick="openPicker(${dayCounter}, 'mid-ot')" title="Tăng ca giữa giờ đêm">${data.midOt}</div>
+          `;
+        }
+
+        cell.innerHTML = htmlInner;
+        grid.appendChild(cell);
+        dayCounter++;
+      }
+    }
+  };
 
   window.syncChamCongToTinhLuong = function() {
     let tongNgayCong100 = 0;
@@ -370,7 +459,6 @@ const DSHanhChinhChung = [
       if (hcType === "pn_nua") tongPhepNam += 0.5;
       if (holiday) tongNgayLe += 1;
 
-      // 1. Ca ngày (T2 - T7)
       if (ca === "ngay" && dayOfWeek >= 1 && dayOfWeek <= 6) {
         if (hcType === "du") {
           tongNgayCong100 += 1;
@@ -382,7 +470,6 @@ const DSHanhChinhChung = [
         tongTC150 += otVal;
       }
 
-      // 2. Ca đêm (T2 - T6)
       if (ca === "dem" && dayOfWeek >= 1 && dayOfWeek <= 5) {
         if (hcType === "du") {
           tongNgayCong100 += 1;
@@ -410,7 +497,6 @@ const DSHanhChinhChung = [
         tongTCDem30 += Math.max(0, dem30);
       }
 
-      // 3. Ca đêm Thứ Bảy
       if (ca === "dem" && dayOfWeek === 6) {
         let cong100_t7 = 0.5;
         if (hcType === "muon") cong100_t7 = Math.max(0, (4 - hcVal) / 8);
@@ -435,9 +521,7 @@ const DSHanhChinhChung = [
         tongTCDem70 += dem70_t7;
       }
 
-      // 4. Ngày Chủ Nhật hoặc Lễ (Hỗ trợ cả Ca Ngày và Ca Đêm)
       if (dayOfWeek === 0 || holiday) {
-        // Nếu làm Ca Ngày
         if (ca === "ngay" && hcType !== "nghi") {
           let cong200_cn = 1;
           if (hcType === "muon" || hcType === "vesom") {
@@ -449,7 +533,6 @@ const DSHanhChinhChung = [
           tongTC300 += otVal;
         }
 
-        // Nếu làm Ca Đêm (tuần đi ca đêm)
         if (ca === "dem" && hcType !== "nghi") {
           let cong200_dem_cn = 0.5;
           if (hcType === "muon") cong200_dem_cn = Math.max(0, (4 - hcVal) / 8);
@@ -499,84 +582,6 @@ const DSHanhChinhChung = [
     triggerCcComputeEngine();
   };
 
-  function renderLichChamCong() {
-    const thang = +document.getElementById("cc_thang")?.value || 1;
-    const nam = +document.getElementById("cc_nam")?.value || new Date().getFullYear();
-    const grid = document.getElementById("chamCongGrid");
-    if (!grid) return;
-    grid.innerHTML = "";
-
-    const firstDate = new Date(nam, thang - 1, 1);
-    const totalDays = new Date(nam, thang, 0).getDate();
-
-    let startDay = firstDate.getDay() - 1;
-    if (startDay === -1) startDay = 6;
-
-    let dayCounter = 1;
-    let totalCells = Math.ceil((startDay + totalDays) / 7) * 7;
-
-    for (let i = 0; i < totalCells; i++) {
-      if (i < startDay || dayCounter > totalDays) {
-        const emptyCell = document.createElement("div");
-        emptyCell.className = "day-card empty";
-        grid.appendChild(emptyCell);
-      } else {
-        const cell = document.createElement("div");
-        const curDate = new Date(nam, thang - 1, dayCounter);
-        const dayOfWeek = curDate.getDay();
-        const lunar = convertSolar2Lunar(dayCounter, thang, nam, TZ);
-        const holiday = isHoliday(dayCounter, thang, nam, lunar);
-        const ca = xacDinhCa(nam, thang, dayCounter);
-        
-        let caClass = "ca-ngay";
-        if (dayOfWeek === 0 || holiday) caClass = "ca-nghi";
-        else if (ca === "dem") caClass = "ca-dem";
-
-        cell.className = `day-card ${caClass}`;
-
-        const lunarLabel = (lunar.day === 1) ? `${lunar.day}/${lunar.month}` : `${lunar.day}`;
-
-        if (!chamCongData[dayCounter]) {
-          const defaultHc = (dayOfWeek === 0 || holiday) 
-            ? { label: "Nghỉ", short: "Nghỉ", type: "nghi", value: 8, allowSunday: true }
-            : { label: "Đi làm đủ", short: "Đi làm đủ", type: "du", value: 0, allowSunday: true };
-          // Mặc định ca đêm có sẵn 1 tiếng tăng ca, trừ Chủ Nhật (dayOfWeek === 0) và ngày lễ
-          const defaultOt = (ca === "dem" && dayOfWeek !== 0 && !holiday) ? "1" : "0";
-
-          chamCongData[dayCounter] = {
-            hc: defaultHc,
-            ot: defaultOt,
-            midOt: "0"
-          };
-        }
-        const data = chamCongData[dayCounter];
-
-        let htmlInner = `
-          <div class="day-top">
-            <span class="solar-num">${dayCounter}</span>
-            <span class="lunar-num">${lunarLabel}</span>
-          </div>
-          <div class="input-cell-val cell-hc" id="hc_val_${dayCounter}" onclick="openPicker(${dayCounter}, 'hc')" title="Giờ hành chính">${data.hc.short}</div>
-          <div class="input-cell-val cell-ot" id="ot_val_${dayCounter}" onclick="openPicker(${dayCounter}, 'ot')" title="Tăng ca">${data.ot}</div>
-        `;
-
-        // Chỉ hiển thị ô tăng ca giữa giờ đêm khi là CA ĐÊM (bao gồm cả đêm trong tuần lẫn đêm Chủ Nhật / Lễ nếu thuộc tuần đi ca đêm)
-        if (ca === "dem") {
-          htmlInner += `
-            <div class="input-cell-val cell-mid-ot" id="mid_ot_val_${dayCounter}" onclick="openPicker(${dayCounter}, 'mid-ot')" title="Tăng ca giữa giờ đêm">${data.midOt}</div>
-          `;
-        }
-
-        cell.innerHTML = htmlInner;
-        grid.appendChild(cell);
-        dayCounter++;
-      }
-    }
-  }
-
-  // =========================================================================
-  // === ENGINE TÍNH LƯƠNG CHO TAB CHẤM CÔNG ===
-  // =========================================================================
   function setupCcLuongEngine() {
     const lcbInput = document.getElementById("cc_luongCoBan");
     if (!lcbInput) return;
@@ -590,11 +595,13 @@ const DSHanhChinhChung = [
           let val = e.target.value.replace(/\./g, "").replace(/[^0-9]/g, "");
           if (val) e.target.value = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
           triggerCcComputeEngine();
+          if (typeof window.autoSaveUserData === "function") window.autoSaveUserData();
         });
         el.addEventListener("blur", function(e) {
           let val = parseInt(e.target.value.replace(/\./g, "")) || 0;
           if (val > 0) e.target.value = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
           triggerCcComputeEngine();
+          if (typeof window.autoSaveUserData === "function") window.autoSaveUserData();
         });
       }
     });
@@ -602,8 +609,14 @@ const DSHanhChinhChung = [
     const ccPane = document.getElementById("paneChamCong");
     if (ccPane) {
       ccPane.querySelectorAll("input, select").forEach(inp => {
-        inp.addEventListener("input", triggerCcComputeEngine);
-        inp.addEventListener("change", triggerCcComputeEngine);
+        inp.addEventListener("input", () => {
+          triggerCcComputeEngine();
+          if (typeof window.autoSaveUserData === "function") window.autoSaveUserData();
+        });
+        inp.addEventListener("change", () => {
+          triggerCcComputeEngine();
+          if (typeof window.autoSaveUserData === "function") window.autoSaveUserData();
+        });
       });
     }
 
@@ -690,173 +703,6 @@ const DSHanhChinhChung = [
     setTien("cc_thucLinh", tong - bhxh - congDoan);
   }
 
-  // Khởi chạy lịch chấm công ban đầu
   renderLichChamCong();
   syncChamCongToTinhLuong();
 });
-// --- CẤU HÌNH API GOOGLE APPS SCRIPT ---
-const API_URL = "https://script.google.com/macros/s/AKfycbxf0muqO7ulrNdARYbwllrupFb0wwrZTwhjaax_FXZSBb1Ft9HEmnSVbuI0ALbK1ITmMQ/exec"; 
-
-let currentUser = localStorage.getItem("cc_currentUser") || null;
-
-document.addEventListener("DOMContentLoaded", function () {
-  checkLoginState();
-});
-
-function checkLoginState() {
-  const loginArea = document.getElementById("loginFormArea");
-  const userArea = document.getElementById("userInfoArea");
-  const lblUser = document.getElementById("lblUsername");
-  const gridContainer = document.querySelector(".cc-desktop-layout");
-
-  if (currentUser) {
-    if (loginArea) loginArea.style.display = "none";
-    if (userArea) userArea.style.display = "flex";
-    if (lblUser) lblUser.textContent = currentUser;
-    loadUserDataFromCloud();
-  } else {
-    if (loginArea) loginArea.style.display = "flex";
-    if (userArea) userArea.style.display = "none";
-  }
-}
-
-window.handleLogin = async function() {
-  const u = document.getElementById("authUsername").value.trim();
-  const p = document.getElementById("authPassword").value.trim();
-  if (!u || !p) { alert("Vui lòng nhập tài khoản và mật khẩu!"); return; }
-
-  try {
-    let res = await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify({ action: "login", username: u, password: p })
-    });
-    let json = await res.json();
-    if (json.status === "success") {
-      currentUser = u;
-      localStorage.setItem("cc_currentUser", u);
-      alert("Đăng nhập thành công!");
-      checkLoginState();
-    } else {
-      alert(json.message);
-    }
-  } catch (err) {
-    alert("Lỗi kết nối server!");
-  }
-};
-
-window.handleRegister = async function() {
-  const u = document.getElementById("authUsername").value.trim();
-  const p = document.getElementById("authPassword").value.trim();
-  if (!u || !p) { alert("Vui lòng nhập tài khoản và mật khẩu!"); return; }
-
-  try {
-    let res = await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify({ action: "register", username: u, password: p })
-    });
-    let json = await res.json();
-    alert(json.message);
-    if (json.status === "success") {
-      currentUser = u;
-      localStorage.setItem("cc_currentUser", u);
-      checkLoginState();
-    }
-  } catch (err) {
-    alert("Lỗi kết nối server!");
-  }
-};
-
-window.handleLogout = function() {
-  currentUser = null;
-  localStorage.removeItem("cc_currentUser");
-  checkLoginState();
-  alert("Đã đăng xuất!");
-};
-
-// Tự động lưu dữ liệu lên Cloud khi có thay đổi
-window.autoSaveUserData = function() {
-  if (!currentUser) return;
-  const year = document.getElementById("cc_nam")?.value || new Date().getFullYear();
-  const month = document.getElementById("cc_thang")?.value || 1;
-  const baseSalary = document.getElementById("cc_luongCoBan")?.value || "0";
-
-  // Gom toàn bộ phụ cấp hiện tại thành object JSON
-  const allowances = {
-    pcABC: document.getElementById("cc_pcABC")?.value || "",
-    pcChuyenCan: document.getElementById("cc_pcChuyenCan")?.value || "",
-    pcThamNien: document.getElementById("cc_pcThamNien")?.value || "",
-    pcChucVu: document.getElementById("cc_pcChucVu")?.value || "",
-    pcDiLai: document.getElementById("cc_pcDiLai")?.value || "",
-    pcDienThoai: document.getElementById("cc_pcDienThoai")?.value || "",
-    pcTreEm: document.getElementById("cc_pcTreEm")?.value || "",
-    pcKhac: document.getElementById("cc_pcKhac")?.value || ""
-  };
-
-  const payload = {
-    action: "saveData",
-    username: currentUser,
-    year: year,
-    month: month,
-    baseSalary: baseSalary,
-    allowancesJSON: JSON.stringify(allowances),
-    timesheetJSON: JSON.stringify(chamCongData)
-  };
-
-  const statusEl = document.getElementById("syncStatus");
-  if (statusEl) statusEl.textContent = "(Đang lưu...)";
-
-  fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify(payload)
-  }).then(res => res.json()).then(json => {
-    if (json.status === "success" && statusEl) {
-      statusEl.textContent = "(Đã lưu tự động)";
-    }
-  }).catch(err => {
-    if (statusEl) statusEl.textContent = "(Lỗi lưu dữ liệu)";
-  });
-};
-
-// Tải dữ liệu từ Cloud khi đổi tháng/năm hoặc vừa đăng nhập
-window.loadUserDataFromCloud = async function() {
-  if (!currentUser) return;
-  const year = document.getElementById("cc_nam")?.value || new Date().getFullYear();
-  const month = document.getElementById("cc_thang")?.value || 1;
-
-  try {
-    let res = await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify({ action: "loadData", username: currentUser, year: year, month: month })
-    });
-    let json = await res.json();
-    if (json.status === "success") {
-      if (document.getElementById("cc_luongCoBan")) document.getElementById("cc_luongCoBan").value = json.baseSalary || "";
-      
-      // Khôi phục phụ cấp
-      if (json.allowancesJSON) {
-        let al = JSON.parse(json.allowancesJSON);
-        Object.keys(al).forEach(k => {
-          let el = document.getElementById(k);
-          if (el) el.value = al[k];
-        });
-      }
-
-      // Khôi phục lịch chấm công
-      if (json.timesheetJSON) {
-        let ts = JSON.parse(json.timesheetJSON);
-        Object.keys(chamCongData).forEach(k => delete chamCongData[k]);
-        Object.assign(chamCongData, ts);
-      } else {
-        Object.keys(chamCongData).forEach(k => delete chamCongData[k]);
-      }
-    } else {
-      // Nếu tháng đó chưa có dữ liệu thì reset sạch sẽ
-      Object.keys(chamCongData).forEach(k => delete chamCongData[k]);
-      if (document.getElementById("cc_luongCoBan")) document.getElementById("cc_luongCoBan").value = "";
-    }
-    renderLichChamCong();
-    syncChamCongToTinhLuong();
-  } catch (err) {
-    console.error("Lỗi tải dữ liệu:", err);
-  }
-};
