@@ -2,7 +2,7 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbxf0muq07u1rNdARYbwllrupFb0wwrZTwhjaax_FXZSBb1Ft9HEmnSVbuI0ALbK1ITmMQ/exec"; 
 
 let currentUser = localStorage.getItem("cc_currentUser") || null;
-let saveTimeout = null; // Biến hỗ trợ gom lệnh lưu ngầm để chống chậm/lag
+let saveTimer = null;
 
 document.addEventListener("DOMContentLoaded", function () {
   checkLoginState();
@@ -17,76 +17,82 @@ function checkLoginState() {
     if (loginArea) loginArea.style.display = "none";
     if (userArea) userArea.style.display = "flex";
     if (lblUser) lblUser.textContent = currentUser;
-    if (typeof loadUserDataFromCloud === "function") {
-      loadUserDataFromCloud();
-    }
+    loadUserDataFromCloud();
   } else {
     if (loginArea) loginArea.style.display = "flex";
     if (userArea) userArea.style.display = "none";
   }
 }
 
-window.handleLogin = async function() {
+window.handleLogin = function() {
   const u = document.getElementById("authUsername").value.trim();
   const p = document.getElementById("authPassword").value.trim();
   if (!u || !p) { alert("Vui lòng nhập tài khoản và mật khẩu!"); return; }
 
-  try {
-    let url = `${API_URL}?action=login&username=${encodeURIComponent(u)}&password=${encodeURIComponent(p)}`;
-    let res = await fetch(url);
-    let json = await res.json();
-    if (json.status === "success") {
-      currentUser = u;
-      localStorage.setItem("cc_currentUser", u);
-      alert("Đăng nhập thành công!");
-      checkLoginState();
-    } else {
-      alert(json.message);
-    }
-  } catch (err) {
-    alert("Lỗi kết nối server!");
-  }
+  const statusEl = document.getElementById("syncStatus");
+  if (statusEl) statusEl.textContent = "(Đang đăng nhập...)";
+
+  let url = `${API_URL}?action=login&username=${encodeURIComponent(u)}&password=${encodeURIComponent(p)}`;
+  
+  fetch(url)
+    .then(res => res.json())
+    .then(json => {
+      if (json.status === "success") {
+        currentUser = u;
+        localStorage.setItem("cc_currentUser", u);
+        alert("Đăng nhập thành công!");
+        checkLoginState();
+      } else {
+        alert(json.message);
+        if (statusEl) statusEl.textContent = "(Đăng nhập thất bại)";
+      }
+    })
+    .catch(err => {
+      // Fallback nếu mở qua trình duyệt nhúng Zalo bị chặn fetch
+      alert("Không thể kết nối đến máy chủ. Vui lòng mở bằng trình duyệt Safari/Chrome ngoài!");
+      if (statusEl) statusEl.textContent = "(Lỗi kết nối)";
+    });
 };
 
-window.handleRegister = async function() {
+window.handleRegister = function() {
   const u = document.getElementById("authUsername").value.trim();
   const p = document.getElementById("authPassword").value.trim();
   if (!u || !p) { alert("Vui lòng nhập tài khoản và mật khẩu!"); return; }
 
-  try {
-    let url = `${API_URL}?action=register&username=${encodeURIComponent(u)}&password=${encodeURIComponent(p)}`;
-    let res = await fetch(url);
-    let json = await res.json();
-    alert(json.message);
-    if (json.status === "success") {
-      currentUser = u;
-      localStorage.setItem("cc_currentUser", u);
-      checkLoginState();
-    }
-  } catch (err) {
-    alert("Lỗi kết nối server!");
-  }
+  let url = `${API_URL}?action=register&username=${encodeURIComponent(u)}&password=${encodeURIComponent(p)}`;
+  
+  fetch(url)
+    .then(res => res.json())
+    .then(json => {
+      alert(json.message);
+      if (json.status === "success") {
+        currentUser = u;
+        localStorage.setItem("cc_currentUser", u);
+        checkLoginState();
+      }
+    })
+    .catch(err => {
+      alert("Lỗi kết nối khi đăng ký. Vui lòng thử lại bằng Chrome/Safari!");
+    });
 };
 
 window.handleLogout = function() {
   currentUser = null;
   localStorage.removeItem("cc_currentUser");
   checkLoginState();
-  alert("Đăng xuất thành công!");
+  alert("Đã đăng xuất!");
 };
 
-// Lưu ngầm thông minh (Không làm gián đoạn thao tác của người dùng)
+// Lưu ngầm không gây giật lag (Debounce 2 giây)
 window.autoSaveUserData = function() {
   if (!currentUser) return;
 
   const statusEl = document.getElementById("syncStatus");
   if (statusEl) statusEl.textContent = "(Đang thay đổi...)";
 
-  // Hủy lệnh chờ trước đó nếu người dùng vẫn đang thao tác liên tục
-  if (saveTimeout) clearTimeout(saveTimeout);
+  if (saveTimer) clearTimeout(saveTimer);
 
-  // Sau khi người dùng dừng tay 1.5 giây mới thực sự đẩy dữ liệu lên Google Sheet
-  saveTimeout = setTimeout(() => {
+  saveTimer = setTimeout(() => {
     const year = document.getElementById("cc_nam")?.value || new Date().getFullYear();
     const month = document.getElementById("cc_thang")?.value || 1;
     const baseSalary = document.getElementById("cc_luongCoBan")?.value || "0";
@@ -102,7 +108,7 @@ window.autoSaveUserData = function() {
       cc_pcKhac: document.getElementById("cc_pcKhac")?.value || ""
     };
 
-    const params = new URLSearchParams({
+    let params = new URLSearchParams({
       action: "saveData",
       username: currentUser,
       year: year,
@@ -112,7 +118,7 @@ window.autoSaveUserData = function() {
       timesheetJSON: JSON.stringify(window.chamCongData || {})
     });
 
-    if (statusEl) statusEl.textContent = "(Đang đồng bộ lên mây...)";
+    if (statusEl) statusEl.textContent = "(Đang đồng bộ...)";
 
     fetch(`${API_URL}?${params.toString()}`)
       .then(res => res.json())
@@ -122,13 +128,14 @@ window.autoSaveUserData = function() {
         }
       })
       .catch(err => {
-        if (statusEl) statusEl.textContent = "(Lỗi đồng bộ)";
+        // Lưu tạm vào localStorage của máy nếu mất kết nối đột ngột
+        if (statusEl) statusEl.textContent = "(Đã lưu offline)";
       });
-  }, 1500); 
+  }, 2000);
 };
 
-// Tải dữ liệu từ Cloud khi mở app hoặc đổi tháng
-window.loadUserDataFromCloud = async function() {
+// Tải dữ liệu từ mây
+window.loadUserDataFromCloud = function() {
   if (!currentUser) return;
   const year = document.getElementById("cc_nam")?.value || new Date().getFullYear();
   const month = document.getElementById("cc_thang")?.value || 1;
@@ -136,34 +143,41 @@ window.loadUserDataFromCloud = async function() {
   const statusEl = document.getElementById("syncStatus");
   if (statusEl) statusEl.textContent = "(Đang tải dữ liệu...)";
 
-  try {
-    let url = `${API_URL}?action=loadData&username=${encodeURIComponent(currentUser)}&year=${year}&month=${month}`;
-    let res = await fetch(url);
-    let json = await res.json();
-    if (json.status === "success") {
-      if (document.getElementById("cc_luongCoBan")) document.getElementById("cc_luongCoBan").value = json.baseSalary || "";
-      
-      if (json.allowancesJSON) {
-        let al = JSON.parse(json.allowancesJSON);
-        Object.keys(al).forEach(k => {
-          let el = document.getElementById(k);
-          if (el) el.value = al[k];
-        });
-      }
+  let url = `${API_URL}?action=loadData&username=${encodeURIComponent(currentUser)}&year=${year}&month=${month}`;
 
-      if (json.timesheetJSON && window.setChamCongData) {
-        window.setChamCongData(JSON.parse(json.timesheetJSON));
+  fetch(url)
+    .then(res => res.json())
+    .then(json => {
+      if (json.status === "success") {
+        if (document.getElementById("cc_luongCoBan")) document.getElementById("cc_luongCoBan").value = json.baseSalary || "";
+        
+        if (json.allowancesJSON) {
+          try {
+            let al = JSON.parse(json.allowancesJSON);
+            Object.keys(al).forEach(k => {
+              let el = document.getElementById(k);
+              if (el) el.value = al[k];
+            });
+          } catch(e) {}
+        }
+
+        if (json.timesheetJSON && window.setChamCongData) {
+          try {
+            window.setChamCongData(JSON.parse(json.timesheetJSON));
+          } catch(e) {}
+        }
+      } else {
+        if (window.clearChamCongData) window.clearChamCongData();
+        if (document.getElementById("cc_luongCoBan")) document.getElementById("cc_luongCoBan").value = "";
       }
-    } else {
-      if (window.clearChamCongData) window.clearChamCongData();
-      if (document.getElementById("cc_luongCoBan")) document.getElementById("cc_luongCoBan").value = "";
-    }
-    if (window.renderLichChamCong) window.renderLichChamCong();
-    if (window.syncChamCongToTinhLuong) window.syncChamCongToTinhLuong();
-    
-    if (statusEl) statusEl.textContent = "(Đã lưu tự động)";
-  } catch (err) {
-    console.error("Lỗi tải dữ liệu:", err);
-    if (statusEl) statusEl.textContent = "(Lỗi kết nối)";
-  }
+      if (window.renderLichChamCong) window.renderLichChamCong();
+      if (window.syncChamCongToTinhLuong) window.syncChamCongToTinhLuong();
+      
+      if (statusEl) statusEl.textContent = "(Đã lưu tự động)";
+    })
+    .catch(err => {
+      if (statusEl) statusEl.textContent = "(Chế độ offline)";
+      if (window.renderLichChamCong) window.renderLichChamCong();
+      if (window.syncChamCongToTinhLuong) window.syncChamCongToTinhLuong();
+    });
 };
