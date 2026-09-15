@@ -2,14 +2,14 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <title>Tính Lương & Chấm Công</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tính Lương</title>
 <link rel="icon" href="https://raw.githubusercontent.com/o0oS2/Tinh-luong/main/Image/Icon.png" type="image/png" />
   <style>
     body {
       font-family: "Times New Roman", Times, serif;
       background: #f4f4f4;
-      padding: 15px;
+      padding: 30px;
       margin: 0;
     } 
     /* Layout 2 cột cho desktop */
@@ -39,137 +39,208 @@
       padding: 10px;
       border: 1px solid #ddd;
       text-align: center;
-      vertical-align: middle;
+      vertical-align: middle; /* Canh giữa theo chiều dọc */
     }
     th {
       background: #007bff;
       color: white;
     }
-    /* CHỈNH INPUT/SELECT NẰM TRONG BẢNG TÍNH LƯƠNG */
-    #tabLuong table input[type="number"],
-    #tabLuong table input[type="text"],
-    #tabLuong table select {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 2px 6px;
-      font-size: 12px;
-      text-align: right;
-      margin: 0;
-      border: 1px solid #ccc;
-      border-radius: 3px;
-      height: 24px;
-    }
+    /* CHỈNH INPUT/SELECT NẰM TRONG BẢNG */
+table input[type="number"],
+table input[type="text"],
+table select {
+  width: 100%;               /* Chiếm hết chiều rộng ô */
+  box-sizing: border-box;   /* Padding không làm vượt quá ô */
+  padding: 2px 6px;         /* Giảm padding để chiều cao thấp hơn */
+  font-size: 12px;          /* Giảm cỡ chữ xuống 12px */
+  text-align: right;        /* Căn phải với số */
+  margin: 0;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  height: 24px;             /* Đặt chiều cao cụ thể để đều */
+}
 
-    #luongContainer table > thead > tr > th:nth-child(1),
-    #luongContainer table > tbody > tr > td:nth-child(1) {
-      width: 45%;
-      text-align: left;
-      padding-left: 15px;
-    }
+/* ==== CHỈNH KÍCH THƯỚC CỘT BẢNG CHÍNH ==== */
+#luongContainer table > thead > tr > th:nth-child(1),
+#luongContainer table > tbody > tr > td:nth-child(1),
+#cc_luongContainer table > thead > tr > th:nth-child(1),
+#cc_luongContainer table > tbody > tr > td:nth-child(1) {
+  width: 45%;
+  text-align: left;
+  padding-left: 15px;
+}
 
-    #luongContainer table > thead > tr > th:nth-child(2),
-    #luongContainer table > tbody > tr > td:nth-child(2) {
-      width: 20%;
-    }
+#luongContainer table > thead > tr > th:nth-child(2),
+#luongContainer table > tbody > tr > td:nth-child(2),
+#cc_luongContainer table > thead > tr > th:nth-child(2),
+#cc_luongContainer table > tbody > tr > td:nth-child(2) {
+  width: 20%;
+}
 
-    #luongContainer table > thead > tr > th:nth-child(3),
-    #luongContainer table > tbody > tr > td:nth-child(3) {
-      width: 35%;
-      text-align: right;
-      padding-right: 15px;
-    }
+#luongContainer table > thead > tr > th:nth-child(3),
+#luongContainer table > tbody > tr > td:nth-child(3),
+#cc_luongContainer table > thead > tr > th:nth-child(3),
+#cc_luongContainer table > tbody > tr > td:nth-child(3) {
+  width: 35%;
+  text-align: right;
+  padding-right: 15px;
+}
 
-    #bangPhu table {
-      table-layout: fixed;
-      width: 100%;
-    }
+/* ==== CHỈNH KÍCH THƯỚC CỘT BẢNG PHỤ ==== */
+#bangPhu table, #cc_bangPhu table {
+  table-layout: fixed; /* Thêm dòng này để cố định layout bảng */
+  width: 100%;
+}
 
-    #bangPhu table td:nth-child(1), #bangPhu table th:nth-child(1) { width: 10%; }
-    #bangPhu table td:nth-child(2), #bangPhu table th:nth-child(2) { width: 30%; }
-    #bangPhu table td:nth-child(3), #bangPhu table th:nth-child(3) { width: 15%; max-width: 60px; }
-    #bangPhu table td:nth-child(4), #bangPhu table th:nth-child(4) { width: 15%; }
-    #bangPhu table td:nth-child(5), #bangPhu table th:nth-child(5) { width: 30%; }
+#bangPhu table td:nth-child(1), #bangPhu table th:nth-child(1),
+#cc_bangPhu table td:nth-child(1), #cc_bangPhu table th:nth-child(1) {
+  width: 10%;
+}
+#bangPhu table td:nth-child(2), #bangPhu table th:nth-child(2),
+#cc_bangPhu table td:nth-child(2), #cc_bangPhu table th:nth-child(2) {
+  width: 30%;
+}
+#bangPhu table td:nth-child(3), #bangPhu table th:nth-child(3),
+#cc_bangPhu table td:nth-child(3), #cc_bangPhu table th:nth-child(3) {
+  width: 15%;
+  max-width: 60px;
+}
+#bangPhu table td:nth-child(4), #bangPhu table th:nth-child(4),
+#cc_bangPhu table td:nth-child(4), #cc_bangPhu table th:nth-child(4) {
+  width: 15%;
+}
+#bangPhu table td:nth-child(5), #bangPhu table th:nth-child(5),
+#cc_bangPhu table td:nth-child(5), #cc_bangPhu table th:nth-child(5) {
+  width: 30%;
+}
 
-    #bangPhu table td:nth-child(3) input[type="number"] {
-      width: 100% !important;
-      font-size: 12px;
-      padding: 2px 4px;
-      height: 22px;
-      text-align: right;
-      box-sizing: border-box;
-    }
+/* Kiểm soát input trong cột 3 bảng phụ */
+#bangPhu table td:nth-child(3) input[type="number"],
+#cc_bangPhu table td:nth-child(3) input[type="number"] {
+  width: 100% !important;
+  font-size: 12px;
+  padding: 2px 4px;
+  height: 22px;
+  text-align: right;
+  box-sizing: border-box;
+}
 
-    #luongContainer table th, #luongContainer table td {
-      padding: 1px 2px;
-      height: 20px;
-      vertical-align: middle;
-    }
+#luongContainer table th, #luongContainer table td,
+#cc_luongContainer table th, #cc_luongContainer table td {
+  padding: 1px 2px;
+  height: 20px;
+  vertical-align: middle;
+}
 
-    #luongContainer table input[type="number"],
-    #luongContainer table input[type="text"],
-    #luongContainer table select {
-      padding: 1px 2px;
-      height: 20px;
-      font-size: 13px;
-      box-sizing: border-box;
-      text-align: right;
-    }
+#luongContainer table input[type="number"], #luongContainer table input[type="text"], #luongContainer table select,
+#cc_luongContainer table input[type="number"], #cc_luongContainer table input[type="text"], #cc_luongContainer table select {
+  padding: 1px 2px;
+  height: 20px;
+  font-size: 13px;
+  box-sizing: border-box;
+  text-align: right;
+}
 
-    #bangPhu table td, #bangPhu table th {
-      padding: 2px 4px;
-      height: 24px;
-      vertical-align: middle;
-    }
+#bangPhu table td, #bangPhu table th,
+#cc_bangPhu table td, #cc_bangPhu table th {
+  padding: 2px 4px;
+  height: 24px;
+  vertical-align: middle;
+}
 
-    #bangPhu table input[type="number"] {
-      padding: 1px 3px;
-      height: 22px;
-      font-size: 12px;
-      box-sizing: border-box;
-    }
+#bangPhu table input[type="number"],
+#cc_bangPhu table input[type="number"] {
+  padding: 1px 3px;
+  height: 22px;
+  font-size: 12px;
+  box-sizing: border-box;
+}
 
-    .input-row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 2px;
-      margin-bottom: 2px;
-      justify-content: center;
-    }
+table th,
+table td {
+  height: 18px;
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+input[type="number"],
+select {
+  padding: 4px 6px;
+  font-size: 12px;
+  height: 28px;
+}
 
-    .input-row .group {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
+tfoot td {
+  font-weight: bold;
+  background: #e9f7ef;
+}
+.center {
+  text-align: center;
+  margin-top: 5px;
+}
+button {
+  padding: 10px 20px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 2px;
+}
+button:hover {
+  background: #218838;
+}
+#bangPhu, #cc_bangPhu {
+  margin-top: 2px;
+}
+#bangPhu th, #cc_bangPhu th {
+  background: #28a745;
+}
+#bangPhu td, #bangPhu th, #cc_bangPhu td, #cc_bangPhu th {
+  padding: 8px;
+  border: 1px solid #ddd;
+  text-align: center;
+  vertical-align: middle;
+}
 
-    .input-row label {
-      white-space: nowrap;
-      font-size: 18px;
-      color: green;
-    }
+/* ===== PHẦN CHỈNH CHO LƯƠNG CƠ BẢN VÀ NGÀY CÔNG CHUẨN CÙNG DÒNG ===== */
+.input-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+  margin-bottom: 2px;
+  justify-content: center;
+}
 
-    .input-row input[type="number"],
-    .input-row select {
-      width: 160px;
-      min-width: 40px;
-      text-align: right;
-      font-size: 20px;
-      padding: 2px 4px;
-      height: 24px;
-      border: 1px solid #ccc;
-      border-radius: 3px;
-    }
-    
-    /* Tăng độ dài ô nhập Lương cơ bản */
-    #luongCoBan {
-      height: 26px !important;
-      font-size: 18px !important;
-      font-weight: bold;
-      width: 165px !important; /* Đã tăng chiều dài trên máy tính */
-      text-align: right;
-    }
+.input-row .group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
 
+.input-row label {
+  white-space: nowrap;
+  font-size: 18px;
+  color: green;
+}
+
+.input-row input[type="number"],
+.input-row select {
+  width: 160px;
+  min-width: 40px;
+  text-align: right;
+  font-size: 20px;
+  padding: 2px 4px;
+  height: 24px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+#luongCoBan, #cc_luongCoBan {
+  height: 26px !important;
+  font-size: 18px !important;
+  font-weight: bold;
+}
+/* Toast notification styles */
     .toast {
       position: fixed;
       top: 20px;
@@ -187,368 +258,204 @@
       transition: opacity 0.3s ease-in-out;
     }
     
-    .toast.show { opacity: 1; }
-    .toast::before { content: "✓ "; margin-right: 5px; }
-
-    /* CSS cho phần liên hệ và mã QR */
-    .contact-section {
-        display: flex;
-        gap: 20px;
-        align-items: flex-start;
-        max-width: 100%;
-        margin: 0 auto;
-    }
-
-    .contact-info {
-        flex: 1 1 65%;
-        min-width: 250px;
-    }
-
-    .contact-links {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 15px;
-        margin-top: 20px;
-        margin-bottom: 0;
-        line-height: 1.5;
-    }
-
-    .bank-info {
-        text-align: center;
-        margin-top: 3px;
-        font-weight: bold;
-        line-height: 1.5;
-    }
-
-    .bank-info p {
-        margin: 8px 0;
-    }
-
-    .qr-section {
-        flex: 1 1 30%;
-        min-width: 180px;
-        text-align: center;
-        display: flex;
-        align-items: flex-start;
-        justify-content: center;
-    }
-
-    .qr-image {
-        width: 160px;
-        height: 160px;
-        object-fit: cover;
-        border-radius: 6px;
-    }
-
-    .social-link {
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-    }
-
-    .social-icon {
-        margin-right: 4px;
-    }
-
-    .facebook-text {
-        color: #1877F2;
-        font-weight: bold;
-    }
-
-    .zalo-text {
-        color: #0068FF;
-        font-weight: bold;
-    }
-
-    .vietin-red {
-        color: red;
-    }
-
-    .bank-blue {
-        color: blue;
-    }
-
-    .copy-btn {
-        margin-left: 5px;
-        padding: 0 6px;
-        font-size: 12px;
-        height: 20px;
-        border: none;
-        border-radius: 4px;
-        background-color: #007bff;
-        color: white;
-        cursor: pointer;
-        white-space: nowrap;
-        vertical-align: middle;
-    }
-
-    .stk-container {
-        display: inline-flex;
-        align-items: center;
-        flex-wrap: nowrap;
-    }
-
-    .copy-btn:hover {
-        background-color: #0056b3;
-    }
-
-    /* Nút Tab */
-    .tab-bar {
-      display: flex;
-      gap: 8px;
-      margin: 10px auto 14px;
-      justify-content: center;
-      max-width: 500px;
-    }
-    .tab-btn {
-      flex: 1;
-      padding: 7px 12px;
-      font-size: 14px;
-      font-weight: bold;
-      border: 1.5px solid #007bff;
-      border-radius: 5px;
-      background: #fff;
-      color: #007bff;
-      cursor: pointer;
-      text-align: center;
-    }
-    .tab-btn.active {
-      background: #007bff;
-      color: #fff;
-    }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-
-    /* ================= GIAO DIỆN LỊCH CHẤM CÔNG ================= */
-    .chamcong-container {
-      max-width: 100%;
-      margin: 0 auto;
-    }
-    .chamcong-tools {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin-bottom: 8px;
-    }
-    .tools-header-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-    .btn-dao-ca {
-      background: #475569;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      padding: 5px 12px;
-      font-size: 12.5px;
-      font-weight: bold;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .btn-dao-ca.active {
-      background: #d97706;
+    .toast.show {
+      opacity: 1;
     }
     
-    .legend-box {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px 12px;
-      background: #fff;
-      padding: 6px 10px;
-      border-radius: 5px;
-      border: 1px solid #e2e8f0;
-      font-size: 11.5px;
-      color: #334155;
-    }
-    .legend-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .dot-sample {
-      width: 13px;
-      height: 13px;
-      border-radius: 3px;
-      display: inline-block;
-      border: 1px solid rgba(0,0,0,0.12);
+    .toast::before {
+      content: "✓ ";
+      margin-right: 5px;
     }
 
-    /* Grid 7 Cột */
-    .calendar-grid {
-      display: grid;
-      grid-template-columns: repeat(7, minmax(0, 1fr));
-      gap: 2.5px;
-      width: 100%;
-    }
-    .grid-header {
-      background: #007bff;
-      color: #fff;
-      font-size: 11.5px;
-      font-weight: bold;
-      text-align: center;
-      padding: 4px 1px;
-      border-radius: 3px;
-    }
-    .day-card {
-      border-radius: 4px;
-      padding: 3px 2px;
-      min-height: 70px;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      gap: 2px;
-      border: 1px solid #ddd;
-      box-sizing: border-box;
-    }
-    .day-card.empty {
-      background: #f8fafc;
-      border: 1px dashed #cbd5e1;
-      min-height: 40px;
-    }
+/* Responsive cho màn hình nhỏ - về lại layout 1 cột */
+@media screen and (max-width: 768px) {
+  .main-container {
+    display: block;
+  }
+  
+  .left-column, .right-column {
+    flex: none;
+    width: 100%;
+  }
+  
+  body {
+    padding: 10px;
+  }
+  table {
+    font-size: 14px;
+  }
+  table input[type="number"],
+  table input[type="text"],
+  table select {
+    width: 100%;
+    font-size: 16px;
+    padding: 10px 8px;
+  }
+  label,
+  select {
+    display: block;
+    margin-top: 2px;
+    margin-bottom: 2px;
+  }
+  button {
+    width: 100%;
+    font-size: 16px;
+  }
+  th,
+  td {
+    padding: 6px;
+  }
+  h1 {
+    font-size: 22px;
+  }
 
-    /* Ca ngày: Sáng */
-    .day-card.ca-ngay {
-      background-color: #fffdf5;
-      border-color: #fce7b2;
-    }
-    .day-card.ca-ngay .solar-num { color: #1e293b; }
-    .day-card.ca-ngay .lunar-num { color: #b91c1c; }
+   .input-row label {
+    font-size: 18px;
+  }
 
-    /* Ca đêm: Xám nhạt tinh tế */
-    .day-card.ca-dem {
-      background-color: #e2e8f0;
-      border-color: #cbd5e1;
-    }
-    .day-card.ca-dem .solar-num { color: #0f172a; }
-    .day-card.ca-dem .lunar-num { color: #c2410c; }
+  .input-row input[type="number"],
+  .input-row select {
+    width: 90px;
+    font-size: 14px;
+    height: 18px;
+    text-align: center;
+  }
+  #luongCoBan, #cc_luongCoBan {
+    height: 22px !important;
+    font-size: 18px !important;
+    font-weight: bold;
+    width: 120px !important;
+  }
+  
+  #luongContainer table th:nth-child(1), #luongContainer table td:nth-child(1),
+  #cc_luongContainer table th:nth-child(1), #cc_luongContainer table td:nth-child(1) {
+    width: 45% !important;
+  }
 
-    /* Nghỉ Chủ Nhật mặc định */
-    .day-card.ca-nghi {
-      background-color: #fee2e2;
-      border-color: #fca5a5;
-    }
-    .day-card.ca-nghi .solar-num { color: #dc2626; }
-    .day-card.ca-nghi .lunar-num { color: #991b1b; }
+  #luongContainer table th:nth-child(2), #luongContainer table td:nth-child(2),
+  #cc_luongContainer table th:nth-child(2), #cc_luongContainer table td:nth-child(2) {
+    width: 20% !important;
+  }
 
-    .day-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      line-height: 1;
-      padding: 0 1px;
-      margin-bottom: 2px;
-    }
-    .solar-num {
-      font-size: 13px;
-      font-weight: 800;
-    }
-    .lunar-num {
-      font-size: 9px;
-      font-weight: 600;
-    }
+  #luongContainer table th:nth-child(3), #luongContainer table td:nth-child(3),
+  #cc_luongContainer table th:nth-child(3), #cc_luongContainer table td:nth-child(3) {
+    width: 35% !important;
+  }
+  
+  #bangPhu table th:nth-child(1), #bangPhu table td:nth-child(1),
+  #cc_bangPhu table th:nth-child(1), #cc_bangPhu table td:nth-child(1) {
+    width: 12% !important;
+  }
+  #bangPhu table th:nth-child(2), #bangPhu table td:nth-child(2),
+  #cc_bangPhu table th:nth-child(2), #cc_bangPhu table td:nth-child(2) {
+    width: 30% !important;
+  }
+  #bangPhu table th:nth-child(3), #bangPhu table td:nth-child(3),
+  #cc_bangPhu table th:nth-child(3), #cc_bangPhu table td:nth-child(3) {
+    width: 15% !important;
+    max-width: 50px;
+  }
+  #bangPhu table th:nth-child(4), #bangPhu table td:nth-child(4),
+  #cc_bangPhu table th:nth-child(4), #cc_bangPhu table td:nth-child(4) {
+    width: 15% !important;
+  }
+  #bangPhu table th:nth-child(5), #bangPhu table td:nth-child(5),
+  #cc_bangPhu table th:nth-child(5), #cc_bangPhu table td:nth-child(5) {
+    width: 28% !important;
+  }
+}
 
-    .input-cell-val {
-      width: 100%;
-      height: 19px;
-      line-height: 17px;
-      font-size: 10.5px;
-      font-weight: bold;
-      text-align: center;
-      border-radius: 3px;
-      box-sizing: border-box;
-      cursor: pointer;
-      user-select: none;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      letter-spacing: -0.2px;
-    }
+        /* CSS phần mã QR */
+        .contact-section {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            max-width: 100%;
+            margin: 0 auto;
+        }
 
-    .cell-hc {
-      background-color: #ecfdf5;
-      color: #065f46;
-      border: 1px solid #a7f3d0;
-    }
-    .cell-ot {
-      background-color: #fff7ed;
-      color: #9a3412;
-      border: 1px solid #fed7aa;
-    }
-    .cell-mid-ot {
-      background-color: #f5f3ff;
-      color: #5b21b6;
-      border: 1px solid #ddd6fe;
-    }
+        .contact-info {
+            flex: 1 1 65%;
+            min-width: 250px;
+        }
 
-    /* Modal Picker: Đã mở rộng chiều dài và chiều cao để thấy đủ các lựa chọn */
-    .picker-overlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.45);
-      z-index: 9999;
-      justify-content: center;
-      align-items: center;
-      padding: 10px;
-    }
-    .picker-modal {
-      background: #fff;
-      border-radius: 8px;
-      max-width: 360px; /* Rộng hơn để chứa trọn danh sách */
-      width: 100%;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
-      overflow: hidden;
-      animation: popIn 0.15s ease-out;
-    }
-    @keyframes popIn {
-      from { transform: scale(0.92); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-    .picker-header {
-      background: #007bff;
-      color: #fff;
-      font-size: 14.5px;
-      font-weight: bold;
-      padding: 9px 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .picker-body {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
-      padding: 12px;
-      max-height: 450px; /* Tăng chiều cao tối đa để thấy trọn vẹn */
-      overflow-y: auto;
-    }
-    .picker-body.list-mode {
-      grid-template-columns: repeat(2, 1fr); /* 2 cột cân đối và đầy đủ */
-      gap: 7px;
-    }
-    .picker-btn {
-      padding: 7px 4px;
-      font-size: 12px;
-      font-weight: bold;
-      border: 1px solid #cbd5e1;
-      border-radius: 5px;
-      background: #f8fafc;
-      color: #1e293b;
-      cursor: pointer;
-      text-align: center;
-    }
-    .picker-btn:hover, .picker-btn:active {
-      background: #007bff;
-      color: #fff;
-      border-color: #007bff;
-    }
+        .contact-links {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            margin-bottom: 0;
+            line-height: 1.5;
+        }
 
+        .bank-info {
+            text-align: center;
+            margin-top: 3px;
+            font-weight: bold;
+            line-height: 1.5;
+        }
+
+        .bank-info p { margin: 8px 0; }
+
+        .qr-section {
+            flex: 1 1 30%;
+            min-width: 180px;
+            text-align: center;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        .qr-image {
+            width: 160px;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .social-link { text-decoration: none; display: inline-flex; align-items: center; }
+        .social-icon { margin-right: 4px; }
+        .facebook-text { color: #1877F2; font-weight: bold; }
+        .zalo-text { color: #0068FF; font-weight: bold; }
+        .vietin-red { color: red; }
+        .bank-blue { color: blue; }
+
+        .copy-btn {
+            margin-left: 5px; padding: 0 6px; font-size: 12px; height: 20px;
+            border: none; border-radius: 4px; background-color: #007bff; color: white;
+            cursor: pointer; white-space: nowrap; vertical-align: middle;
+        }
+
+        .stk-container { display: inline-flex; align-items: center; flex-wrap: nowrap; }
+        .copy-btn:hover { background-color: #0056b3; }
+
+        @media (max-width: 768px) {
+            .contact-section { flex-direction: column; gap: 10px; align-items: center; }
+            .contact-info { min-width: unset; }
+            .contact-links { gap: 10px; margin-top: 5px; font-size: 14px; }
+            .bank-info { margin-top: 1px; line-height: 1.2; }
+            .bank-info p { margin: 4px 0; }
+            .copy-btn { font-size: 13px; height: 18px; padding: 0 4px; }
+            .qr-section { min-width: unset; margin-top: 1px; display: flex; justify-content: center; width: 100%; }
+            .qr-image { width: 180px; height: 180px; }
+        }
+
+        @media (max-width: 480px) {
+            .bank-info { line-height: 1.1; }
+            .bank-info p { margin: 3px 0; }
+            .contact-links { gap: 8px; font-size: 13px; }
+            .copy-btn { font-size: 11px; height: 16px; padding: 0 3px; margin-left: 3px; }
+            .qr-section { display: flex; justify-content: center; width: 100%; }
+            .qr-image { width: 160px; height: 160px; }
+        }
+
+    #luongCoBan::placeholder, #cc_luongCoBan::placeholder {
+      font-size: 14px;
+      color: #aaa;
+      font-weight: normal;
+    }
+  
     .footer {
       text-align: center;
       font-size: 14px;
@@ -558,68 +465,167 @@
       border-top: 1px solid #ccc;
     }
 
-    /* Responsive cho điện thoại */
-    @media screen and (max-width: 768px) {
-      body { padding: 6px; }
-      .main-container { display: block; }
-      .left-column, .right-column { width: 100%; }
-      .tab-bar { max-width: 100%; }
-      .day-card { min-height: 65px; padding: 2px 1px; }
-      .solar-num { font-size: 12px; }
-      .lunar-num { font-size: 8px; }
-      .input-cell-val { 
-        font-size: 8px !important;
-        height: 17px !important; 
-        line-height: 15px !important;
-        letter-spacing: -0.4px;
-        padding: 0;
-      }
-      #luongCoBan {
-        width: 135px !important; /* Rộng rãi trên điện thoại */
-      }
-      .contact-section {
-          flex-direction: column;
-          gap: 10px;
-          align-items: center;
-      }
-      .contact-info { min-width: unset; }
-      .contact-links { gap: 10px; margin-top: 5px; font-size: 14px; }
-      .bank-info { margin-top: 1px; line-height: 1.2; }
-      .bank-info p { margin: 4px 0; }
-      .copy-btn { font-size: 13px; height: 18px; padding: 0 4px; }
-      .qr-section { min-width: unset; margin-top: 1px; display: flex; justify-content: center; width: 100%; }
-      .qr-image { width: 180px; height: 180px; }
+    /* ===== CỤM TAB & LỊCH CHẤM CÔNG ===== */
+    .tab-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      justify-content: flex-start;
     }
+    .tab-btn {
+      padding: 10px 24px;
+      font-size: 15px;
+      font-weight: bold;
+      border: 1.5px solid #007bff;
+      border-radius: 5px;
+      background: #fff;
+      color: #007bff;
+      cursor: pointer;
+    }
+    .tab-btn.active { background: #007bff; color: #fff; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    /* Layout 2 cột Tab Chấm Công máy tính */
+    .cc-desktop-layout {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .cc-col-left { flex: 1; }
+    .cc-col-right {
+      flex: 0 0 450px;
+      background: #fff;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+    }
+
+    .chamcong-tools { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+    .tools-header-row { display: flex; justify-content: space-between; align-items: center; }
+    .btn-dao-ca {
+      background: #475569; color: #fff; border: none; border-radius: 4px;
+      padding: 5px 12px; font-size: 12.5px; font-weight: bold; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .btn-dao-ca.active { background: #d97706; }
+
+    .legend-box {
+      display: flex; flex-wrap: wrap; gap: 6px 12px; background: #fff;
+      padding: 6px 10px; border-radius: 5px; border: 1px solid #e2e8f0;
+      font-size: 11.5px; color: #334155;
+    }
+    .legend-item { display: inline-flex; align-items: center; gap: 4px; }
+    .dot-sample { width: 12px; height: 12px; border-radius: 3px; display: inline-block; border: 1px solid rgba(0,0,0,0.12); }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 2.5px;
+      width: 100%;
+    }
+    .grid-header {
+      background: #007bff; color: #fff; font-size: 11.5px; font-weight: bold;
+      text-align: center; padding: 4px 1px; border-radius: 3px;
+    }
+    .day-card {
+      border-radius: 4px; padding: 3px 2px; min-height: 70px;
+      display: flex; flex-direction: column; justify-content: flex-start; gap: 2px;
+      border: 1px solid #ddd; box-sizing: border-box;
+    }
+    .day-card.empty { background: #f8fafc; border: 1px dashed #cbd5e1; min-height: 40px; }
+    .day-card.ca-ngay { background-color: #fffdf5; border-color: #fce7b2; }
+    .day-card.ca-ngay .solar-num { color: #1e293b; }
+    .day-card.ca-ngay .lunar-num { color: #b91c1c; }
+    .day-card.ca-dem { background-color: #e2e8f0; border-color: #cbd5e1; }
+    .day-card.ca-dem .solar-num { color: #0f172a; }
+    .day-card.ca-dem .lunar-num { color: #c2410c; }
+    .day-card.ca-nghi { background-color: #fee2e2; border-color: #fca5a5; }
+    .day-card.ca-nghi .solar-num { color: #dc2626; }
+    .day-card.ca-nghi .lunar-num { color: #991b1b; }
+
+    .day-top { display: flex; justify-content: space-between; align-items: baseline; line-height: 1; padding: 0 1px; margin-bottom: 2px; }
+    .solar-num { font-size: 13px; font-weight: 800; }
+    .lunar-num { font-size: 9px; font-weight: 600; }
+
+    .input-cell-val {
+      width: 100%; height: 19px; line-height: 17px; font-size: 10px; font-weight: bold;
+      text-align: center; border-radius: 3px; box-sizing: border-box; cursor: pointer;
+      user-select: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.2px;
+    }
+    .cell-hc { background-color: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+    .cell-ot { background-color: #fff7ed; color: #9a3412; border: 1px solid #fed7aa; }
+    .cell-mid-ot { background-color: #f5f3ff; color: #5b21b6; border: 1px solid #ddd6fe; }
+
+    /* Modal Picker */
+    .picker-overlay {
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.45); z-index: 9999; justify-content: center; align-items: center; padding: 10px;
+    }
+    .picker-modal {
+      background: #fff; border-radius: 8px; max-width: 360px; width: 100%;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25); overflow: hidden; animation: popIn 0.15s ease-out;
+    }
+    @keyframes popIn { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .picker-header {
+      background: #007bff; color: #fff; font-size: 14.5px; font-weight: bold;
+      padding: 9px 14px; display: flex; justify-content: space-between; align-items: center;
+    }
+    .picker-body {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 7px; padding: 12px; max-height: 450px; overflow-y: auto;
+    }
+    .picker-btn {
+      padding: 8px 6px; font-size: 12.5px; font-weight: bold; border: 1px solid #cbd5e1;
+      border-radius: 5px; background: #f8fafc; color: #1e293b; cursor: pointer; text-align: center;
+    }
+    .picker-btn:hover, .picker-btn:active { background: #007bff; color: #fff; border-color: #007bff; }
+
+    @media screen and (max-width: 768px) {
+      .cc-desktop-layout { display: block; }
+      .cc-col-right { margin-top: 20px; padding: 10px; }
+      .input-cell-val { font-size: 8px !important; height: 17px !important; line-height: 15px !important; }
+    }
+   @media screen and (max-width: 768px) {
+  /* Thu nhỏ chữ Đi làm đủ vừa khít ô trên điện thoại */
+  .input-cell-val {
+    font-size: 7.5px !important;
+    height: 17px !important;
+    line-height: 16px !important;
+    letter-spacing: -0.5px;
+    padding: 0 1px;
+  }
+}
   </style>
 </head>
 <body>
+<div class="main-container" style="display:block;">
 
-  <!-- PHẦN CHỌN LƯƠNG CƠ BẢN VÀ THÁNG, NĂM -->
-  <div class="input-row">
-    <div class="group">
-      <label for="luongCoBan"><strong>LCB:</strong></label>
-      <input type="text" id="luongCoBan" placeholder="lương cơ bản" style="height: 20px;" />
-    </div>
-
-    <div class="group date-group">
-      <label for="thang" style="margin-left: 5px;"></label>
-      <select id="thang" name="thang" style="width: 55px; height: 32px; text-align: center;"></select>
-
-      <label for="nam" style="margin-left: 2px;">/</label>
-      <select id="nam" name="nam" style="width: 75px; height: 32px; text-align: center;"></select>
-    </div>
-  </div>
-
-  <!-- 2 TAB ĐIỀU HƯỚNG -->
+  <!-- CỤM 2 TAB ĐIỀU HƯỚNG TRÊN CÙNG -->
   <div class="tab-bar">
-    <button type="button" class="tab-btn active" id="btnTabLuong" onclick="chuyenTab('tabLuong')">💰 Bảng Tính Lương</button>
-    <button type="button" class="tab-btn" id="btnTabChamCong" onclick="chuyenTab('tabChamCong')">📅 Chấm Công</button>
+    <button type="button" class="tab-btn active" id="btnTabLuong" onclick="switchTab('tabLuong')">💰 Tính Lương</button>
+    <button type="button" class="tab-btn" id="btnTabChamCong" onclick="switchTab('tabChamCong')">📅 Chấm Công</button>
   </div>
 
-  <!-- ================= TAB 1: TÍNH LƯƠNG ================= -->
-  <div id="tabLuong" class="tab-content active">
+  <!-- ================= TAB 1: TÍNH LƯƠNG (GỐC) ================= -->
+  <div id="paneLuong" class="tab-pane active">
     <div class="main-container">
+      <!-- Cột 1: Input row, bảng chính, bảng phụ -->
       <div class="left-column">
+        <div class="input-row">
+          <div class="group">
+            <label for="luongCoBan"><strong>LCB:</strong></label>
+            <input type="text" id="luongCoBan" placeholder="nhập lương cơ bản" style="height: 20px;" />
+          </div>
+
+          <div class="group date-group">
+            <label for="thang" style="margin-left: 5px;"></label>
+            <select id="thang" name="thang" style="width: 55px; height: 32px; text-align: center;"></select>
+
+            <label for="nam" style="margin-left: 2px;">/</label>
+            <select id="nam" name="nam" style="width: 75px; height: 32px; text-align: center;"></select>
+          </div>
+        </div>
+
         <div id="luongContainer">
           <table>
             <thead>
@@ -686,9 +692,8 @@
           </table>
         </div>
 
-        <div id="bangPhu">
+        <div id="bangPhu" class="bang-phu-table">
           <h3 style="text-align: center; color: red; margin-top: 3px; margin-bottom: 3px;">🎊 Lương ngày lễ, tết 🎊</h3>
-
           <table>
             <thead>
               <tr>
@@ -743,6 +748,7 @@
         </div>
       </div>
 
+      <!-- Cột 2: Tải file, liên hệ, thông tin -->
       <div class="right-column">
         <div style="text-align: center; margin: 3px 0; padding: 4px 8px; border: 1px solid #ccc; border-radius: 6px;">
           <h4 style="margin: 3px 0 8px;">📥 <a href="Files/Tinh_luong.xlsx" download> Tải file Excel tính lương - chấm công</a> 📥</h4>
@@ -791,119 +797,237 @@
           </ul>
         </div>
 
-        <!-- CỤM THÔNG TIN LIÊN HỆ ĐƯỢC CẬP NHẬT CHUẨN XÁC NGUYÊN VĂN -->
         <div style="margin: 3px 0; padding: 4px 8px; border: 1px solid #ccc; border-radius: 6px; display: flex; flex-wrap: wrap; gap: 10px;">
           <div class="contact-section">
-            <!-- Cột 1: Thông tin liên hệ -->
             <div class="contact-info">
-              <p class="contact-links">
-                <span>Liên hệ:</span>
-                <a href="https://m.facebook.com/tdt93/" target="_blank" class="social-link">
-                  <img src="https://raw.githubusercontent.com/o0oS2/Tinh-luong/main/Image/Facebook.png" width="20" height="20" class="social-icon">
-                  <span class="facebook-text">Facebook</span>
-                </a>
-                <a href="http://zalo.me/trungpl" target="_blank" class="social-link">
-                  <img src="https://raw.githubusercontent.com/o0oS2/Tinh-luong/main/Image/Zalo.png" alt="Zalo" width="20" height="20" class="social-icon">
-                  <span class="zalo-text">Zalo</span>
-                </a>
-              </p>
-              <div class="bank-info">
-                <p>Ủng hộ tôi qua <span class="vietin-red">Vietin</span><span class="bank-blue">Bank</span></p>
-                <p>Chủ TK: <span class="bank-blue">Trần Đức Trung</span></p>
-                <p>
-                  STK: 
-                  <span class="stk-container">
-                    <span id="stk" class="bank-blue">102829132222</span>
-                    <button onclick="copySTK()" class="copy-btn">Copy</button>
-                  </span>
+                <p class="contact-links">
+                    <span>Liên hệ:</span>
+                    <a href="https://m.facebook.com/tdt93/" target="_blank" class="social-link">
+                        <img src="https://raw.githubusercontent.com/o0oS2/Tinh-luong/main/Image/Facebook.png" width="20" height="20" class="social-icon">
+                        <span class="facebook-text">Facebook</span>
+                    </a>
+                    <a href="http://zalo.me/trungpl" target="_blank" class="social-link">
+                        <img src="https://raw.githubusercontent.com/o0oS2/Tinh-luong/main/Image/Zalo.png" alt="Zalo" width="20" height="20" class="social-icon">
+                        <span class="zalo-text">Zalo</span>
+                    </a>
                 </p>
-              </div>
+                <div class="bank-info">
+                    <p>Ủng hộ tôi qua <span class="vietin-red">Vietin</span><span class="bank-blue">Bank</span></p>
+                    <p>Chủ TK: <span class="bank-blue">Trần Đức Trung</span></p>
+                    <p>
+                        STK: 
+                        <span class="stk-container">
+                            <span id="stk" class="bank-blue">102829132222</span>
+                            <button onclick="copySTK()" class="copy-btn">Copy</button>
+                        </span>
+                    </p>
+                </div>
             </div>
-            
-            <!-- Cột 2: Ảnh QR -->
             <div class="qr-section">
-              <img src="https://raw.githubusercontent.com/o0oS2/Tinh-luong/main/Image/ViettinbankQR.jpg" alt="Vietinbank QR" class="qr-image">
+                <img src="https://raw.githubusercontent.com/o0oS2/Tinh-luong/main/Image/ViettinbankQR.jpg" alt="Vietinbank QR" class="qr-image">
             </div>
           </div>
         </div>
-            
+        
         <div style="margin: 5px 0; padding: 6px 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; line-height: 1.4;">
           <div style="margin-top: 2px;">
             <p>📥 <a href="Files/In_cham_cong.xlsx" download style="color: #080;"> Tải file in chấm công</a>, <a href="Files/Thiep_Cuoi.docx" download style="color: #080;"> Tải file in thiệp cưới</a> 📥</p>
             <p>🔗 <a href="https://chanquangcao.pages.dev/" target="_blank" style="text-decoration: none; color: #0073e6;">DNS - VPN Cloudflare chặn quảng cáo</a></p>
           </div>
         </div>
-        <div class="footer">
-          • Phiên bản 1.9, cập nhật ngày 28/09/2025 • 
+        <div class="footer">• Phiên bản 1.9, cập nhật ngày 28/09/2025 •</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TAB 2: CHẤM CÔNG (2 CỘT: TRÁI CHẤM CÔNG, PHẢI TÍNH LƯƠNG & BẢNG PHỤ) ================= -->
+  <div id="paneChamCong" class="tab-pane">
+    <div class="cc-desktop-layout">
+      <!-- Cột trái: Chấm công -->
+      <div class="cc-col-left">
+        <div class="input-row">
+          <div class="group">
+            <label for="cc_luongCoBan"><strong>LCB:</strong></label>
+            <input type="text" id="cc_luongCoBan" class="lcb-input" placeholder="lương cơ bản" />
+          </div>
+          <div class="group date-group">
+            <select id="cc_thang" name="cc_thang" style="width: 55px; height: 32px; text-align: center;"></select>
+            <label>/</label>
+            <select id="cc_nam" name="cc_nam" style="width: 75px; height: 32px; text-align: center;"></select>
+          </div>
+        </div>
+
+        <div class="chamcong-tools">
+          <div class="tools-header-row">
+            <button type="button" class="btn-dao-ca" id="btnDaoCa" onclick="toggleDaoCa()">
+              <span>⇄</span> <span id="lblDaoCa">Đảo ca ngày/đêm</span>
+            </button>
+          </div>
+          <div class="legend-box">
+            <div class="legend-item"><span class="dot-sample" style="background:#fffdf5; border-color:#fce7b2;"></span> Ca ngày</div>
+            <div class="legend-item"><span class="dot-sample" style="background:#e2e8f0; border-color:#cbd5e1;"></span> Ca đêm</div>
+            <div class="legend-item"><span class="dot-sample" style="background:#fee2e2; border-color:#fca5a5;"></span> Nghỉ CN</div>
+            <div class="legend-item"><span class="dot-sample" style="background:#ecfdf5; border-color:#a7f3d0;"></span> Giờ HC</div>
+            <div class="legend-item"><span class="dot-sample" style="background:#fff7ed; border-color:#fed7aa;"></span> Tăng ca</div>
+            <div class="legend-item"><span class="dot-sample" style="background:#f5f3ff; border-color:#ddd6fe;"></span> TC đêm</div>
+          </div>
+        </div>
+
+        <div class="calendar-grid">
+          <div class="grid-header">T2</div>
+          <div class="grid-header">T3</div>
+          <div class="grid-header">T4</div>
+          <div class="grid-header">T5</div>
+          <div class="grid-header">T6</div>
+          <div class="grid-header">T7</div>
+          <div class="grid-header" style="background:#dc3545;">CN</div>
+        </div>
+        <div class="calendar-grid" id="chamCongGrid" style="margin-top: 3px;"></div>
+      </div>
+
+      <!-- Cột phải: Bảng tính lương chuẩn y hệt + Bảng phụ lễ tết -->
+      <div class="cc-col-right">
+        <h3 style="margin: 0 0 8px 0; color: #007bff; font-size: 16px; text-align: center;">Bảng Lương Từ Chấm Công</h3>
+        <div id="cc_luongContainer">
+          <table class="table-luong-chuan">
+            <thead>
+              <tr>
+                <th>📋 Khoản mục</th>
+                <th>⏰ Time</th>
+                <th>💰 Thành tiền</th>
+              </tr>
+            </thead>
+            <tbody id="cc_luongTable">
+              <tr><td>Ngày công 100%</td><td><input type="number" id="cc_ngayCong" placeholder="ngày" /></td><td id="cc_tienNgayCong">0</td></tr>
+              <tr><td>Tăng ca 150%</td><td><input type="number" id="cc_tc150" placeholder="giờ" /></td><td id="cc_tienTC150">0</td></tr>
+              <tr><td>Tăng ca 200%</td><td><input type="number" id="cc_tc200" placeholder="giờ" /></td><td id="cc_tienTC200">0</td></tr>
+              <tr><td>Trợ cấp đêm 30%</td><td><input type="number" id="cc_tcDem30" placeholder="giờ" /></td><td id="cc_tienDem30">0</td></tr>
+              <tr style="color:red;"><td>Ngày công 200%</td><td><input type="number" id="cc_ngayCong200" placeholder="ngày" /></td><td id="cc_tienCong200">0</td></tr>
+              <tr style="color:red;"><td>Tăng ca 300%</td><td><input type="number" id="cc_tc300" placeholder="giờ" /></td><td id="cc_tienTC300">0</td></tr>
+              <tr style="color:red;"><td>Tăng ca 340%</td><td><input type="number" id="cc_tc340" placeholder="giờ" /></td><td id="cc_tienTC340">0</td></tr>
+              <tr style="color:red;"><td>Trợ cấp đêm 70%</td><td><input type="number" id="cc_tcDem70" placeholder="giờ" /></td><td id="cc_tienTCDem70">0</td></tr>
+              <tr style="color:red;"><td>Thông ca 380%</td><td><input type="number" id="cc_thongca380" placeholder="giờ" /></td><td id="cc_tienthongca380">0</td></tr>
+              <tr><td>Phép năm</td><td><input type="number" id="cc_phepNam" placeholder="ngày" /></td><td id="cc_tienPhepNam">0</td></tr>
+              <tr><td>Ngày lễ</td><td><input type="number" id="cc_le" placeholder="ngày" /></td><td id="cc_tienLe">0</td></tr>
+              <tr><td colspan="2">Phụ cấp kỹ năng ABC</td><td><input type="text" id="cc_pcABC" /></td></tr>
+              <tr><td colspan="2">Phụ cấp Chuyên cần</td><td>
+                <select id="cc_pcChuyenCan">
+                  <option text="0">0</option>
+                  <option text="200.000" selected>200.000</option>
+                </select>
+              </td></tr>
+              <tr><td colspan="2">Phụ cấp thâm niên</td><td>
+                <select id="cc_pcThamNien">
+                  <option text="400.000">400.000</option>
+                  <option text="500.000">500.000</option>
+                  <option text="600.000">600.000</option>
+                </select>
+              </td></tr>
+              <tr><td colspan="2">Phụ cấp lương, chức vụ</td><td><input type="text" id="cc_pcChucVu" /></td></tr>
+              <tr><td colspan="2">Hỗ trợ đi lại</td><td><input type="text" id="cc_pcDiLai" /></td></tr>
+              <tr><td colspan="2">Hỗ trợ điện thoại</td><td>
+                <select id="cc_pcDienThoai">
+                  <option text="0">0</option>
+                  <option text="1.500.000">1.500.000</option>
+                  <option text="2.500.000">2.500.000</option>
+                  <option text="3.000.000">3.000.000</option>
+                  <option text="4.000.000">4.000.000</option>
+                  <option text="5.000.000">5.000.000</option>
+                </select>
+              </td></tr>
+              <tr><td colspan="2">Hỗ trợ trẻ em dưới 6 tuổi</td><td>
+                <select id="cc_pcTreEm">
+                  <option text="0">0</option>
+                  <option text="50.000">50.000</option>
+                  <option text="100.000">100.000</option>
+                  <option text="150.000">150.000</option>
+                  <option text="200.000">200.000</option>
+                </select>
+              </td></tr>
+              <tr><td colspan="2">Phụ cấp khác (ngoại ngữ, kỹ thuật...)</td><td><input type="text" id="cc_pcKhac" /></td></tr>
+              <tr><td colspan="2">Tổng lương ngày lễ, tết</td><td id="cc_tienNgayLeTet">0</td></tr>
+              <tr style="background-color: yellow;"><td colspan="2">💰 Tổng thu nhập</td><td id="cc_tongLuong">0</td></tr>
+              <tr style="color:red;"><td colspan="2">Khấu trừ BHXH 10.5%</td><td id="cc_tienTruBHXH">0</td></tr>
+              <tr style="color:red;"><td colspan="2">Khấu trừ Công đoàn 0.5%</td><td id="cc_tienTruCD">0</td></tr>
+              <tr style="background-color: #cce5ff; font-weight: bold;"><td colspan="2">💵 Thực lĩnh (chưa tính thuế)</td><td id="cc_thucLinh">0</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Bảng phụ tính lương lễ tết ở cột phải Tab Chấm công -->
+        <div id="cc_bangPhu" class="bang-phu-table">
+          <h3 style="text-align: center; color: red; margin-top: 5px; margin-bottom: 3px; font-size: 14px;">🎊 Lương ngày lễ, tết 🎊</h3>
+          <table>
+            <thead>
+              <tr>
+                <th rowspan="2">📅 Ngày</th>
+                <th rowspan="2">📋 Khoản mục</th>
+                <th rowspan="2">⏰ Giờ</th>
+                <th rowspan="2">💲 % lương</th>
+                <th rowspan="2">💰 Thành tiền</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td rowspan="3"><input type="number" /></td>
+                <td>Giờ hành chính</td>
+                <td><input type="number" id="cc_soGioHanhChinh1" placeholder="giờ" /></td>
+                <td><input type="number" id="cc_phuLuongHanhChinh" /></td>
+                <td id="cc_tienHanhChinh">0</td>
+              </tr>
+              <tr>
+                <td>Tăng ca</td>
+                <td><input type="number" id="cc_soGioTangCa1" placeholder="giờ" /></td>
+                <td><input type="number" id="cc_phuLuongTangCa" /></td>
+                <td id="cc_tienTangCa">0</td>
+              </tr>
+              <tr>
+                <td>Trợ cấp đêm</td>
+                <td><input type="number" id="cc_soGioDem1" placeholder="giờ" /></td>
+                <td><input type="number" id="cc_phuLuongDem" /></td>
+                <td id="cc_tienTroCapDem">0</td>
+              </tr>
+              <tr>
+                <td rowspan="3"><input type="number" /></td>
+                <td>Giờ hành chính</td>
+                <td><input type="number" id="cc_soGioHanhChinh2" placeholder="giờ" /></td>
+                <td><input type="number" id="cc_phuLuongHanhChinh2" /></td>
+                <td id="cc_tienHanhChinh2">0</td>
+              </tr>
+              <tr>
+                <td>Tăng ca</td>
+                <td><input type="number" id="cc_soGioTangCa2" placeholder="giờ" /></td>
+                <td><input type="number" id="cc_phuLuongTangCa2" /></td>
+                <td id="cc_tienTangCa2">0</td>
+              </tr>
+              <tr>
+                <td>Trợ cấp đêm</td>
+                <td><input type="number" id="cc_soGioDem2" placeholder="giờ" /></td>
+                <td><input type="number" id="cc_phuLuongDem2" /></td>
+                <td id="cc_tienTroCapDem2">0</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ================= TAB 2: CHẤM CÔNG ================= -->
-  <div id="tabChamCong" class="tab-content">
-    <div class="chamcong-container">
-      <div class="chamcong-tools">
-        <div class="tools-header-row">
-          <button type="button" class="btn-dao-ca" id="btnDaoCa" onclick="toggleDaoCa()">
-            <span>⇄</span> <span id="lblDaoCa">Đảo ca ngày/đêm</span>
-          </button>
-        </div>
+</div>
 
-        <!-- Chú thích nhận biết màu sắc -->
-        <div class="legend-box">
-          <div class="legend-item">
-            <span class="dot-sample" style="background:#fffdf5; border-color:#fce7b2;"></span> Sáng: Ca ngày
-          </div>
-          <div class="legend-item">
-            <span class="dot-sample" style="background:#e2e8f0; border-color:#cbd5e1;"></span> Xám nhạt: Ca đêm
-          </div>
-          <div class="legend-item">
-            <span class="dot-sample" style="background:#fee2e2; border-color:#fca5a5;"></span> Nghỉ CN
-          </div>
-          <div class="legend-item">
-            <span class="dot-sample" style="background:#ecfdf5; border-color:#a7f3d0;"></span> Giờ HC (Trống = Đủ)
-          </div>
-          <div class="legend-item">
-            <span class="dot-sample" style="background:#fff7ed; border-color:#fed7aa;"></span> Tăng ca (Số 0)
-          </div>
-          <div class="legend-item">
-            <span class="dot-sample" style="background:#f5f3ff; border-color:#ddd6fe;"></span> TC giữa giờ đêm (Số 0)
-          </div>
-        </div>
-      </div>
-
-      <!-- Lưới 7 cột theo thứ trong tuần -->
-      <div class="calendar-grid">
-        <div class="grid-header">T2</div>
-        <div class="grid-header">T3</div>
-        <div class="grid-header">T4</div>
-        <div class="grid-header">T5</div>
-        <div class="grid-header">T6</div>
-        <div class="grid-header">T7</div>
-        <div class="grid-header" style="background:#dc3545;">CN</div>
-      </div>
-      <div class="calendar-grid" id="chamCongGrid" style="margin-top: 3px;">
-        <!-- Tự động nạp các ngày trong tháng -->
-      </div>
+<!-- MODAL CHỌN GIÁ TRỊ NHANH -->
+<div class="picker-overlay" id="pickerOverlay" onclick="closePicker(event)">
+  <div class="picker-modal">
+    <div class="picker-header">
+      <span id="pickerTitle">Chọn thông số</span>
+      <span style="cursor:pointer;" onclick="forceClosePicker()">✕</span>
     </div>
+    <div class="picker-body" id="pickerBody"></div>
   </div>
+</div>
 
-  <!-- MODAL CHỌN GIÁ TRỊ NHANH -->
-  <div class="picker-overlay" id="pickerOverlay" onclick="closePicker(event)">
-    <div class="picker-modal">
-      <div class="picker-header">
-        <span id="pickerTitle">Chọn thông số</span>
-        <span style="cursor:pointer;" onclick="forceClosePicker()">✕</span>
-      </div>
-      <div class="picker-body" id="pickerBody">
-        <!-- Tự động nạp nút bấm chọn -->
-      </div>
-    </div>
-  </div>
-
-  <script>
-    function showToast(message) {
+<script>
+  function showToast(message) {
       const existingToast = document.querySelector('.toast');
       if (existingToast) existingToast.remove();
       
@@ -912,10 +1036,15 @@
       toast.textContent = message;
       document.body.appendChild(toast);
       
-      setTimeout(() => toast.classList.add('show'), 100);
+      setTimeout(() => {
+        toast.classList.add('show');
+      }, 100);
+      
       setTimeout(() => {
         toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
+        setTimeout(() => {
+          toast.remove();
+        }, 300);
       }, 3000);
     }
     
@@ -925,21 +1054,27 @@
         showToast("Đã sao chép STK: " + stkText);
       }).catch(err => {
         showToast("Lỗi khi sao chép!");
+        console.error("Clipboard copy failed:", err);
       });
     }
 
-    function chuyenTab(tabId) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       
-      document.getElementById(tabId).classList.add('active');
       if (tabId === 'tabLuong') {
+        document.getElementById('paneLuong').classList.add('active');
         document.getElementById('btnTabLuong').classList.add('active');
       } else {
+        document.getElementById('paneChamCong').classList.add('active');
         document.getElementById('btnTabChamCong').classList.add('active');
+        if (typeof syncChamCongToTinhLuong === 'function') {
+          syncChamCongToTinhLuong();
+        }
       }
     }
-  </script>
-  <script src="tinhluong.js"></script>
+</script>
+<script src="tinhluong.js"></script>
+<script src="chamcong.js"></script>
 </body>
 </html>

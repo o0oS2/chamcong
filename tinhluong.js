@@ -1,20 +1,26 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // === Khởi tạo select tháng, năm ===
+  // === Khởi tạo select tháng, năm theo logic của bạn ===
   const thangSelect = document.getElementById("thang");
   const namSelect = document.getElementById("nam");
 
+  // Lấy ngày hiện tại
   const today = new Date();
   const currentMonth = today.getMonth() + 1;
   const currentYear = today.getFullYear();
   const currentDate = today.getDate();
 
+  // Xác định tháng mặc định
   let defaultMonth;
   if (currentDate < 11) {
+    // Nếu là tháng 1 thì tháng trước là 12
     defaultMonth = currentMonth === 1 ? 12 : currentMonth - 1;
   } else {
     defaultMonth = currentMonth;
   }
 
+  // Xác định năm mặc định
+  // Nếu ngày < 11/1 thì năm mặc định là năm hiện tại - 1
+  // Ngược lại là năm hiện tại
   let defaultYear;
   if (currentMonth === 1 && currentDate < 11) {
     defaultYear = currentYear - 1;
@@ -22,6 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
     defaultYear = currentYear;
   }
 
+  // Gán tháng (1-12)
   for (let i = 1; i <= 12; i++) {
     const option = document.createElement("option");
     option.value = i;
@@ -30,6 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
     thangSelect.appendChild(option);
   }
 
+  // Gán năm (năm hiện tại -1, năm hiện tại, năm hiện tại +1)
   for (let y = currentYear - 1; y <= currentYear + 1; y++) {
     const option = document.createElement("option");
     option.value = y;
@@ -38,57 +46,82 @@ document.addEventListener("DOMContentLoaded", function () {
     namSelect.appendChild(option);
   }
 
-  // === Định dạng số cho tất cả input tiền ===
+  // === Phần định dạng số cho tất cả input tiền ===
+  
+  // Hàm định dạng số thành chuỗi có dấu chấm phân cách
   function formatNumber(num) {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
 
+  // Hàm loại bỏ dấu chấm để lấy số thực
   function parseNumber(str) {
     return parseInt(str.replace(/\./g, "")) || 0;
   }
 
+  // Danh sách tất cả input cần định dạng số
   const moneyInputIds = [
     "luongCoBan", "pcABC", "pcChuyenCan", "pcThamNien",
     "pcChucVu", "pcDiLai", "pcDienThoai", "pcTreEm", "pcKhac"
   ];
 
+  // Áp dụng định dạng số cho tất cả input tiền
   moneyInputIds.forEach(inputId => {
     const input = document.getElementById(inputId);
     if (input) {
+      // Xử lý khi người dùng nhập
       input.addEventListener("input", function(e) {
-        let value = e.target.value.replace(/\./g, "");
-        value = value.replace(/[^0-9]/g, "");
-        if (value) e.target.value = formatNumber(value);
+        let value = e.target.value.replace(/\./g, ""); // Loại bỏ dấu chấm
+        value = value.replace(/[^0-9]/g, ""); // Chỉ giữ lại số
+        
+        if (value) {
+          e.target.value = formatNumber(value);
+        }
+        // Tính lại lương ngay khi nhập
         tinhLuong();
       });
 
+      // Xử lý khi focus ra khỏi input
       input.addEventListener("blur", function(e) {
         let value = parseNumber(e.target.value);
-        if (value > 0) e.target.value = formatNumber(value);
+        if (value > 0) {
+          e.target.value = formatNumber(value);
+        }
+        // Tính lại lương khi blur
         tinhLuong();
       });
 
+      // Xử lý khi focus vào input (có thể bỏ định dạng để dễ chỉnh sửa)
       input.addEventListener("focus", function(e) {
         let value = parseNumber(e.target.value);
-        if (value > 0) e.target.value = value.toString();
+        if (value > 0) {
+          e.target.value = value.toString();
+        }
       });
     }
   });
 
+  // === Phần còn lại của code tính lương ===
+
+  // Giá trị mặc định cho một số phụ cấp
   const defaultValues = {
     pcDiLai: 500000,
     pcChuyenCan: 200000,
     pcThamNien: 600000
   };
 
+  // Khởi tạo giá trị mặc định phụ cấp (với định dạng)
   Object.keys(defaultValues).forEach(id => {
     const input = document.getElementById(id);
-    if (input) input.value = formatNumber(defaultValues[id]);
+    if (input) {
+      input.value = formatNumber(defaultValues[id]);
+    }
   });
 
+  // Hàm tính ngayCongChuan dựa vào tháng và năm
   function tinhNgayCongChuan() {
     const thang = +document.getElementById("thang")?.value || 1;
     const nam = +document.getElementById("nam")?.value || new Date().getFullYear();
+
     const soNgayTrongThang = new Date(nam, thang, 0).getDate();
 
     let soNgayChuNhat = 0;
@@ -99,11 +132,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let ngayCongChuan = soNgayTrongThang - soNgayChuNhat;
     if (ngayCongChuan === 27) ngayCongChuan = 26;
+
     return ngayCongChuan;
   }
 
-  const inputs = Array.from(document.querySelectorAll("#tabLuong input, #tabLuong select, #luongCoBan, #thang, #nam"));
+  // Tạo mảng tất cả input và select để xử lý focus Enter và cập nhật
+  const inputs = Array.from(document.querySelectorAll("input, select"));
   inputs.forEach((input, index) => {
+    // Chuyển focus khi nhấn Enter
     input.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
@@ -112,23 +148,24 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
     
+    // Chỉ thêm event listener input/change cho các input không phải tiền
+    // (vì các input tiền đã có xử lý riêng ở trên)
     if (!moneyInputIds.includes(input.id)) {
       input.addEventListener("input", tinhLuong);
       input.addEventListener("change", tinhLuong);
     }
   });
 
+  // Khi thay đổi thang hoặc nam thì tính lương lại
   ["thang", "nam"].forEach(id => {
     const el = document.getElementById(id);
     if (el) {
-      el.addEventListener("change", function () {
-        tinhLuong();
-        renderLichChamCong();
-      });
+      el.addEventListener("change", tinhLuong);
     }
   });
 
   function tinhLuong() {
+    // Sử dụng parseNumber để lấy giá trị số thực từ input đã được định dạng
     const luongCoBan = parseNumber(document.getElementById("luongCoBan")?.value || "0");
     const ngayCongChuan = tinhNgayCongChuan();
 
@@ -168,6 +205,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     tong += tienNgayLeTet;
 
+    // Tính tổng phụ cấp sử dụng parseNumber
     const phuCaps = [
       "pcABC", "pcChuyenCan", "pcThamNien",
       "pcChucVu", "pcDiLai", "pcDienThoai",
@@ -225,386 +263,6 @@ document.addEventListener("DOMContentLoaded", function () {
     return tongPhu;
   }
 
-  // =========================================================================
-  // === LỊCH CHẤM CÔNG CẬP NHẬT ĐẦY ĐỦ VÀ TRỰC QUAN ===
-  // =========================================================================
-
-  const MOC_CA_DEM = new Date(2026, 8, 7);
-  let isDaoCa = false;
-
-  const DSHanhChinhFull = [
-    { label: "Đi làm đủ", short: "", deduct: 0, allowSunday: true },
-    { label: "Nghỉ", short: "Nghỉ", deduct: 8, allowSunday: true },
-    { label: "Muộn 1 giờ", short: "M 1", deduct: 1, allowSunday: true },
-    { label: "Muộn 1.5 giờ", short: "M 1.5", deduct: 1.5, allowSunday: true },
-    { label: "Muộn 2 giờ", short: "M 2", deduct: 2, allowSunday: true },
-    { label: "Muộn 2.5 giờ", short: "M 2.5", deduct: 2.5, allowSunday: true },
-    { label: "Muộn 3 giờ", short: "M 3", deduct: 3, allowSunday: true },
-    { label: "Muộn 3.5 giờ", short: "M 3.5", deduct: 3.5, allowSunday: true },
-    { label: "Về sớm 1 giờ", short: "V 1", deduct: 1, allowSunday: true },
-    { label: "Về sớm 1.5 giờ", short: "V 1.5", deduct: 1.5, allowSunday: true },
-    { label: "Về sớm 2 giờ", short: "V 2", deduct: 2, allowSunday: true },
-    { label: "Về sớm 2.5 giờ", short: "V 2.5", deduct: 2.5, allowSunday: true },
-    { label: "Về sớm 3 giờ", short: "V 3", deduct: 3, allowSunday: true },
-    { label: "Về sớm 3.5 giờ", short: "V 3.5", deduct: 3.5, allowSunday: true },
-    { label: "Nghỉ buổi sáng", short: "Nghỉ S", deduct: 4, allowSunday: true },
-    { label: "Nghỉ buổi chiều", short: "Nghỉ Chiều", deduct: 4, allowSunday: true },
-    { label: "Phép năm", short: "PN", deduct: 8, allowSunday: false },
-    { label: "1/2 phép năm", short: "½PN", deduct: 4, allowSunday: false }
-  ];
-
-  const DSTangCaFull = [];
-  for (let h = 0; h <= 10; h += 0.5) {
-    DSTangCaFull.push(h.toString());
-  }
-
-  const DSMidOtFull = ["0", "0.5", "1", "1.5", "2"];
-  const chamCongData = {};
-
-  function xacDinhCa(y, m, d) {
-    const curDate = new Date(y, m - 1, d);
-    const dayOfWeek = curDate.getDay();
-
-    if (dayOfWeek === 0) return "nghi"; // Chủ nhật
-
-    const diffTime = curDate.getTime() - MOC_CA_DEM.getTime();
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    
-    let mod = diffDays % 28;
-    if (mod < 0) mod += 28;
-
-    let ca = (mod < 14) ? "dem" : "ngay";
-    if (isDaoCa) ca = (ca === "dem") ? "ngay" : "dem";
-    return ca;
-  }
-
-  window.toggleDaoCa = function() {
-    isDaoCa = !isDaoCa;
-    const btn = document.getElementById("btnDaoCa");
-    const lbl = document.getElementById("lblDaoCa");
-    if (isDaoCa) {
-      btn.classList.add("active");
-      lbl.textContent = "Đã đảo (Bấm về gốc)";
-    } else {
-      btn.classList.remove("active");
-      lbl.textContent = "Đảo ca ngày/đêm";
-    }
-    renderLichChamCong();
-  };
-
-  // Thuật toán Âm lịch Jean Meeus UTC+7[cite: 3]
-  const TZ = 7;
-  const PI = Math.PI;
-  function INT(d) { return Math.floor(d); }
-
-  function jdFromDate(dd, mm, yy) {
-    const a = INT((14 - mm) / 12);
-    const y = yy + 4800 - a;
-    const m = mm + 12 * a - 3;
-    return dd + INT((153 * m + 2) / 5) + 365 * y + INT(y / 4) - INT(y / 100) + INT(y / 400) - 32045;
-  }
-
-  function NewMoon(k) {
-    const T = k / 1236.85, T2 = T * T, T3 = T2 * T, dr = PI / 180;
-    let Jd1 = 2415020.75933 + 29.53058868 * k + 0.0001178 * T2 - 0.000000155 * T3;
-    Jd1 += 0.00033 * Math.sin((166.56 + 132.87 * T - 0.009173 * T2) * dr);
-    const M = 359.2242 + 29.10535608 * k - 0.0000333 * T2 - 0.00000347 * T3;
-    const Mpr = 306.0253 + 385.81691806 * k + 0.0107306 * T2 + 0.00001236 * T3;
-    const F = 21.2964 + 390.67050646 * k - 0.0016528 * T2 - 0.00000239 * T3;
-    let C1 = (0.1734 - 0.000393 * T) * Math.sin(M * dr) + 0.0021 * Math.sin(2 * dr * M) - 0.4068 * Math.sin(Mpr * dr) + 0.0161 * Math.sin(dr * 2 * Mpr) - 0.0004 * Math.sin(dr * 3 * Mpr) + 0.0104 * Math.sin(dr * 2 * F) - 0.0051 * Math.sin(dr * (M + Mpr)) - 0.0074 * Math.sin(dr * (M - Mpr)) + 0.0004 * Math.sin(dr * (2 * F + M)) - 0.0004 * Math.sin(dr * (2 * F - M)) - 0.0006 * Math.sin(dr * (2 * F + Mpr)) + 0.0010 * Math.sin(dr * (2 * F - Mpr)) + 0.0005 * Math.sin(dr * (2 * Mpr + M));
-    let deltat;
-    if (T < -11) deltat = 0.001 + 0.000839 * T + 0.0002261 * T2 - 0.00000845 * T3 - 0.000000081 * T * T3;
-    else deltat = -0.000278 + 0.000265 * T + 0.000262 * T2;
-    return Jd1 + C1 - deltat;
-  }
-
-  function SunLongitude(jdn) {
-    const T = (jdn - 2451545.0) / 36525, T2 = T * T, dr = PI / 180;
-    const M = 357.52910 + 35999.05030 * T - 0.0001559 * T2 - 0.00000048 * T * T2;
-    const L0 = 280.46645 + 36000.76983 * T + 0.0003032 * T2;
-    let DL = (1.914600 - 0.004817 * T - 0.000014 * T2) * Math.sin(dr * M) + (0.019993 - 0.000101 * T) * Math.sin(dr * 2 * M) + 0.000290 * Math.sin(dr * 3 * M);
-    let L = (L0 + DL) * dr;
-    L = L - PI * 2 * INT(L / (PI * 2));
-    return L;
-  }
-
-  function getNewMoonDay(k, tz) { return INT(NewMoon(k) + 0.5 + tz / 24); }
-  function getSunLongitude(dayNumber, tz) { return INT(SunLongitude(dayNumber - 0.5 - tz / 24) / PI * 6); }
-
-  function getLunarMonth11(yy, tz) {
-    const off = jdFromDate(31, 12, yy) - 2415021;
-    let k = INT(off / 29.530588853);
-    let nm = getNewMoonDay(k, tz);
-    const sunLong = getSunLongitude(nm, tz);
-    if (sunLong >= 9) k--;
-    return getNewMoonDay(k, tz);
-  }
-
-  function getLeapMonthOffset(a11, tz) {
-    const k = INT((a11 - 2415021.076998695) / 29.530588853 + 0.5);
-    let last = 0, i = 1;
-    let arc = getSunLongitude(getNewMoonDay(k + i, tz), tz);
-    do { last = arc; i++; arc = getSunLongitude(getNewMoonDay(k + i, tz), tz); } while (arc !== last && i < 14);
-    return i - 1;
-  }
-
-  function convertSolar2Lunar(dd, mm, yy, tz) {
-    const dayNumber = jdFromDate(dd, mm, yy);
-    const k = INT((dayNumber - 2415021.076998695) / 29.530588853);
-    let monthStart = getNewMoonDay(k + 1, tz);
-    if (monthStart > dayNumber) monthStart = getNewMoonDay(k, tz);
-    let a11 = getLunarMonth11(yy, tz);
-    let b11 = a11;
-    let lunarYear;
-    if (a11 >= monthStart) { lunarYear = yy; a11 = getLunarMonth11(yy - 1, tz); }
-    else { lunarYear = yy + 1; b11 = getLunarMonth11(yy + 1, tz); }
-    const lunarDay = dayNumber - monthStart + 1;
-    const diff = INT((monthStart - a11) / 29);
-    let lunarLeap = 0;
-    let lunarMonth = diff + 11;
-    if (b11 - a11 > 365) {
-      const leapMonthDiff = getLeapMonthOffset(a11, tz);
-      if (diff >= leapMonthDiff) { lunarMonth = diff + 10; if (diff === leapMonthDiff) lunarLeap = 1; }
-    }
-    if (lunarMonth > 12) lunarMonth -= 12;
-    if (lunarMonth >= 11 && diff < 4) lunarYear -= 1;
-    return { day: lunarDay, month: lunarMonth, year: lunarYear, leap: lunarLeap === 1 };
-  }
-
-  // Quản lý Modal Picker
-  let currentPickContext = null;
-
-  window.openPicker = function(day, type) {
-    currentPickContext = { day, type };
-    const overlay = document.getElementById("pickerOverlay");
-    const title = document.getElementById("pickerTitle");
-    const body = document.getElementById("pickerBody");
-
-    const thang = +document.getElementById("thang")?.value || 1;
-    const nam = +document.getElementById("nam")?.value || new Date().getFullYear();
-    const isSunday = (new Date(nam, thang - 1, day).getDay() === 0);
-
-    body.innerHTML = "";
-    overlay.style.display = "flex";
-
-    if (type === "hc") {
-      title.textContent = `Ngày ${day}: Giờ hành chính`;
-      body.className = "picker-body list-mode";
-      
-      const filteredList = DSHanhChinhFull.filter(item => {
-        if (isSunday && !item.allowSunday) return false;
-        return true;
-      });
-
-      filteredList.forEach(item => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "picker-btn";
-        btn.textContent = item.label;
-        btn.onclick = () => selectPickValue(item);
-        body.appendChild(btn);
-      });
-    } else if (type === "ot") {
-      title.textContent = `Ngày ${day}: Tăng ca (giờ)`;
-      body.className = "picker-body";
-      DSTangCaFull.forEach(val => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "picker-btn";
-        btn.textContent = val;
-        btn.onclick = () => selectPickValue(val);
-        body.appendChild(btn);
-      });
-    } else if (type === "mid-ot") {
-      title.textContent = `Ngày ${day}: TC giữa giờ đêm`;
-      body.className = "picker-body";
-      DSMidOtFull.forEach(val => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "picker-btn";
-        btn.textContent = val;
-        btn.onclick = () => selectPickValue(val);
-        body.appendChild(btn);
-      });
-    }
-  };
-
-  function selectPickValue(val) {
-    if (!currentPickContext) return;
-    const { day, type } = currentPickContext;
-
-    const thang = +document.getElementById("thang")?.value || 1;
-    const nam = +document.getElementById("nam")?.value || new Date().getFullYear();
-    const ca = xacDinhCa(nam, thang, day);
-
-    if (!chamCongData[day]) {
-      const defaultHc = (ca === "nghi") 
-        ? { label: "Nghỉ", short: "Nghỉ", deduct: 8, allowSunday: true }
-        : { label: "Đi làm đủ", short: "", deduct: 0, allowSunday: true };
-
-      chamCongData[day] = { hc: defaultHc, ot: "0", midOt: "0" };
-    }
-
-    if (type === "hc") {
-      chamCongData[day].hc = val;
-    } else if (type === "ot") {
-      chamCongData[day].ot = val;
-    } else if (type === "mid-ot") {
-      chamCongData[day].midOt = val;
-    }
-
-    forceClosePicker();
-    updateDayDisplay(day);
-    dongBoVaoBangLuong();
-  }
-
-  window.closePicker = function(e) {
-    if (e.target.id === "pickerOverlay") forceClosePicker();
-  };
-
-  window.forceClosePicker = function() {
-    document.getElementById("pickerOverlay").style.display = "none";
-    currentPickContext = null;
-  };
-
-  function updateDayDisplay(day) {
-    const data = chamCongData[day];
-    if (!data) return;
-
-    const elHc = document.getElementById(`hc_val_${day}`);
-    const elOt = document.getElementById(`ot_val_${day}`);
-    const elMidOt = document.getElementById(`mid_ot_val_${day}`);
-
-    if (elHc) elHc.textContent = data.hc.short;
-    if (elOt) elOt.textContent = data.ot;
-    if (elMidOt) elMidOt.textContent = data.midOt;
-  }
-
-  function dongBoVaoBangLuong() {
-    let tongGioCongThuc = 0;
-    let tongGioTC150 = 0;
-    let tongGioTCDem200 = 0;
-    let tongGioTroCapDem30 = 0;
-    let tongPhepNam = 0;
-
-    const thang = +document.getElementById("thang")?.value || 1;
-    const nam = +document.getElementById("nam")?.value || new Date().getFullYear();
-    const totalDays = new Date(nam, thang, 0).getDate();
-
-    for (let d = 1; d <= totalDays; d++) {
-      const ca = xacDinhCa(nam, thang, d);
-      
-      const defaultHc = (ca === "nghi") 
-        ? { label: "Nghỉ", short: "Nghỉ", deduct: 8, allowSunday: true }
-        : { label: "Đi làm đủ", short: "", deduct: 0, allowSunday: true };
-
-      const data = chamCongData[d] || { hc: defaultHc, ot: "0", midOt: "0" };
-      const deductHours = data.hc.deduct || 0;
-      const otHours = parseFloat(data.ot) || 0;
-      const midOtHours = parseFloat(data.midOt) || 0;
-
-      const gioChuanNgay = Math.max(0, 8 - deductHours);
-      tongGioCongThuc += gioChuanNgay;
-
-      if (ca === "dem") {
-        tongGioTroCapDem30 += (gioChuanNgay > 0) ? 6 : 0;
-        tongGioTCDem200 += midOtHours;
-        tongGioTC150 += otHours;
-      } else {
-        tongGioTC150 += otHours;
-      }
-
-      if (data.hc.label === "Phép năm") tongPhepNam += 1;
-      if (data.hc.label === "1/2 phép năm") tongPhepNam += 0.5;
-    }
-
-    const inpNgayCong = document.getElementById("ngayCong");
-    const inpTc150 = document.getElementById("tc150");
-    const inpTc200 = document.getElementById("tc200");
-    const inpTcDem30 = document.getElementById("tcDem30");
-    const inpPhepNam = document.getElementById("phepNam");
-
-    if (inpNgayCong) inpNgayCong.value = (tongGioCongThuc / 8).toFixed(1).replace(".0", "");
-    if (inpTc150) inpTc150.value = tongGioTC150.toString();
-    if (inpTc200) inpTc200.value = tongGioTCDem200.toString();
-    if (inpTcDem30) inpTcDem30.value = tongGioTroCapDem30.toString();
-    if (inpPhepNam) inpPhepNam.value = tongPhepNam.toString();
-
-    tinhLuong();
-  }
-
-  function renderLichChamCong() {
-    const thang = +document.getElementById("thang")?.value || 1;
-    const nam = +document.getElementById("nam")?.value || new Date().getFullYear();
-    const grid = document.getElementById("chamCongGrid");
-    if (!grid) return;
-    grid.innerHTML = "";
-
-    const firstDate = new Date(nam, thang - 1, 1);
-    const totalDays = new Date(nam, thang, 0).getDate();
-
-    let startDay = firstDate.getDay() - 1;
-    if (startDay === -1) startDay = 6;
-
-    let dayCounter = 1;
-    let totalCells = Math.ceil((startDay + totalDays) / 7) * 7;
-
-    for (let i = 0; i < totalCells; i++) {
-      if (i < startDay || dayCounter > totalDays) {
-        const emptyCell = document.createElement("div");
-        emptyCell.className = "day-card empty";
-        grid.appendChild(emptyCell);
-      } else {
-        const cell = document.createElement("div");
-        const ca = xacDinhCa(nam, thang, dayCounter);
-        
-        let caClass = "ca-ngay";
-        if (ca === "dem") {
-          caClass = "ca-dem";
-        } else if (ca === "nghi") {
-          caClass = "ca-nghi";
-        }
-
-        cell.className = `day-card ${caClass}`;
-
-        const lunar = convertSolar2Lunar(dayCounter, thang, nam, TZ);
-        const lunarLabel = (lunar.day === 1) ? `${lunar.day}/${lunar.month}` : `${lunar.day}`;
-
-        if (!chamCongData[dayCounter]) {
-          const defaultHc = (ca === "nghi") 
-            ? { label: "Nghỉ", short: "Nghỉ", deduct: 8, allowSunday: true }
-            : { label: "Đi làm đủ", short: "", deduct: 0, allowSunday: true };
-
-          chamCongData[dayCounter] = {
-            hc: defaultHc,
-            ot: "0",
-            midOt: "0"
-          };
-        }
-        const data = chamCongData[dayCounter];
-
-        let htmlInner = `
-          <div class="day-top">
-            <span class="solar-num">${dayCounter}</span>
-            <span class="lunar-num">${lunarLabel}</span>
-          </div>
-          <div class="input-cell-val cell-hc" id="hc_val_${dayCounter}" onclick="openPicker(${dayCounter}, 'hc')" title="Giờ hành chính">${data.hc.short}</div>
-          <div class="input-cell-val cell-ot" id="ot_val_${dayCounter}" onclick="openPicker(${dayCounter}, 'ot')" title="Tăng ca">${data.ot}</div>
-        `;
-
-        if (ca === "dem") {
-          htmlInner += `
-            <div class="input-cell-val cell-mid-ot" id="mid_ot_val_${dayCounter}" onclick="openPicker(${dayCounter}, 'mid-ot')" title="Tăng ca giữa giờ đêm">${data.midOt}</div>
-          `;
-        }
-
-        cell.innerHTML = htmlInner;
-        grid.appendChild(cell);
-        dayCounter++;
-      }
-    }
-  }
-
+  // Tính lương ngay khi load trang
   tinhLuong();
-  renderLichChamCong();
 });
