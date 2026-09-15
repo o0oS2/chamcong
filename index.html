@@ -267,104 +267,6 @@ button:hover {
       margin-right: 5px;
     }
 
-/* Responsive cho màn hình nhỏ - về lại layout 1 cột */
-@media screen and (max-width: 768px) {
-  .main-container {
-    display: block;
-  }
-  
-  .left-column, .right-column {
-    flex: none;
-    width: 100%;
-  }
-  
-  body {
-    padding: 10px;
-  }
-  table {
-    font-size: 14px;
-  }
-  table input[type="number"],
-  table input[type="text"],
-  table select {
-    width: 100%;
-    font-size: 16px;
-    padding: 10px 8px;
-  }
-  label,
-  select {
-    display: block;
-    margin-top: 2px;
-    margin-bottom: 2px;
-  }
-  button {
-    width: 100%;
-    font-size: 16px;
-  }
-  th,
-  td {
-    padding: 6px;
-  }
-  h1 {
-    font-size: 22px;
-  }
-
-   .input-row label {
-    font-size: 18px;
-  }
-
-  .input-row input[type="number"],
-  .input-row select {
-    width: 90px;
-    font-size: 14px;
-    height: 18px;
-    text-align: center;
-  }
-  #luongCoBan, #cc_luongCoBan {
-    height: 22px !important;
-    font-size: 18px !important;
-    font-weight: bold;
-    width: 120px !important;
-  }
-  
-  #luongContainer table th:nth-child(1), #luongContainer table td:nth-child(1),
-  #cc_luongContainer table th:nth-child(1), #cc_luongContainer table td:nth-child(1) {
-    width: 45% !important;
-  }
-
-  #luongContainer table th:nth-child(2), #luongContainer table td:nth-child(2),
-  #cc_luongContainer table th:nth-child(2), #cc_luongContainer table td:nth-child(2) {
-    width: 20% !important;
-  }
-
-  #luongContainer table th:nth-child(3), #luongContainer table td:nth-child(3),
-  #cc_luongContainer table th:nth-child(3), #cc_luongContainer table td:nth-child(3) {
-    width: 35% !important;
-  }
-  
-  #bangPhu table th:nth-child(1), #bangPhu table td:nth-child(1),
-  #cc_bangPhu table th:nth-child(1), #cc_bangPhu table td:nth-child(1) {
-    width: 12% !important;
-  }
-  #bangPhu table th:nth-child(2), #bangPhu table td:nth-child(2),
-  #cc_bangPhu table th:nth-child(2), #cc_bangPhu table td:nth-child(2) {
-    width: 30% !important;
-  }
-  #bangPhu table th:nth-child(3), #bangPhu table td:nth-child(3),
-  #cc_bangPhu table th:nth-child(3), #cc_bangPhu table td:nth-child(3) {
-    width: 15% !important;
-    max-width: 50px;
-  }
-  #bangPhu table th:nth-child(4), #bangPhu table td:nth-child(4),
-  #cc_bangPhu table th:nth-child(4), #cc_bangPhu table td:nth-child(4) {
-    width: 15% !important;
-  }
-  #bangPhu table th:nth-child(5), #bangPhu table td:nth-child(5),
-  #cc_bangPhu table th:nth-child(5), #cc_bangPhu table td:nth-child(5) {
-    width: 28% !important;
-  }
-}
-
         /* CSS phần mã QR */
         .contact-section {
             display: flex;
@@ -504,7 +406,7 @@ button:hover {
     .chamcong-tools { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
     .tools-header-row { display: flex; justify-content: space-between; align-items: center; }
     .btn-dao-ca {
-      background: linear-gradient(135deg, #2563eb, #1d4ed8) !important; /* Xanh dương đậm nổi bật */
+      background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
       color: #fff !important;
       border: 1.5px solid #93c5fd !important;
       border-radius: 6px !important;
@@ -523,7 +425,7 @@ button:hover {
       box-shadow: 0 5px 12px rgba(37, 99, 235, 0.5);
     }
     .btn-dao-ca.active { 
-      background: linear-gradient(135deg, #d97706, #b45309) !important; /* Chuyển sang màu cam sáng rực khi đang kích hoạt đảo ca */
+      background: linear-gradient(135deg, #d97706, #b45309) !important;
       border-color: #fde68a !important;
       box-shadow: 0 3px 8px rgba(217, 119, 6, 0.35);
     }
@@ -598,107 +500,65 @@ button:hover {
     }
     .picker-btn:hover, .picker-btn:active { background: #007bff; color: #fff; border-color: #007bff; }
 
-    /* 1. KHI CẦM DỌC ĐIỆN THOẠI (Hiển thị 1 cột dọc, chống vỡ giao diện) */
-@media screen and (max-width: 768px) and (orientation: portrait) {
-  .main-container {
-    display: block !important;
-  }
-  .left-column, .right-column {
-    flex: none !important;
-    width: 100% !important;
-  }
-  .cc-desktop-layout {
-    display: block !important;
-  }
-  .cc-col-right {
-    margin-top: 15px !important;
-    padding: 10px !important;
-    background: #fff !important;
-    border: 1px solid #ddd !important;
-  }
-  .input-cell-val {
-    font-size: 7.5px !important;
-    height: 17px !important;
-    line-height: 16px !important;
-    letter-spacing: -0.5px;
-    padding: 0 1px;
-  }
-  body {
-    padding: 10px;
-  }
-}
-/* KHI XOAY NGANG ĐIỆN THOẠI: GIỮ TAB Ở TRÊN, NỘI DUNG BÊN DƯỚI CHIA 2 CỘT */
-@media screen and (max-width: 900px) and (orientation: landscape) {
-  /* 1. Thanh tab giữ nguyên bề ngang, nằm trọn trên cùng */
-  .main-container {
-    display: block !important;
-    max-width: 100% !important;
-  }
-  
-  .tab-bar {
-    display: flex !important;
-    width: 100% !important;
-    margin-bottom: 10px !important;
-  }
+    /* 1. KHI CẦM DỌC ĐIỆN THOẠI */
+    @media screen and (max-width: 768px) and (orientation: portrait) {
+      .main-container { display: block !important; }
+      .left-column, .right-column { flex: none !important; width: 100% !important; }
+      .cc-desktop-layout { display: block !important; }
+      .cc-col-right {
+        margin-top: 15px !important;
+        padding: 10px !important;
+        background: #fff !important;
+        border: 1px solid #ddd !important;
+      }
+      .input-cell-val {
+        font-size: 7.5px !important;
+        height: 17px !important;
+        line-height: 16px !important;
+        letter-spacing: -0.5px;
+        padding: 0 1px;
+      }
+      body { padding: 10px; }
+    }
 
-  /* 2. Chỉ phần nội dung bên trong mỗi tab (pane) mới chia thành 2 cột */
-  .tab-pane.active .main-container {
-    display: flex !important;
-    flex-direction: row !important;
-    gap: 15px !important;
-  }
+    /* 2. KHI XOAY NGANG ĐIỆN THOẠI */
+    @media screen and (max-width: 900px) and (orientation: landscape) {
+      .main-container { display: block !important; max-width: 100% !important; }
+      .tab-bar { display: flex !important; width: 100% !important; margin-bottom: 10px !important; }
+      .tab-pane.active .main-container {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 15px !important;
+      }
+      .left-column { flex: 0 0 55% !important; min-width: unset !important; }
+      .right-column { flex: 1 !important; }
+      .cc-desktop-layout {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 15px !important;
+        align-items: flex-start !important;
+      }
+      .cc-col-left { flex: 1 !important; }
+      .cc-col-right {
+        flex: 0 0 400px !important;
+        margin-top: 0 !important;
+        padding: 10px !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+      }
+      .calendar-grid { gap: 2px; }
+      .day-card { min-height: 50px !important; padding: 2px !important; }
+      .input-cell-val { font-size: 7.5px !important; height: 15px !important; line-height: 14px !important; }
+      body { padding: 8px; }
+    }
 
-  .left-column {
-    flex: 0 0 55% !important;
-    min-width: unset !important;
-  }
-  
-  .right-column {
-    flex: 1 !important;
-  }
-
-  /* 3. Riêng tab Chấm công giữ chuẩn 2 cột ngang */
-  .cc-desktop-layout {
-    display: flex !important;
-    flex-direction: row !important;
-    gap: 15px !important;
-    align-items: flex-start !important;
-  }
-  .cc-col-left { 
-    flex: 1 !important; 
-  }
-  .cc-col-right {
-    flex: 0 0 400px !important;
-    margin-top: 0 !important;
-    padding: 10px !important;
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-  }
-
-  .calendar-grid {
-    gap: 2px;
-  }
-  .day-card {
-    min-height: 50px !important;
-    padding: 2px !important;
-  }
-  .input-cell-val {
-    font-size: 7.5px !important;
-    height: 15px !important;
-    line-height: 14px !important;
-  }
-  body {
-    padding: 8px;
-  }
-}
-/* BỎ KHUNG BẢNG TÍNH LƯƠNG BÊN PHẢI TAB CHẤM CÔNG */
-.cc-col-right {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-}
+    .cc-col-right {
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+    }
   </style>
 </head>
 <body>
@@ -944,23 +804,14 @@ button:hover {
     </div>
   </div>
 
-  <!-- ================= TAB 2: CHẤM CÔNG (2 CỘT: TRÁI CHẤM CÔNG, PHẢI TÍNH LƯƠNG & BẢNG PHỤ) ================= -->
+  <!-- ================= TAB 2: CHẤM CÔNG ================= -->
   <div id="paneChamCong" class="tab-pane">
-<!-- KHUNG ĐĂNG NHẬP / TÀI KHOẢN -->
-<div id="authContainer" style="background: #fff; padding: 10px 15px; border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-  <div id="loginFormArea" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-    <span style="font-weight: bold; color: #007bff; font-size: 14px;">👤 Tài khoản chấm công:</span>
-    <input type="text" id="authUsername" placeholder="Tên đăng nhập" style="width: 120px; height: 26px; font-size: 13px; padding: 2px 6px; border: 1px solid #ccc; border-radius: 4px;" />
-    <input type="password" id="authPassword" placeholder="Mật khẩu" style="width: 110px; height: 26px; font-size: 13px; padding: 2px 6px; border: 1px solid #ccc; border-radius: 4px;" />
-    <button type="button" onclick="handleLogin()" style="padding: 4px 12px; font-size: 13px; height: 26px; background: #007bff; border-radius: 4px;">Đăng nhập</button>
-    <button type="button" onclick="handleRegister()" style="padding: 4px 12px; font-size: 13px; height: 26px; background: #28a745; border-radius: 4px;">Đăng ký</button>
-  </div>
-  <div id="userInfoArea" style="display: none; align-items: center; gap: 10px;">
-    <span style="font-size: 13px; color: #334155;">Xin chào, <b id="lblUsername" style="color: #007bff;"></b></span>
-    <button type="button" onclick="handleLogout()" style="padding: 2px 10px; font-size: 12px; height: 24px; background: #dc3545; border-radius: 4px;">Đăng xuất</button>
-    <span id="syncStatus" style="font-size: 11px; color: #16a34a; font-weight: bold;">(Đã lưu tự động)</span>
-  </div>
-</div>
+    <!-- Thanh trạng thái tài khoản ở góc trên tab Chấm công (chỉ hiện khi đã đăng nhập) -->
+    <div id="userInfoBar" style="display: none; justify-content: space-between; align-items: center; background: #f8fafc; padding: 6px 12px; border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 10px; font-size: 13px;">
+      <span>👤 Tài khoản: <b id="lblUsername" style="color: #007bff;"></b> <span id="syncStatus" style="font-size: 11px; color: #16a34a; font-weight: bold; margin-left: 8px;">(Đã lưu tự động)</span></span>
+      <button type="button" onclick="handleLogout()" style="padding: 3px 10px; font-size: 12px; height: 24px; background: #dc3545; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Đăng xuất</button>
+    </div>
+
     <div class="cc-desktop-layout">
       <!-- Cột trái: Chấm công -->
       <div class="cc-col-left">
@@ -1134,6 +985,38 @@ button:hover {
 
 </div>
 
+<!-- ================= MODAL ĐĂNG NHẬP / ĐĂNG KÝ (POPUP) ================= -->
+<div id="loginModalOverlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.6); z-index: 99999; justify-content: center; align-items: center; padding: 15px;">
+  <div style="background: #fff; width: 100%; max-width: 380px; border-radius: 10px; box-shadow: 0 8px 25px rgba(0,0,0,0.3); overflow: hidden;">
+    <div style="background: #007bff; color: #fff; padding: 12px 18px; font-weight: bold; font-size: 16px; text-align: center;">
+      🔐 Yêu cầu đăng nhập Chấm công
+    </div>
+    <div style="padding: 20px;">
+      <p style="font-size: 13.5px; color: #555; margin-top: 0; margin-bottom: 15px; text-align: center;">
+        Vui lòng đăng nhập tài khoản để xem và lưu trữ dữ liệu chấm công của riêng bạn.
+      </p>
+      <div style="margin-bottom: 12px;">
+        <label style="display: block; font-size: 13px; font-weight: bold; margin-bottom: 4px; color: #333;">Tên đăng nhập:</label>
+        <input type="text" id="authUsername" placeholder="Nhập tài khoản..." style="width: 100%; height: 34px; padding: 4px 8px; font-size: 14px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;" />
+      </div>
+      <div style="margin-bottom: 18px;">
+        <label style="display: block; font-size: 13px; font-weight: bold; margin-bottom: 4px; color: #333;">Mật khẩu:</label>
+        <div style="position: relative; display: flex; align-items: center;">
+          <input type="password" id="authPassword" placeholder="Nhập mật khẩu..." style="width: 100%; height: 34px; padding: 4px 35px 4px 8px; font-size: 14px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;" />
+          <span id="togglePasswordBtn" onclick="togglePasswordVisibility()" style="position: absolute; right: 10px; cursor: pointer; font-size: 16px; user-select: none;" title="Hiện/Ẩn mật khẩu">👁️‍🗨️</span>
+        </div>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button type="button" onclick="handleLogin()" style="flex: 1; height: 36px; background: #007bff; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">Đăng nhập</button>
+        <button type="button" onclick="handleRegister()" style="flex: 1; height: 36px; background: #28a745; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">Đăng ký</button>
+      </div>
+      <div style="text-align: center; margin-top: 15px;">
+        <button type="button" onclick="closeLoginModalForTabLuong()" style="background: transparent; border: none; color: #666; font-size: 13px; cursor: pointer; text-decoration: underline;">Quay lại tab Tính lương</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL CHỌN GIÁ TRỊ NHANH -->
 <div class="picker-overlay" id="pickerOverlay" onclick="closePicker(event)">
   <div class="picker-modal">
@@ -1177,6 +1060,7 @@ button:hover {
       });
     }
 
+    // Chuyển tab và chặn mở tab Chấm Công nếu chưa đăng nhập
     function switchTab(tabId) {
       document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -1185,11 +1069,45 @@ button:hover {
         document.getElementById('paneLuong').classList.add('active');
         document.getElementById('btnTabLuong').classList.add('active');
       } else {
+        // Kiểm tra xem đã đăng nhập chưa (dựa trên biến currentUser từ google-sync.js)
+        const isLogged = (typeof currentUser !== 'undefined' && currentUser);
+        if (!isLogged) {
+          const modal = document.getElementById("loginModalOverlay");
+          if (modal) modal.style.display = "flex";
+          // Giữ nguyên giao diện ở tab Tính Lương
+          document.getElementById('paneLuong').classList.add('active');
+          document.getElementById('btnTabLuong').classList.add('active');
+          return;
+        }
+
         document.getElementById('paneChamCong').classList.add('active');
         document.getElementById('btnTabChamCong').classList.add('active');
         if (typeof syncChamCongToTinhLuong === 'function') {
           syncChamCongToTinhLuong();
         }
+      }
+    }
+
+    // Nút quay lại tab Tính Lương khi tắt popup đăng nhập
+    function closeLoginModalForTabLuong() {
+      const modal = document.getElementById("loginModalOverlay");
+      if (modal) modal.style.display = "none";
+      switchTab('tabLuong');
+    }
+
+    // Tính năng ẩn/hiện mật khẩu
+    function togglePasswordVisibility() {
+      const passwordInput = document.getElementById("authPassword");
+      const toggleBtn = document.getElementById("togglePasswordBtn");
+      
+      if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        toggleBtn.textContent = "👁️";
+        toggleBtn.title = "Ẩn mật khẩu";
+      } else {
+        passwordInput.type = "password";
+        toggleBtn.textContent = "👁️‍🗨️";
+        toggleBtn.title = "Hiện mật khẩu";
       }
     }
 </script>
