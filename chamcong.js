@@ -695,7 +695,7 @@ const DSHanhChinhChung = [
   syncChamCongToTinhLuong();
 });
 // --- CẤU HÌNH API GOOGLE APPS SCRIPT ---
-const API_URL = "ĐIỀN_WEB_APP_URL_CỦA_ANH_VÀO_ĐÂY"; 
+const API_URL = "https://script.google.com/macros/s/AKfycbxf0muqO7ulrNdARYbwllrupFb0wwrZTwhjaax_FXZSBb1Ft9HEmnSVbuI0ALbK1ITmMQ/exec"; 
 
 let currentUser = localStorage.getItem("cc_currentUser") || null;
 
