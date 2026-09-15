@@ -1,15 +1,13 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // === Khởi tạo select tháng, năm theo logic của bạn ===
+  // === Khởi tạo select tháng, năm[cite: 4] ===
   const thangSelect = document.getElementById("thang");
   const namSelect = document.getElementById("nam");
 
-  // Lấy ngày hiện tại
   const today = new Date();
   const currentMonth = today.getMonth() + 1;
   const currentYear = today.getFullYear();
   const currentDate = today.getDate();
 
-  // Xác định tháng mặc định
   let defaultMonth;
   if (currentDate < 11) {
     defaultMonth = currentMonth === 1 ? 12 : currentMonth - 1;
@@ -17,7 +15,6 @@ document.addEventListener("DOMContentLoaded", function () {
     defaultMonth = currentMonth;
   }
 
-  // Xác định năm mặc định
   let defaultYear;
   if (currentMonth === 1 && currentDate < 11) {
     defaultYear = currentYear - 1;
@@ -25,7 +22,6 @@ document.addEventListener("DOMContentLoaded", function () {
     defaultYear = currentYear;
   }
 
-  // Gán tháng (1-12)
   for (let i = 1; i <= 12; i++) {
     const option = document.createElement("option");
     option.value = i;
@@ -34,7 +30,6 @@ document.addEventListener("DOMContentLoaded", function () {
     thangSelect.appendChild(option);
   }
 
-  // Gán năm
   for (let y = currentYear - 1; y <= currentYear + 1; y++) {
     const option = document.createElement("option");
     option.value = y;
@@ -43,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
     namSelect.appendChild(option);
   }
 
-  // === Phần định dạng số cho tất cả input tiền ===
+  // === Định dạng số cho tất cả input tiền[cite: 4] ===
   function formatNumber(num) {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
@@ -231,7 +226,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // =========================================================================
-  // === LOGIC LỊCH CHẤM CÔNG: XOAY CA 2 TUẦN, ĐẢO CA, TỐI ƯU GIAO DIỆN ===
+  // === LỊCH CHẤM CÔNG: BỎ CHỮ, MÀU Ô KHÁC NHAU TINH TẾ, CA ĐÊM XÁM NHẸ ===
   // =========================================================================
 
   const DSHanhChinh = [
@@ -248,24 +243,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const DSTangCaGiuaGio = ["0", "0.5", "1", "1.5", "2"];
 
-  // Mốc bắt đầu: Thứ Hai 07/09/2026 bắt đầu ca ĐÊM
+  // Mốc bắt đầu: Thứ Hai ngày 07/09/2026 bắt đầu ca ĐÊM
   const MOC_CA_DEM = new Date(2026, 8, 7);
   let isDaoCa = false;
 
-  // Thuật toán xác định ca làm việc
   function xacDinhCa(y, m, d) {
     const curDate = new Date(y, m - 1, d);
-    const dayOfWeek = curDate.getDay(); // 0 là Chủ nhật
+    const dayOfWeek = curDate.getDay();
 
     if (dayOfWeek === 0) {
       return "nghi"; // Chủ nhật nghỉ
     }
 
-    // Tính khoảng cách ngày so với mốc 07/09/2026
     const diffTime = curDate.getTime() - MOC_CA_DEM.getTime();
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     
-    // Chu kỳ 28 ngày: 14 ngày đêm (0-13) và 14 ngày ngày (14-27)
+    // Chu kỳ 28 ngày: 14 ngày ca đêm (0-13) và 14 ngày ca ngày (14-27)
     let mod = diffDays % 28;
     if (mod < 0) mod += 28;
 
@@ -277,7 +270,6 @@ document.addEventListener("DOMContentLoaded", function () {
     return ca;
   }
 
-  // Nút đảo ca
   window.toggleDaoCa = function() {
     isDaoCa = !isDaoCa;
     const btn = document.getElementById("btnDaoCa");
@@ -292,7 +284,7 @@ document.addEventListener("DOMContentLoaded", function () {
     renderLichChamCong();
   };
 
-  // Thuật toán Âm lịch Jean Meeus UTC+7
+  // Thuật toán Âm lịch Jean Meeus UTC+7[cite: 3]
   const TZ = 7;
   const PI = Math.PI;
   function INT(d) { return Math.floor(d); }
@@ -371,7 +363,7 @@ document.addEventListener("DOMContentLoaded", function () {
     return { day: lunarDay, month: lunarMonth, year: lunarYear, leap: lunarLeap === 1 };
   }
 
-  // Render lưới lịch tháng vừa khít màn hình điện thoại
+  // Render lịch chấm công tinh giản
   function renderLichChamCong() {
     const thang = +document.getElementById("thang")?.value || 1;
     const nam = +document.getElementById("nam")?.value || new Date().getFullYear();
@@ -399,13 +391,10 @@ document.addEventListener("DOMContentLoaded", function () {
         const ca = xacDinhCa(nam, thang, dayCounter);
         
         let caClass = "ca-ngay";
-        let caText = "Ca ngày";
         if (ca === "dem") {
           caClass = "ca-dem";
-          caText = "Ca đêm";
         } else if (ca === "nghi") {
           caClass = "ca-nghi";
-          caText = "Nghỉ CN";
         }
 
         cell.className = `day-card ${caClass}`;
@@ -418,27 +407,20 @@ document.addEventListener("DOMContentLoaded", function () {
             <span class="solar-num">${dayCounter}</span>
             <span class="lunar-num">${lunarLabel}</span>
           </div>
-          <div class="day-sub-label">${caText}</div>
-          <div class="form-group-mini">
-            <select class="select-hc" title="Giờ hành chính">
-              ${DSHanhChinh.map(item => `<option value="${item}">${item}</option>`).join('')}
-            </select>
-          </div>
-          <div class="form-group-mini">
-            <select class="select-ot" title="Tăng ca">
-              ${DSTangCa.map(item => `<option value="${item}">${item === '0' ? 'TC: 0' : 'TC: ' + item + 'h'}</option>`).join('')}
-            </select>
-          </div>
+          <select class="select-hc" title="Giờ hành chính">
+            ${DSHanhChinh.map(item => `<option value="${item}">${item}</option>`).join('')}
+          </select>
+          <select class="select-ot" title="Tăng ca">
+            ${DSTangCa.map(item => `<option value="${item}">${item === '0' ? 'TC: 0' : item + 'h'}</option>`).join('')}
+          </select>
         `;
 
-        // Chỉ ca đêm mới hiện tăng ca giữa giờ đêm
+        // Chỉ ca đêm mới hiển thị ô Tăng ca giữa giờ đêm
         if (ca === "dem") {
           htmlInner += `
-            <div class="form-group-mini">
-              <select class="select-mid-ot" title="Tăng ca giữa giờ đêm">
-                ${DSTangCaGiuaGio.map(item => `<option value="${item}">${item === '0' ? 'Đêm: 0' : 'Đêm: ' + item + 'h'}</option>`).join('')}
-              </select>
-            </div>
+            <select class="select-mid-ot" title="Tăng ca giữa giờ đêm">
+              ${DSTangCaGiuaGio.map(item => `<option value="${item}">${item === '0' ? 'Đêm: 0' : item + 'h'}</option>`).join('')}
+            </select>
           `;
         }
 
@@ -449,7 +431,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Khởi chạy tính lương và vẽ lịch
   tinhLuong();
   renderLichChamCong();
 });

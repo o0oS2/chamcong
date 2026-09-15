@@ -213,58 +213,71 @@
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
-    /* ================= GIAO DIỆN LỊCH CHẤM CÔNG TỐI ƯU MOBILE ================= */
+    /* ================= GIAO DIỆN LỊCH CHẤM CÔNG ================= */
     .chamcong-container {
       max-width: 100%;
       margin: 0 auto;
     }
     .chamcong-tools {
       display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .tools-header-row {
+      display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
-      gap: 8px;
       flex-wrap: wrap;
+      gap: 6px;
     }
     .btn-dao-ca {
-      background: #3E4B7A;
+      background: #475569;
       color: #fff;
       border: none;
-      border-radius: 5px;
-      padding: 6px 12px;
-      font-size: 13px;
+      border-radius: 4px;
+      padding: 5px 12px;
+      font-size: 12.5px;
       font-weight: bold;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
     }
     .btn-dao-ca.active {
-      background: #c8862a;
+      background: #d97706;
     }
-    .ca-legend {
+    
+    /* Chú thích màu sắc trên cùng (Legend) */
+    .legend-box {
       display: flex;
-      gap: 10px;
-      font-size: 12px;
-      font-weight: bold;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+      background: #fff;
+      padding: 6px 10px;
+      border-radius: 5px;
+      border: 1px solid #e2e8f0;
+      font-size: 11.5px;
+      color: #334155;
     }
-    .ca-legend span {
-      display: flex;
+    .legend-item {
+      display: inline-flex;
       align-items: center;
       gap: 4px;
     }
-    .badge-color {
+    .dot-sample {
       width: 12px;
       height: 12px;
       border-radius: 3px;
       display: inline-block;
+      border: 1px solid rgba(0,0,0,0.1);
     }
 
-    /* Grid Lịch 7 Cột Chuẩn Điện Thoại */
+    /* Grid Lịch 7 Cột Chuẩn Màn Hình Điện Thoại */
     .calendar-grid {
       display: grid;
       grid-template-columns: repeat(7, minmax(0, 1fr));
-      gap: 3px;
+      gap: 2.5px;
       width: 100%;
     }
     .grid-header {
@@ -273,133 +286,122 @@
       font-size: 11.5px;
       font-weight: bold;
       text-align: center;
-      padding: 5px 1px;
+      padding: 4px 1px;
       border-radius: 3px;
     }
     .day-card {
       border-radius: 4px;
       padding: 3px 2px;
-      min-height: 96px;
+      min-height: 78px;
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
+      gap: 2px;
       border: 1px solid #ddd;
       box-sizing: border-box;
-      overflow: hidden;
     }
     .day-card.empty {
-      background: #f0f0f0;
-      border: 1px dashed #e0e0e0;
+      background: #f1f5f9;
+      border: 1px dashed #cbd5e1;
       min-height: 40px;
     }
 
-    /* Ca ngày: Sáng */
+    /* Ca ngày: Sáng dịu */
     .day-card.ca-ngay {
-      background-color: #fff9e6;
-      border-color: #f3d489;
-      color: #333;
-    }
-    .day-card.ca-ngay .day-sub-label {
-      color: #b86200;
+      background-color: #f8fafc;
+      border-color: #cbd5e1;
     }
     .day-card.ca-ngay .solar-num {
-      color: #4a2800;
+      color: #1e293b;
     }
     .day-card.ca-ngay .lunar-num {
-      color: #a33800;
-    }
-    .day-card.ca-ngay select {
-      background: #fff;
-      color: #222;
-      border-color: #e2c176;
+      color: #b91c1c;
     }
 
-    /* Ca đêm: Tối */
+    /* Ca đêm: Màu xám nhẹ tinh tế */
     .day-card.ca-dem {
-      background-color: #242e52;
-      border-color: #171d36;
-      color: #f1f3fa;
-    }
-    .day-card.ca-dem .day-sub-label {
-      color: #a5b4fc;
+      background-color: #475569;
+      border-color: #334155;
     }
     .day-card.ca-dem .solar-num {
       color: #ffffff;
     }
     .day-card.ca-dem .lunar-num {
-      color: #ffd166;
-    }
-    .day-card.ca-dem select {
-      background: #18203d;
-      color: #ffffff;
-      border-color: #3b4877;
+      color: #fde047;
     }
 
-    /* Ngày nghỉ CN */
+    /* Ngày nghỉ Chủ Nhật */
     .day-card.ca-nghi {
-      background-color: #fbebee;
-      border-color: #f3c2cb;
-      color: #555;
+      background-color: #fee2e2;
+      border-color: #fca5a5;
     }
-    .day-card.ca-nghi .solar-num { color: #b71c1c; }
-    .day-card.ca-nghi .day-sub-label { color: #c62828; }
+    .day-card.ca-nghi .solar-num { color: #dc2626; }
+    .day-card.ca-nghi .lunar-num { color: #991b1b; }
 
     .day-top {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      margin-bottom: 2px;
       line-height: 1;
+      padding: 0 1px;
+      margin-bottom: 1px;
     }
     .solar-num {
       font-size: 13px;
       font-weight: 800;
     }
     .lunar-num {
-      font-size: 9.5px;
+      font-size: 9px;
       font-weight: 600;
     }
-    .day-sub-label {
-      font-size: 9px;
-      font-weight: bold;
-      text-align: center;
-      margin-bottom: 2px;
-      line-height: 1.1;
-      text-transform: uppercase;
-    }
 
-    .form-group-mini {
-      display: flex;
-      flex-direction: column;
-      margin-bottom: 2px;
-    }
+    /* Các ô chọn được phân biệt màu sắc pastel nhẹ nhàng */
     .day-card select {
       width: 100%;
       height: 20px;
-      font-size: 10.5px;
+      font-size: 10px;
       padding: 0 1px;
       border-radius: 3px;
       outline: none;
       box-sizing: border-box;
-      line-height: 18px;
+      font-weight: 500;
     }
 
-    /* Responsive màn hình nhỏ */
+    /* Màu ô Giờ hành chính: Xanh ngọc nhạt */
+    .select-hc {
+      background-color: #ecfdf5 !important;
+      color: #065f46 !important;
+      border: 1px solid #a7f3d0 !important;
+    }
+    /* Màu ô Tăng ca: Cam pastel nhạt */
+    .select-ot {
+      background-color: #fff7ed !important;
+      color: #9a3412 !important;
+      border: 1px solid #fed7aa !important;
+    }
+    /* Màu ô Tăng ca giữa giờ đêm: Tím lavender nhạt */
+    .select-mid-ot {
+      background-color: #f5f3ff !important;
+      color: #5b21b6 !important;
+      border: 1px solid #ddd6fe !important;
+    }
+
+    /* Responsive */
     @media screen and (max-width: 768px) {
       body { padding: 6px; }
       .main-container { display: block; }
       .left-column, .right-column { width: 100%; }
       .tab-bar { max-width: 100%; }
-      .day-card { min-height: 90px; padding: 2px 1px; }
+      .day-card { min-height: 72px; padding: 2px 1px; }
       .solar-num { font-size: 12px; }
-      .lunar-num { font-size: 8.5px; }
-      .day-card select { font-size: 10px; height: 19px; }
+      .lunar-num { font-size: 8px; }
+      .day-card select { font-size: 9.5px; height: 18px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- PHẦN CHỌN LƯƠNG CƠ BẢN VÀ THÁNG, NĂM -->
+  <!-- PHẦN CHỌN LƯƠNG CƠ BẢN VÀ THÁNG, NĂM[cite: 2] -->
   <div class="input-row">
     <div class="group">
       <label for="luongCoBan"><strong>LCB:</strong></label>
@@ -415,13 +417,13 @@
     </div>
   </div>
 
-  <!-- 2 TAB ĐIỀU HƯỚNG BÊN DƯỚI THÁNG, NĂM -->
+  <!-- 2 TAB ĐIỀU HƯỚNG[cite: 2] -->
   <div class="tab-bar">
     <button type="button" class="tab-btn active" id="btnTabLuong" onclick="chuyenTab('tabLuong')">💰 Bảng Tính Lương</button>
     <button type="button" class="tab-btn" id="btnTabChamCong" onclick="chuyenTab('tabChamCong')">📅 Chấm Công</button>
   </div>
 
-  <!-- ================= TAB 1: TÍNH LƯƠNG (GIỮ NGUYÊN 100% CỦA BẠN) ================= -->
+  <!-- ================= TAB 1: TÍNH LƯƠNG[cite: 2] ================= -->
   <div id="tabLuong" class="tab-content active">
     <div class="main-container">
       <div class="left-column">
@@ -641,17 +643,36 @@
     </div>
   </div>
 
-  <!-- ================= TAB 2: CHẤM CÔNG (TỐI ƯU MÀN HÌNH ĐIỆN THOẠI) ================= -->
+  <!-- ================= TAB 2: CHẤM CÔNG (TINH TẾ & GỌN GÀNG) ================= -->
   <div id="tabChamCong" class="tab-content">
     <div class="chamcong-container">
       <div class="chamcong-tools">
-        <button type="button" class="btn-dao-ca" id="btnDaoCa" onclick="toggleDaoCa()">
-          <span>⇄</span> <span id="lblDaoCa">Đảo ca ngày/đêm</span>
-        </button>
-        <div class="ca-legend">
-          <span><i class="badge-color" style="background:#fff9e6; border:1px solid #e2c176;"></i> Ca ngày</span>
-          <span><i class="badge-color" style="background:#242e52;"></i> Ca đêm</span>
-          <span><i class="badge-color" style="background:#fbebee; border:1px solid #f3c2cb;"></i> Nghỉ</span>
+        <div class="tools-header-row">
+          <button type="button" class="btn-dao-ca" id="btnDaoCa" onclick="toggleDaoCa()">
+            <span>⇄</span> <span id="lblDaoCa">Đảo ca ngày/đêm</span>
+          </button>
+        </div>
+
+        <!-- Chú thích rõ ràng các màu sắc ở trên đầu bảng -->
+        <div class="legend-box">
+          <div class="legend-item">
+            <span class="dot-sample" style="background:#f8fafc; border-color:#cbd5e1;"></span> Ca ngày
+          </div>
+          <div class="legend-item">
+            <span class="dot-sample" style="background:#475569; border-color:#334155;"></span> Ca đêm (Xám nhẹ)
+          </div>
+          <div class="legend-item">
+            <span class="dot-sample" style="background:#fee2e2; border-color:#fca5a5;"></span> Nghỉ CN
+          </div>
+          <div class="legend-item">
+            <span class="dot-sample" style="background:#ecfdf5; border-color:#a7f3d0;"></span> Giờ HC
+          </div>
+          <div class="legend-item">
+            <span class="dot-sample" style="background:#fff7ed; border-color:#fed7aa;"></span> Tăng ca
+          </div>
+          <div class="legend-item">
+            <span class="dot-sample" style="background:#f5f3ff; border-color:#ddd6fe;"></span> TC giữa giờ đêm
+          </div>
         </div>
       </div>
 
