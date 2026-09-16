@@ -126,6 +126,28 @@ document.addEventListener("DOMContentLoaded", function () {
     return false;
   }
 
+  // Khi sang tháng/năm mới (chưa có dữ liệu lưu sẵn): chỉ xóa lịch chấm công
+  // và bảng "Lương ngày lễ, tết" (cả 2 tab), GIỮ NGUYÊN lương cơ bản & các phụ cấp
+  window.clearAttendanceAndHolidayForNewMonth = function() {
+    Object.keys(chamCongData).forEach(k => delete chamCongData[k]);
+    renderLichChamCong();
+
+    const holidayIds = [
+      "soGioHanhChinh1", "phuLuongHanhChinh", "soGioTangCa1", "phuLuongTangCa", "soGioDem1", "phuLuongDem",
+      "soGioHanhChinh2", "phuLuongHanhChinh2", "soGioTangCa2", "phuLuongTangCa2", "soGioDem2", "phuLuongDem2",
+      "cc_soGioHanhChinh1", "cc_phuLuongHanhChinh", "cc_soGioTangCa1", "cc_phuLuongTangCa", "cc_soGioDem1", "cc_phuLuongDem",
+      "cc_soGioHanhChinh2", "cc_phuLuongHanhChinh2", "cc_soGioTangCa2", "cc_phuLuongTangCa2", "cc_soGioDem2", "cc_phuLuongDem2"
+    ];
+    holidayIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = "";
+    });
+
+    syncChamCongToTinhLuong();
+    if (typeof window.tinhLuong === "function") window.tinhLuong();
+    triggerCcComputeEngine();
+  };
+
   // Đổi ca xoay vòng 3 nấc
   window.toggleDaoCa = function() {
     if (hasUserModifiedData()) {
@@ -405,7 +427,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (dayOfWeek === 0 || holiday) caClass = "ca-nghi";
         else if (ca === "dem") caClass = "ca-dem";
 
-        cell.className = `day-card ${caClass}`;
+        cell.className = `day-card ${caClass} ${ca === "dem" ? "shift-tall" : "shift-short"}`;
         const lunarLabel = (lunar.day === 1) ? `${lunar.day}/${lunar.month}` : `${lunar.day}`;
 
         if (!chamCongData[dayCounter]) {
@@ -721,10 +743,7 @@ document.addEventListener("DOMContentLoaded", function () {
           if (typeof window.loadUserDataFromCloud === "function" && localStorage.getItem("cc_currentUser")) {
             window.loadUserDataFromCloud();
           } else {
-            Object.keys(chamCongData).forEach(k => delete chamCongData[k]);
-            renderLichChamCong();
-            syncChamCongToTinhLuong();
-            if (typeof window.tinhLuong === "function") window.tinhLuong();
+            window.clearAttendanceAndHolidayForNewMonth();
           }
         };
         body.appendChild(btn);
@@ -752,10 +771,7 @@ document.addEventListener("DOMContentLoaded", function () {
           if (typeof window.loadUserDataFromCloud === "function" && localStorage.getItem("cc_currentUser")) {
             window.loadUserDataFromCloud();
           } else {
-            Object.keys(chamCongData).forEach(k => delete chamCongData[k]);
-            renderLichChamCong();
-            syncChamCongToTinhLuong();
-            if (typeof window.tinhLuong === "function") window.tinhLuong();
+            window.clearAttendanceAndHolidayForNewMonth();
           }
         };
         body.appendChild(btn);

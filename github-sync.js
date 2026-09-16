@@ -168,7 +168,7 @@ window.autoSaveUserData = function() {
     });
 
     const payload = {
-      base_salary: document.getElementById("cc_luongCoBan")?.value || document.getElementById("luongCoBan")?.value || "0",
+      base_salary: document.getElementById("cc_luongCoBan")?.value || document.getElementById("luongCoBan")?.value || "",
       allowances: allowances,
       extra_fields: extraInputs,
       timesheet: window.chamCongData || {},

@@ -276,6 +276,26 @@
       color: #fff !important;
     }
 
+    .btn-install-app {
+      padding: 2px 8px !important;
+      height: 30px !important;
+      font-size: 12px !important;
+      font-weight: bold !important;
+      background: #e7f1ff !important;
+      color: #007bff !important;
+      border: 1px solid #007bff !important;
+      border-radius: 4px !important;
+      cursor: pointer !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 3px;
+      white-space: nowrap;
+    }
+    .btn-install-app:hover {
+      background: #007bff !important;
+      color: #fff !important;
+    }
+
     .user-info-area {
       display: flex;
       align-items: center;
@@ -372,7 +392,7 @@
       #cc_bangPhu table td:nth-child(5), #cc_bangPhu table td:nth-child(5) { width: 28% !important; }
 
       /* Giữ các nút nhỏ (Xóa, Đổi ca, Đăng xuất, tab) gọn gàng, không kéo full-width */
-      .btn-xoa-tab, .btn-dao-ca, .btn-logout, .tab-btn {
+      .btn-xoa-tab, .btn-dao-ca, .btn-logout, .tab-btn, .btn-install-app {
         width: auto !important;
         flex: 0 0 auto !important;
       }
@@ -383,6 +403,7 @@
         height: 28px !important;
       }
       .user-info-area { justify-content: flex-start; }
+      #authContainer button { width: auto !important; }
     }
 
     .contact-section { display: flex; gap: 20px; align-items: flex-start; max-width: 100%; margin: 0 auto; }
@@ -425,7 +446,19 @@
     #luongCoBan::placeholder, #cc_luongCoBan::placeholder { font-size: 14px; color: #aaa; font-weight: normal; }
     .footer { text-align: center; font-size: 14px; color: #555; margin-top: 20px; padding: 10px 0; border-top: 1px solid #ccc; }
 
-    .tab-bar { display: flex; gap: 10px; margin-bottom: 20px; justify-content: flex-start; }
+    .top-bar-row {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 10px; margin-bottom: 15px;
+    }
+    .tab-bar { display: flex; gap: 10px; justify-content: flex-start; }
+    #authContainer {
+      background: #fff; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px;
+      display: flex; align-items: center; flex-wrap: wrap; gap: 6px;
+    }
+    @media screen and (max-width: 768px) {
+      .top-bar-row { gap: 6px; margin-bottom: 10px; }
+      #authContainer { width: 100%; justify-content: flex-start; }
+    }
     .tab-btn { padding: 10px 24px; font-size: 15px; font-weight: bold; border: 1.5px solid #007bff; border-radius: 5px; background: #fff; color: #007bff; cursor: pointer; }
     .tab-btn.active { background: #007bff; color: #fff; }
     .tab-pane { display: none; }
@@ -472,8 +505,10 @@
 
     .calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2.5px; width: 100%; }
     .grid-header { background: #007bff; color: #fff; font-size: 11.5px; font-weight: bold; text-align: center; padding: 4px 1px; border-radius: 3px; }
-    .day-card { border-radius: 4px; padding: 5px 3px; min-height: 105px; display: flex; flex-direction: column; justify-content: flex-start; gap: 3px; border: 1px solid #ddd; box-sizing: border-box; }
+    .day-card { border-radius: 4px; padding: 5px 3px; display: flex; flex-direction: column; justify-content: flex-start; gap: 3px; border: 1px solid #ddd; box-sizing: border-box; }
     .day-card.empty { background: #f8fafc; border: 1px dashed #cbd5e1; min-height: 40px; }
+    .day-card.shift-tall { min-height: 105px; }
+    .day-card.shift-short { min-height: 72px; }
     .day-card.ca-ngay { background-color: #fffdf5; border-color: #fce7b2; }
     .day-card.ca-ngay .solar-num { color: #1e293b; }
     .day-card.ca-ngay .lunar-num { color: #b91c1c; }
@@ -493,7 +528,12 @@
       text-align: center; border-radius: 3px; box-sizing: border-box; cursor: pointer;
       user-select: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.2px;
     }
-    .cell-hc { background-color: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+    .cell-hc {
+      background-color: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0;
+      white-space: normal; line-height: 1.1; font-size: 11px; word-break: break-word;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+      height: auto; min-height: 26px; align-items: center;
+    }
     .cell-ot { background-color: #fff7ed; color: #9a3412; border: 1px solid #fed7aa; }
     .cell-mid-ot { background-color: #f5f3ff; color: #5b21b6; border: 1px solid #ddd6fe; }
 
@@ -525,7 +565,30 @@
       .cc-desktop-layout { display: block !important; }
       .cc-col-right { margin-top: 15px !important; padding: 10px !important; background: #fff !important; border: 1px solid #ddd !important; }
       .input-cell-val { font-size: 11px !important; height: 26px !important; line-height: 24px !important; letter-spacing: -0.4px; padding: 0 1px; }
+      .cell-hc { height: auto !important; min-height: 26px !important; line-height: 1.1 !important; white-space: normal !important; }
       body { padding: 10px; }
+
+      /* LCB + Tháng + Năm + nút Xóa gọn trên cùng 1 dòng */
+      .input-row {
+        flex-wrap: nowrap !important;
+        justify-content: flex-start !important;
+        gap: 3px !important;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .input-row .group { gap: 2px !important; flex: 0 0 auto; }
+      .input-row label { font-size: 13px !important; margin: 0 !important; }
+      #luongCoBan, #cc_luongCoBan {
+        width: 78px !important; min-width: 78px !important; font-size: 13px !important; height: 24px !important;
+      }
+      .input-row .btn-dropdown-select {
+        font-size: 11px !important; padding: 0 2px !important; height: 24px !important;
+      }
+      #btnThangLuong, #btnThangCC { width: 40px !important; }
+      #btnNamLuong, #btnNamCC { width: 54px !important; }
+      .input-row .btn-xoa-tab, .input-row .btn-install-app {
+        font-size: 10.5px !important; padding: 3px 6px !important; height: 24px !important; margin-left: 2px !important;
+      }
     }
 
     @media screen and (max-width: 900px) and (orientation: landscape) {
@@ -538,7 +601,9 @@
       .cc-col-left { flex: 1 !important; }
       .cc-col-right { flex: 0 0 400px !important; margin-top: 0 !important; padding: 10px !important; background: transparent !important; border: none !important; box-shadow: none !important; }
       .calendar-grid { gap: 2px; }
-      .day-card { min-height: 75px !important; padding: 3px !important; }
+      .day-card { padding: 3px !important; }
+      .day-card.shift-tall { min-height: 75px !important; }
+      .day-card.shift-short { min-height: 52px !important; }
       .input-cell-val { font-size: 11px !important; height: 22px !important; line-height: 20px !important; }
       body { padding: 8px; }
     }
@@ -554,10 +619,27 @@
 <body>
 <div class="main-container" style="display:block;">
 
-  <!-- CỤM 2 TAB ĐIỀU HƯỚNG TRÊN CÙNG -->
-  <div class="tab-bar">
-    <button type="button" class="tab-btn active" id="btnTabLuong" onclick="switchTab('tabLuong')">💰 Tính Lương</button>
-    <button type="button" class="tab-btn" id="btnTabChamCong" onclick="switchTab('tabChamCong')">📅 Chấm Công</button>
+  <!-- CỤM 2 TAB ĐIỀU HƯỚNG + ĐĂNG NHẬP TRÊN CÙNG MỘT HÀNG -->
+  <div class="top-bar-row">
+    <div class="tab-bar">
+      <button type="button" class="tab-btn active" id="btnTabLuong" onclick="switchTab('tabLuong')">💰 Tính Lương</button>
+      <button type="button" class="tab-btn" id="btnTabChamCong" onclick="switchTab('tabChamCong')">📅 Chấm Công</button>
+    </div>
+
+    <div id="authContainer">
+      <div id="loginFormArea" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+        <span style="font-weight: bold; color: #007bff; font-size: 14px;">👤 Tài khoản chấm công:</span>
+        <input type="text" id="authUsername" placeholder="Tên đăng nhập" style="width: 120px; height: 26px; font-size: 13px; padding: 2px 6px; border: 1px solid #ccc; border-radius: 4px;" />
+        <input type="password" id="authPassword" placeholder="Mật khẩu" style="width: 110px; height: 26px; font-size: 13px; padding: 2px 6px; border: 1px solid #ccc; border-radius: 4px;" />
+        <button type="button" onclick="handleLogin()" style="padding: 4px 12px; font-size: 13px; height: 26px; background: #007bff; border-radius: 4px; border:none; color:#fff; cursor:pointer;">Đăng nhập</button>
+        <button type="button" onclick="handleRegister()" style="padding: 4px 12px; font-size: 13px; height: 26px; background: #28a745; border-radius: 4px; border:none; color:#fff; cursor:pointer;">Đăng ký</button>
+      </div>
+      <div id="userInfoArea" class="user-info-area">
+        <span class="user-info-name">Xin chào, <b id="lblUsername" style="color: #007bff;"></b></span>
+        <button type="button" class="btn-logout" onclick="handleLogout()">Đăng xuất</button>
+        <span id="syncStatus" class="sync-status">Đã lưu</span>
+      </div>
+    </div>
   </div>
 
   <!-- ================= TAB 1: TÍNH LƯƠNG (GỐC) ================= -->
@@ -584,6 +666,9 @@
 
             <button type="button" class="btn-xoa-tab" onclick="clearDataTabLuong()" title="Chỉ xóa dữ liệu của bảng tính lương" style="margin-left: 4px;">
               🗑 Xóa
+            </button>
+            <button type="button" class="btn-install-app" onclick="handleInstallApp()" title="Cài ứng dụng / mở bằng trình duyệt Chrome hoặc Safari">
+              📲 Cài đặt
             </button>
           </div>
         </div>
@@ -711,13 +796,6 @@
       </div>
 
       <div class="right-column">
-        <div style="text-align: center; margin: 3px 0; padding: 4px 8px; border: 1px solid #ccc; border-radius: 6px;">
-          <h4 style="margin: 3px 0 8px;">📥 <a href="Files/Tinh_luong.xlsx" download> Tải file Excel tính lương - chấm công</a> 📥</h4>
-          <p style="margin: 0 0 8px; color: #d00; font-size: 14px;">
-            ⚠ Mở bằng trình duyệt: <strong>Safari</strong>, <strong>Chrome</strong>...Không mở bằng <strong>Zalo</strong> hoặc <strong>Messenger</strong> vì bị lỗi không tải được.
-          </p>
-        </div>
-
         <div style="margin: 5px 0; padding: 6px 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; line-height: 1.4;">
           <h4 style="margin: 4px 0 2px;">📌 Quy tắc tính lương</h4>
           <ul style="margin: 0 0 6px 16px; padding-left: 0;">
@@ -796,28 +874,22 @@
             <p>🔗 <a href="https://chanquangcao.pages.dev/" target="_blank" style="text-decoration: none; color: #0073e6;">DNS - VPN Cloudflare chặn quảng cáo</a></p>
           </div>
         </div>
-        <div class="footer">• Phiên bản 1.9, cập nhật ngày 28/09/2025 •</div>
+
+        <div style="text-align: center; margin: 3px 0; padding: 4px 8px; border: 1px solid #ccc; border-radius: 6px;">
+          <h4 style="margin: 3px 0 8px;">📥 <a href="Files/Tinh_luong.xlsx" download> Tải file Excel tính lương - chấm công</a> 📥</h4>
+          <p style="margin: 0 0 8px; color: #d00; font-size: 14px;">
+            ⚠ Mở bằng trình duyệt: <strong>Safari</strong>, <strong>Chrome</strong>...Không mở bằng <strong>Zalo</strong> hoặc <strong>Messenger</strong> vì bị lỗi không tải được.
+          </p>
+          <p style="margin: 0; color: #888; font-size: 12px;">Dừng hỗ trợ từ 09/2026</p>
+        </div>
+
+        <div class="footer">• Phiên bản 2.0, cập nhật ngày 09.09.2026 •</div>
       </div>
     </div>
   </div>
 
   <!-- ================= TAB 2: CHẤM CÔNG ================= -->
   <div id="paneChamCong" class="tab-pane">
-    <div id="authContainer" style="background: #fff; padding: 10px 15px; border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-      <div id="loginFormArea" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-        <span style="font-weight: bold; color: #007bff; font-size: 14px;">👤 Tài khoản chấm công:</span>
-        <input type="text" id="authUsername" placeholder="Tên đăng nhập" style="width: 120px; height: 26px; font-size: 13px; padding: 2px 6px; border: 1px solid #ccc; border-radius: 4px;" />
-        <input type="password" id="authPassword" placeholder="Mật khẩu" style="width: 110px; height: 26px; font-size: 13px; padding: 2px 6px; border: 1px solid #ccc; border-radius: 4px;" />
-        <button type="button" onclick="handleLogin()" style="padding: 4px 12px; font-size: 13px; height: 26px; background: #007bff; border-radius: 4px; border:none; color:#fff; cursor:pointer;">Đăng nhập</button>
-        <button type="button" onclick="handleRegister()" style="padding: 4px 12px; font-size: 13px; height: 26px; background: #28a745; border-radius: 4px; border:none; color:#fff; cursor:pointer;">Đăng ký</button>
-      </div>
-      <div id="userInfoArea" class="user-info-area">
-        <span class="user-info-name">Xin chào, <b id="lblUsername" style="color: #007bff;"></b></span>
-        <button type="button" class="btn-logout" onclick="handleLogout()">Đăng xuất</button>
-        <span id="syncStatus" class="sync-status">Đã lưu</span>
-      </div>
-    </div>
-
     <div class="cc-desktop-layout">
       <div class="cc-col-left">
         <!-- HÀNG LCB TAB CHẤM CÔNG CHỈ CÓ LCB, DROPDOWN THÁNG VÀ NĂM -->
@@ -853,6 +925,9 @@
             <!-- Nút Xóa dữ liệu của riêng Tab 2 -->
             <button type="button" class="btn-xoa-tab" onclick="clearDataTabChamCong()" style="height: 34px !important; padding: 4px 12px !important; font-size: 13px !important; white-space: nowrap; margin: 0;" title="Chỉ xóa lịch chấm công và bảng lương tạo từ chấm công">
               🗑 Xóa
+            </button>
+            <button type="button" class="btn-install-app" onclick="handleInstallApp()" style="height: 34px !important; padding: 4px 12px !important; font-size: 13px !important; white-space: nowrap; margin: 0;" title="Cài ứng dụng / mở bằng trình duyệt Chrome hoặc Safari">
+              📲 Cài đặt
             </button>
           </div>
 
@@ -1042,6 +1117,52 @@
       showToast("Lỗi khi sao chép!");
     });
   }
+
+  // ==== NÚT CÀI ĐẶT ỨNG DỤNG / MỞ BẰNG CHROME - SAFARI ====
+  let deferredInstallPrompt = null;
+  window.addEventListener("beforeinstallprompt", function (e) {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+  });
+
+  function isInAppBrowser() {
+    const ua = navigator.userAgent || "";
+    return /FBAN|FBAV|Zalo|Instagram|Line\//i.test(ua);
+  }
+
+  window.handleInstallApp = async function () {
+    const ua = navigator.userAgent || navigator.vendor || "";
+    const isAndroid = /android/i.test(ua);
+    const isIOS = /iphone|ipad|ipod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+    if (isAndroid) {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        try { await deferredInstallPrompt.userChoice; } catch (e) {}
+        deferredInstallPrompt = null;
+        return;
+      }
+      // Không có prompt cài đặt sẵn (VD: đang mở trong Zalo/Messenger) -> mở bằng Chrome
+      const url = window.location.href.replace(/^https?:\/\//, "");
+      const intentUrl = `intent://${url}#Intent;scheme=https;package=com.android.chrome;end`;
+      showToast("Đang mở bằng Chrome...");
+      window.location.href = intentUrl;
+      return;
+    }
+
+    if (isIOS) {
+      if (isInAppBrowser()) {
+        // Cố gắng buộc mở bằng Safari
+        showToast("Đang mở bằng Safari...");
+        window.location.href = "x-safari-" + window.location.href;
+      } else {
+        alert("Để cài ứng dụng trên iPhone/iPad:\n1. Bấm nút Chia sẻ (Share) ở Safari\n2. Chọn 'Thêm vào MH chính' (Add to Home Screen)");
+      }
+      return;
+    }
+
+    alert("Vui lòng mở trang này bằng trình duyệt Chrome (Android) hoặc Safari (iPhone/iPad) để cài đặt ứng dụng.");
+  };
 
   function switchTab(tabId) {
     document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
