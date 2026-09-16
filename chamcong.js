@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function () {
     return ca;
   }
 
-  // Cập nhật nhãn ca bên cạnh nút Đổi ca
+ // Cập nhật nhãn ca bên cạnh nút Đổi ca (Chỉ hiển thị: Ca ngày hoặc Ca đêm)
   window.updateDaoCaButtonUI = function() {
     const lblKetQua = document.getElementById("lblKetQuaCa");
     if (!lblKetQua) return;
@@ -86,18 +86,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const today = new Date();
     const caHomNay = xacDinhCa(today.getFullYear(), today.getMonth() + 1, today.getDate());
 
+    // Dù là Chủ nhật hay Ngày lễ, nếu ca làm là đêm thì hiển thị Ca đêm, ngược lại hiển thị Ca ngày
     if (caHomNay === "dem") {
-      lblKetQua.textContent = "Hôm nay: Ca đêm";
+      lblKetQua.textContent = "Ca đêm";
       lblKetQua.style.color = "#1e293b";
       lblKetQua.style.background = "#e2e8f0";
       lblKetQua.style.borderColor = "#cbd5e1";
-    } else if (caHomNay === "nghi") {
-      lblKetQua.textContent = "Hôm nay: Chủ nhật";
-      lblKetQua.style.color = "#dc2626";
-      lblKetQua.style.background = "#fee2e2";
-      lblKetQua.style.borderColor = "#fca5a5";
     } else {
-      lblKetQua.textContent = "Hôm nay: Ca ngày";
+      lblKetQua.textContent = "Ca ngày";
       lblKetQua.style.color = "#b45309";
       lblKetQua.style.background = "#fffdf5";
       lblKetQua.style.borderColor = "#fce7b2";
