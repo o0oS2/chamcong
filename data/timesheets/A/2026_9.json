@@ -18,7 +18,7 @@
     "cc_ngayCong200": "0",
     "cc_tc300": "0",
     "cc_tc340": "0",
-    "cc_tcDem70": "0",
+    "cc_tcDem70": "1",
     "cc_thongca380": "",
     "cc_phepNam": "0",
     "cc_le": "1",
@@ -368,5 +368,5 @@
     }
   },
   "shift_mode": "chuyen_ngay",
-  "updated_at": "2026-09-16T23:32:21.032Z"
+  "updated_at": "2026-09-16T23:49:56.435Z"
 }
