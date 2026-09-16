@@ -1,9 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const MOC_CA_DEM = new Date(2026, 8, 7);
-  // Các chế độ ca: 'chuan' (2 tuần đổi), 'dao' (đã đảo), 'chuyen_ngay' (chuyên ngày)
+  const MOC_CA_DEM = new Date(2026, 8, 7); // Mốc chuẩn: 07/09/2026 bắt đầu ca đêm
+  // Chế độ ca: 'chuan' (2 tuần đổi), 'dao' (đã đảo ca), 'chuyen_ngay' (chuyên ca ngày)
   window.currentShiftMode = window.currentShiftMode || "chuan";
 
-  // Danh mục giờ hành chính
   const DSHanhChinhChung = [
     { label: "Đi làm đủ", short: "Đi làm đủ", type: "du", value: 0, allowSunday: true },
     { label: "Nghỉ", short: "Nghỉ", type: "nghi", value: 8, allowSunday: true },
@@ -92,6 +91,11 @@ document.addEventListener("DOMContentLoaded", function () {
       lblKetQua.style.color = "#1e293b";
       lblKetQua.style.background = "#e2e8f0";
       lblKetQua.style.borderColor = "#cbd5e1";
+    } else if (caHomNay === "nghi") {
+      lblKetQua.textContent = "Hôm nay: Chủ nhật";
+      lblKetQua.style.color = "#dc2626";
+      lblKetQua.style.background = "#fee2e2";
+      lblKetQua.style.borderColor = "#fca5a5";
     } else {
       lblKetQua.textContent = "Hôm nay: Ca ngày";
       lblKetQua.style.color = "#b45309";
@@ -100,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   };
 
-  // Kiểm tra xem người dùng đã sửa gì chưa
+  // Kiểm tra dữ liệu sửa đổi để quyết định có cảnh báo hay không
   function hasUserModifiedData() {
     const thang = getActiveMonth();
     const nam = getActiveYear();
@@ -688,7 +692,7 @@ document.addEventListener("DOMContentLoaded", function () {
     setTien("cc_thucLinh", tong - bhxh - congDoan);
   };
 
-  // Popup chọn Tháng / Năm
+  // Popup menu chọn Tháng hoặc Năm
   window.openDateMenu = function(type, isChamCongTab = false) {
     const overlay = document.getElementById("pickerOverlay");
     const body = document.getElementById("pickerBody");
@@ -762,7 +766,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   };
 
-  // Xóa trắng riêng Tab Chấm Công
+  // Xóa riêng dữ liệu Tab Chấm Công
   window.clearDataTabChamCong = function() {
     if (!confirm("Bạn có chắc chắn muốn xóa lịch chấm công và bảng lương tạo từ chấm công của tháng này?")) return;
 
