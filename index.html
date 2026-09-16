@@ -794,14 +794,21 @@
 
         <div class="chamcong-tools">
           <div class="tools-header-row">
-            <button type="button" class="btn-dao-ca" id="btnDaoCa" onclick="toggleDaoCa()">
-              <span>⇄</span> <span id="lblDaoCa">Đảo ca ngày/đêm</span>
-            </button>
-            <!-- NÚT XÓA DỮ LIỆU ĐẶT NGAY CẠNH NÚT ĐẢO CA NGÀY ĐÊM -->
-            <button type="button" class="btn-xoa-tab" onclick="clearDataTabChamCong()" style="height: 34px !important; padding: 4px 12px !important; font-size: 13px !important;" title="Chỉ xóa lịch chấm công và bảng lương tạo từ chấm công">
-              🗑 Xóa
-            </button>
-          </div>
+  <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+    <!-- Nút bấm ngắn gọn -->
+    <button type="button" class="btn-dao-ca" id="btnDaoCa" onclick="toggleDaoCa()">
+      <span>⇄</span> <span>Đổi ca</span>
+    </button>
+    <!-- Kết quả ca hiển thị ngay bên cạnh -->
+    <span id="lblKetQuaCa" style="font-size: 14px; font-weight: bold; color: #1e40af; background: #eff6ff; border: 1px solid #bfdbfe; padding: 6px 12px; border-radius: 6px;">
+      Đang tải...
+    </span>
+    </div>
+
+    <button type="button" class="btn-xoa-tab" onclick="clearDataTabChamCong()" style="height: 34px !important; padding: 4px 12px !important; font-size: 13px !important;" title="Chỉ xóa lịch chấm công và bảng lương tạo từ chấm công">
+    🗑 Xóa
+    </button>
+  </div>
           <div class="legend-box">
             <div class="legend-item"><span class="dot-sample" style="background:#fffdf5; border-color:#fce7b2;"></span> Ca ngày</div>
             <div class="legend-item"><span class="dot-sample" style="background:#e2e8f0; border-color:#cbd5e1;"></span> Ca đêm</div>
