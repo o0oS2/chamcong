@@ -11,7 +11,7 @@
     "cc_pcKhac": ""
   },
   "extra_fields": {
-    "ngayCong": "25",
+    "ngayCong": "",
     "tc150": "",
     "tc200": "",
     "tcDem30": "",
@@ -22,7 +22,7 @@
     "thongca380": "",
     "phepNam": "",
     "le": "",
-    "pcABC": "1.000.000",
+    "pcABC": "",
     "pcChuyenCan": "200.000",
     "pcThamNien": "600.000",
     "pcChucVu": "",
@@ -398,5 +398,5 @@
       "midOt": "0"
     }
   },
-  "updated_at": "2026-09-16T18:09:00.517Z"
+  "updated_at": "2026-09-16T18:09:16.130Z"
 }
