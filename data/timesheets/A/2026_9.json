@@ -48,7 +48,7 @@
     "cc_tcDem30": "64",
     "cc_ngayCong200": "1",
     "cc_tc300": "0",
-    "cc_tc340": "2",
+    "cc_tc340": "4",
     "cc_tcDem70": "8",
     "cc_thongca380": "",
     "cc_phepNam": "0",
@@ -196,7 +196,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "3",
       "midOt": "0"
     },
     "13": {
@@ -398,5 +398,5 @@
       "midOt": "0"
     }
   },
-  "updated_at": "2026-09-16T18:06:55.796Z"
+  "updated_at": "2026-09-16T18:06:59.395Z"
 }
