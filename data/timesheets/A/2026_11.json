@@ -1,14 +1,14 @@
 {
   "base_salary": "5.430.000",
   "allowances": {
-    "cc_pcABC": "",
+    "cc_pcABC": "1.000.000",
     "cc_pcChuyenCan": "200.000",
     "cc_pcThamNien": "600.000",
-    "cc_pcChucVu": "",
+    "cc_pcChucVu": "1.000.007",
     "cc_pcDiLai": "500.000",
-    "cc_pcDienThoai": "",
-    "cc_pcTreEm": "",
-    "cc_pcKhac": ""
+    "cc_pcDienThoai": "1.500.000",
+    "cc_pcTreEm": "50.000",
+    "cc_pcKhac": "100.007"
   },
   "extra_fields": {
     "ngayCong": "",
@@ -399,5 +399,5 @@
     }
   },
   "shift_mode": "chuyen_ngay",
-  "updated_at": "2026-09-16T19:18:36.036Z"
+  "updated_at": "2026-09-16T19:42:39.218Z"
 }
