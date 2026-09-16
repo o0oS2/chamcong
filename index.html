@@ -109,7 +109,7 @@
       width: 15%;
     }
     #bangPhu table td:nth-child(5), #bangPhu table th:nth-child(5),
-    #cc_bangPhu table td:nth-child(5), #cc_bangPhu table th:nth-child(5) {
+    #cc_bangPhu table td:nth-child(5), #cc_bangPhu table td:nth-child(5) {
       width: 30%;
     }
 
@@ -198,7 +198,7 @@
       vertical-align: middle;
     }
 
-    /* ===== LƯƠNG CƠ BẢN VÀ CÁC NÚT ĐIỀU HƯỚNG ===== */
+    /* ===== LƯƠNG CƠ BẢN VÀ NGÀY CÔNG CHUẨN CÙNG DÒNG ===== */
     .input-row {
       display: flex;
       flex-wrap: wrap;
@@ -220,7 +220,9 @@
       color: green;
     }
 
-    .input-row input[type="text"] {
+    .input-row input[type="number"],
+    .input-row input[type="text"],
+    .input-row select {
       width: 160px;
       min-width: 40px;
       text-align: right;
@@ -236,9 +238,10 @@
       font-weight: bold;
     }
 
-    /* Nút Tháng / Năm riêng biệt */
-    .btn-picker-item {
-      padding: 2px 6px !important;
+    /* Nút Tháng / Năm giao diện mới */
+    .btn-pop-date {
+      padding: 2px 8px !important;
+      height: 28px !important;
       font-size: 14px !important;
       font-weight: bold !important;
       background: #fff !important;
@@ -246,18 +249,15 @@
       border: 1.5px solid #007bff !important;
       border-radius: 4px !important;
       cursor: pointer !important;
-      height: 28px !important;
-      display: inline-flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      min-width: 42px !important;
+      min-width: 45px !important;
     }
-    .btn-picker-item:hover {
+    .btn-pop-date:hover {
       background: #e0f2fe !important;
     }
 
-    .btn-del-tab {
+    .btn-xoa-tab {
       padding: 2px 8px !important;
+      height: 28px !important;
       font-size: 12px !important;
       font-weight: bold !important;
       background: #ffebee !important;
@@ -265,12 +265,8 @@
       border: 1px solid #dc3545 !important;
       border-radius: 4px !important;
       cursor: pointer !important;
-      height: 28px !important;
-      display: inline-flex !important;
-      align-items: center !important;
-      gap: 3px !important;
     }
-    .btn-del-tab:hover {
+    .btn-xoa-tab:hover {
       background: #dc3545 !important;
       color: #fff !important;
     }
@@ -342,7 +338,9 @@
         font-size: 18px;
       }
 
-      .input-row input[type="text"] {
+      .input-row input[type="number"],
+      .input-row input[type="text"],
+      .input-row select {
         width: 90px;
         font-size: 14px;
         height: 18px;
@@ -375,16 +373,16 @@
         width: 12% !important;
       }
       #bangPhu table th:nth-child(2), #bangPhu table td:nth-child(2),
-      #cc_bangPhu table th:nth-child(2), #cc_bangPhu table td:nth-child(2) {
+      #cc_bangPhu table td:nth-child(2), #cc_bangPhu table td:nth-child(2) {
         width: 30% !important;
       }
       #bangPhu table th:nth-child(3), #bangPhu table td:nth-child(3),
-      #cc_bangPhu table th:nth-child(3), #cc_bangPhu table td:nth-child(3) {
+      #cc_bangPhu table td:nth-child(3), #cc_bangPhu table td:nth-child(3) {
         width: 15% !important;
         max-width: 50px;
       }
       #bangPhu table th:nth-child(4), #bangPhu table td:nth-child(4),
-      #cc_bangPhu table th:nth-child(4), #cc_bangPhu table td:nth-child(4) {
+      #cc_bangPhu table td:nth-child(4), #cc_bangPhu table td:nth-child(4) {
         width: 15% !important;
       }
       #bangPhu table th:nth-child(5), #bangPhu table td:nth-child(5),
@@ -393,7 +391,6 @@
       }
     }
 
-    /* ===== GIAO DIỆN PHẦN LIÊN HỆ GỐC (NGUYÊN BẢN) ===== */
     .contact-section {
       display: flex;
       gap: 20px;
@@ -521,14 +518,14 @@
     .cc-col-left { flex: 1; }
     .cc-col-right {
       flex: 0 0 450px;
-      background: transparent !important;
-      border: none !important;
-      box-shadow: none !important;
-      padding: 0 !important;
+      background: #fff;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
     }
 
     .chamcong-tools { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
-    .tools-header-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .tools-header-row { display: flex; justify-content: space-between; align-items: center; }
     .btn-dao-ca {
       background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
       color: #fff !important;
@@ -646,12 +643,19 @@
       .input-cell-val { font-size: 7.5px !important; height: 15px !important; line-height: 14px !important; }
       body { padding: 8px; }
     }
+
+    .cc-col-right {
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+    }
   </style>
 </head>
 <body>
 <div class="main-container" style="display:block;">
 
-  <!-- SELECT ẨN DUY TRÌ TƯƠNG THÍCH DỮ LIỆU -->
+  <!-- SELECT ẨN DUY TRÌ TƯƠNG THÍCH DỮ LIỆU CŨ -->
   <select id="thang" style="display:none;"></select>
   <select id="nam" style="display:none;"></select>
   <select id="cc_thang" style="display:none;"></select>
@@ -673,16 +677,16 @@
             <input type="text" id="luongCoBan" inputmode="numeric" placeholder="nhập lương cơ bản" style="height: 20px;" />
           </div>
 
-          <!-- Nút Tháng và Nút Năm riêng biệt cạnh LCB, kèm nút xóa tab 1 -->
+          <!-- NÚT THÁNG VÀ NĂM RIÊNG BIỆT KÈM NÚT XÓA DỮ LIỆU TAB LƯƠNG -->
           <div class="group date-group">
-            <button type="button" class="btn-picker-item" onclick="openSinglePicker('month', false)" title="Bấm để chọn tháng">
+            <button type="button" class="btn-pop-date" onclick="openSinglePicker('month', false)" title="Chọn tháng">
               <span id="lblThangLuong">Tháng</span> ▾
             </button>
             <label>/</label>
-            <button type="button" class="btn-picker-item" onclick="openSinglePicker('year', false)" title="Bấm để chọn năm">
+            <button type="button" class="btn-pop-date" onclick="openSinglePicker('year', false)" title="Chọn năm">
               <span id="lblNamLuong">Năm</span> ▾
             </button>
-            <button type="button" class="btn-del-tab" onclick="clearDataTabLuong()" title="Chỉ xóa dữ liệu của bảng tính lương">
+            <button type="button" class="btn-xoa-tab" onclick="clearDataTabLuong()" title="Chỉ xóa bảng tính lương">
               🗑 Xóa dữ liệu
             </button>
           </div>
@@ -921,18 +925,18 @@
 
     <div class="cc-desktop-layout">
       <div class="cc-col-left">
-        <!-- Hàng LCB chỉ chứa LCB, Nút Tháng và Nút Năm riêng biệt -->
+        <!-- HÀNG LCB TAB CHẤM CÔNG CHỈ CÓ LCB, THÁNG VÀ NĂM -->
         <div class="input-row">
           <div class="group">
             <label for="cc_luongCoBan"><strong>LCB:</strong></label>
             <input type="text" id="cc_luongCoBan" inputmode="numeric" class="lcb-input" placeholder="lương cơ bản" />
           </div>
           <div class="group date-group">
-            <button type="button" class="btn-picker-item" onclick="openSinglePicker('month', true)" title="Bấm để chọn tháng">
+            <button type="button" class="btn-pop-date" onclick="openSinglePicker('month', true)" title="Chọn tháng">
               <span id="lblThangCC">Tháng</span> ▾
             </button>
             <label>/</label>
-            <button type="button" class="btn-picker-item" onclick="openSinglePicker('year', true)" title="Bấm để chọn năm">
+            <button type="button" class="btn-pop-date" onclick="openSinglePicker('year', true)" title="Chọn năm">
               <span id="lblNamCC">Năm</span> ▾
             </button>
           </div>
@@ -943,8 +947,8 @@
             <button type="button" class="btn-dao-ca" id="btnDaoCa" onclick="toggleDaoCa()">
               <span>⇄</span> <span id="lblDaoCa">Đảo ca ngày/đêm</span>
             </button>
-            <!-- Nút Xóa dữ liệu đặt ngay cạnh nút Đảo ca ngày/đêm -->
-            <button type="button" class="btn-del-tab" onclick="clearDataTabChamCong()" style="height: 34px !important; padding: 4px 12px !important; font-size: 13px !important;" title="Chỉ xóa lịch chấm công và bảng lương bên dưới">
+            <!-- NÚT XÓA DỮ LIỆU ĐẶT CẠNH NÚT ĐẢO CA NGÀY ĐÊM -->
+            <button type="button" class="btn-xoa-tab" onclick="clearDataTabChamCong()" style="height: 34px !important; padding: 4px 12px !important; font-size: 13px !important;" title="Chỉ xóa lịch chấm công và bảng lương tạo từ chấm công">
               🗑 Xóa dữ liệu
             </button>
           </div>
@@ -1098,7 +1102,7 @@
 
 </div>
 
-<!-- POPUP PICKER CHỌN THÔNG SỐ (GIỜ, THÁNG, NĂM) -->
+<!-- CỬA SỔ POPUP MODAL CHỌN GIỜ & THÁNG / NĂM -->
 <div class="picker-overlay" id="pickerOverlay" onclick="closePicker(event)">
   <div class="picker-modal">
     <div class="picker-header">
