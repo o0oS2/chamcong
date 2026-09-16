@@ -96,16 +96,16 @@
       width: 10%;
     }
     #bangPhu table td:nth-child(2), #bangPhu table th:nth-child(2),
-    #cc_bangPhu table td:nth-child(2), #cc_bangPhu table td:nth-child(2) {
+    #cc_bangPhu table td:nth-child(2), #cc_bangPhu table th:nth-child(2) {
       width: 30%;
     }
     #bangPhu table td:nth-child(3), #bangPhu table th:nth-child(3),
-    #cc_bangPhu table td:nth-child(3), #cc_bangPhu table td:nth-child(3) {
+    #cc_bangPhu table td:nth-child(3), #cc_bangPhu table th:nth-child(3) {
       width: 15%;
       max-width: 60px;
     }
     #bangPhu table td:nth-child(4), #bangPhu table th:nth-child(4),
-    #cc_bangPhu table td:nth-child(4), #cc_bangPhu table td:nth-child(4) {
+    #cc_bangPhu table td:nth-child(4), #cc_bangPhu table th:nth-child(4) {
       width: 15%;
     }
     #bangPhu table td:nth-child(5), #bangPhu table th:nth-child(5),
@@ -537,7 +537,7 @@
             </div>
 
             <button type="button" class="btn-xoa-tab" onclick="clearDataTabLuong()" title="Chỉ xóa dữ liệu của bảng tính lương" style="margin-left: 4px;">
-              🗑 Xóa dữ liệu
+              🗑 Xóa
             </button>
           </div>
         </div>
@@ -793,22 +793,24 @@
         </div>
 
         <div class="chamcong-tools">
-          <div class="tools-header-row">
-  <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-    <!-- Nút bấm ngắn gọn -->
-    <button type="button" class="btn-dao-ca" id="btnDaoCa" onclick="toggleDaoCa()">
-      <span>⇄</span> <span>Đổi ca</span>
-    </button>
-    <!-- Kết quả ca hiển thị ngay bên cạnh -->
-    <span id="lblKetQuaCa" style="font-size: 14px; font-weight: bold; color: #1e40af; background: #eff6ff; border: 1px solid #bfdbfe; padding: 6px 12px; border-radius: 6px;">
-      Đang tải...
-    </span>
-    </div>
+          <div class="tools-header-row" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: nowrap;">
+            <div style="display: inline-flex; align-items: center; gap: 8px; flex: 1;">
+              <!-- Nút bấm Đổi ca -->
+              <button type="button" class="btn-dao-ca" id="btnDaoCa" onclick="toggleDaoCa()" style="white-space: nowrap; margin: 0;">
+                <span>⇄</span> <span>Đổi ca</span>
+              </button>
+              <!-- Kết quả ca hiển thị ngay bên cạnh -->
+              <span id="lblKetQuaCa" style="display: inline-flex; align-items: center; font-size: 13px; font-weight: bold; padding: 6px 12px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff; white-space: nowrap;">
+                Ca chuẩn
+              </span>
+            </div>
 
-    <button type="button" class="btn-xoa-tab" onclick="clearDataTabChamCong()" style="height: 34px !important; padding: 4px 12px !important; font-size: 13px !important;" title="Chỉ xóa lịch chấm công và bảng lương tạo từ chấm công">
-    🗑 Xóa
-    </button>
-  </div>
+            <!-- Nút Xóa dữ liệu của riêng Tab 2 -->
+            <button type="button" class="btn-xoa-tab" onclick="clearDataTabChamCong()" style="height: 34px !important; padding: 4px 12px !important; font-size: 13px !important; white-space: nowrap; margin: 0;" title="Chỉ xóa lịch chấm công và bảng lương tạo từ chấm công">
+              🗑 Xóa
+            </button>
+          </div>
+
           <div class="legend-box">
             <div class="legend-item"><span class="dot-sample" style="background:#fffdf5; border-color:#fce7b2;"></span> Ca ngày</div>
             <div class="legend-item"><span class="dot-sample" style="background:#e2e8f0; border-color:#cbd5e1;"></span> Ca đêm</div>
@@ -1007,6 +1009,7 @@
     } else {
       document.getElementById('paneChamCong').classList.add('active');
       document.getElementById('btnTabChamCong').classList.add('active');
+      if (typeof window.updateDaoCaButtonUI === 'function') window.updateDaoCaButtonUI();
       if (typeof syncChamCongToTinhLuong === 'function') syncChamCongToTinhLuong();
     }
   }
