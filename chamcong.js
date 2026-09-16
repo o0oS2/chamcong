@@ -1,75 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const ccThangSelect = document.getElementById("cc_thang");
-  const ccNamSelect = document.getElementById("cc_nam");
-
-  const today = new Date();
-  const currentMonth = today.getMonth() + 1;
-  const currentYear = today.getFullYear();
-  const currentDate = today.getDate();
-
-  // Mặc định: Sau mùng 10 là tháng hiện tại; Mùng 10 đổ về trước là tháng trước
-  let defaultMonth, defaultYear;
-  if (currentDate <= 10) {
-    defaultMonth = (currentMonth === 1) ? 12 : currentMonth - 1;
-    defaultYear = (currentMonth === 1) ? currentYear - 1 : currentYear;
-  } else {
-    defaultMonth = currentMonth;
-    defaultYear = currentYear;
-  }
-
-  if (ccThangSelect) {
-    ccThangSelect.innerHTML = "";
-    for (let i = 1; i <= 12; i++) {
-      const opt = document.createElement("option");
-      opt.value = i;
-      opt.text = i.toString().padStart(2, '0');
-      if (i === defaultMonth) opt.selected = true;
-      ccThangSelect.appendChild(opt);
-    }
-  }
-
-  // Khởi tạo năm: từ 2020 đến năm sau năm hiện tại
-  if (ccNamSelect) {
-    ccNamSelect.innerHTML = "";
-    for (let y = 2020; y <= currentYear + 1; y++) {
-      const opt = document.createElement("option");
-      opt.value = y;
-      opt.text = y;
-      if (y === defaultYear) opt.selected = true;
-      ccNamSelect.appendChild(opt);
-    }
-  }
-
-  if (ccThangSelect && ccNamSelect) {
-    ccThangSelect.addEventListener("change", () => {
-      const t1 = document.getElementById("thang");
-      if (t1) t1.value = ccThangSelect.value;
-      handleMonthYearChanged();
-    });
-    ccNamSelect.addEventListener("change", () => {
-      const n1 = document.getElementById("nam");
-      if (n1) n1.value = ccNamSelect.value;
-      handleMonthYearChanged();
-    });
-  }
-
-  function handleMonthYearChanged() {
-    if (typeof window.loadUserDataFromCloud === "function" && localStorage.getItem("cc_currentUser")) {
-      window.loadUserDataFromCloud();
-    } else {
-      resetChamCongDataThangMoi();
-      renderLichChamCong();
-      syncChamCongToTinhLuong();
-      if (typeof window.tinhLuong === "function") window.tinhLuong();
-    }
-  }
-
-  setupCcLuongEngine();
-
   const MOC_CA_DEM = new Date(2026, 8, 7);
   let isDaoCa = false;
 
-  // Giờ hành chính: Label trên popup - Short trên ô lịch
+  // Cấu hình giờ hành chính
   const DSHanhChinhChung = [
     { label: "Đi làm đủ", short: "Đi làm đủ", type: "du", value: 0, allowSunday: true },
     { label: "Nghỉ", short: "Nghỉ", type: "nghi", value: 8, allowSunday: true },
@@ -129,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
   window.toggleDaoCa = function() {
     const xacNhan = confirm("CẢNH BÁO:\nĐảo ca ngày/đêm sẽ thiết lập lại toàn bộ dữ liệu chấm công đã nhập trong tháng này.\n\nBấm [OK] để tiếp tục đảo ca.\nBấm [Hủy] để giữ nguyên dữ liệu hiện tại.");
     if (!xacNhan) {
-      return; // Bấm Hủy -> Không làm gì cả
+      return; // Bấm Hủy -> Giữ nguyên dữ liệu
     }
 
     isDaoCa = !isDaoCa;
@@ -251,8 +184,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const title = document.getElementById("pickerTitle");
     const body = document.getElementById("pickerBody");
 
-    const thang = +document.getElementById("cc_thang")?.value || defaultMonth;
-    const nam = +document.getElementById("cc_nam")?.value || defaultYear;
+    const thang = window.selectedMonth || 1;
+    const nam = window.selectedYear || new Date().getFullYear();
     const curDate = new Date(nam, thang - 1, day);
     const dayOfWeek = curDate.getDay();
     const lunar = convertSolar2Lunar(day, thang, nam, TZ);
@@ -313,8 +246,8 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!currentPickContext) return;
     const { day, type } = currentPickContext;
 
-    const thang = +document.getElementById("cc_thang")?.value || defaultMonth;
-    const nam = +document.getElementById("cc_nam")?.value || defaultYear;
+    const thang = window.selectedMonth || 1;
+    const nam = window.selectedYear || new Date().getFullYear();
     const curDate = new Date(nam, thang - 1, day);
     const dayOfWeek = curDate.getDay();
     const lunar = convertSolar2Lunar(day, thang, nam, TZ);
@@ -375,8 +308,8 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   window.renderLichChamCong = function() {
-    const thang = +document.getElementById("cc_thang")?.value || defaultMonth;
-    const nam = +document.getElementById("cc_nam")?.value || defaultYear;
+    const thang = window.selectedMonth || 1;
+    const nam = window.selectedYear || new Date().getFullYear();
     const grid = document.getElementById("chamCongGrid");
     if (!grid) return;
     grid.innerHTML = "";
@@ -458,8 +391,8 @@ document.addEventListener("DOMContentLoaded", function () {
     let tongPhepNam = 0;
     let tongNgayLe = 0;
 
-    const thang = +document.getElementById("cc_thang")?.value || defaultMonth;
-    const nam = +document.getElementById("cc_nam")?.value || defaultYear;
+    const thang = window.selectedMonth || 1;
+    const nam = window.selectedYear || new Date().getFullYear();
     const totalDays = new Date(nam, thang, 0).getDate();
 
     for (let d = 1; d <= totalDays; d++) {
@@ -653,8 +586,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const getFloat = (id) => parseFloat(document.getElementById(id)?.value || "0") || 0;
 
     const lcb = getVal("cc_luongCoBan");
-    const thang = +document.getElementById("cc_thang")?.value || defaultMonth;
-    const nam = +document.getElementById("cc_nam")?.value || defaultYear;
+    const thang = window.selectedMonth || 1;
+    const nam = window.selectedYear || new Date().getFullYear();
 
     const soNgayTrongThang = new Date(nam, thang, 0).getDate();
     let soNgayChuNhat = 0;
@@ -727,6 +660,80 @@ document.addEventListener("DOMContentLoaded", function () {
 
     setTien("cc_thucLinh", tong - bhxh - congDoan);
   }
+
+  // ================= MENU POPUP LỰA CHỌN THÁNG HOẶC NĂM =================
+  window.openDateMenu = function(type, isChamCongTab = false) {
+    const overlay = document.getElementById("pickerOverlay");
+    const body = document.getElementById("pickerBody");
+    const title = document.getElementById("pickerTitle");
+    if (!overlay || !body) return;
+
+    body.innerHTML = "";
+    overlay.style.display = "flex";
+
+    if (type === "month") {
+      title.innerText = "Chọn Tháng";
+      body.style.gridTemplateColumns = "repeat(3, 1fr)";
+      const curMonth = window.selectedMonth || (new Date().getMonth() + 1);
+
+      for (let m = 1; m <= 12; m++) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "picker-btn";
+        if (m === curMonth) {
+          btn.style.background = "#007bff";
+          btn.style.color = "#fff";
+        }
+        btn.innerText = `Tháng ${m.toString().padStart(2, '0')}`;
+        btn.onclick = () => {
+          window.selectedMonth = m;
+          if (typeof window.updateDateDisplays === "function") window.updateDateDisplays();
+          forceClosePicker();
+
+          if (typeof window.loadUserDataFromCloud === "function" && localStorage.getItem("cc_currentUser")) {
+            window.loadUserDataFromCloud();
+          } else {
+            resetChamCongDataThangMoi();
+            renderLichChamCong();
+            syncChamCongToTinhLuong();
+            if (typeof window.tinhLuong === "function") window.tinhLuong();
+          }
+        };
+        body.appendChild(btn);
+      }
+    } else if (type === "year") {
+      title.innerText = "Chọn Năm";
+      body.style.gridTemplateColumns = "repeat(4, 1fr)";
+      const curYear = window.selectedYear || new Date().getFullYear();
+      const maxYear = new Date().getFullYear() + 1;
+
+      for (let y = 2020; y <= maxYear; y++) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "picker-btn";
+        if (y === curYear) {
+          btn.style.background = "#007bff";
+          btn.style.color = "#fff";
+        }
+        btn.innerText = y;
+        btn.onclick = () => {
+          window.selectedYear = y;
+          if (typeof window.updateDateDisplays === "function") window.updateDateDisplays();
+          forceClosePicker();
+
+          if (typeof window.loadUserDataFromCloud === "function" && localStorage.getItem("cc_currentUser")) {
+            window.loadUserDataFromCloud();
+          } else {
+            resetChamCongDataThangMoi();
+            renderLichChamCong();
+            syncChamCongToTinhLuong();
+            if (typeof window.tinhLuong === "function") window.tinhLuong();
+          }
+        };
+        body.appendChild(btn);
+      }
+    }
+  };
 
   // HÀM CHỈ XÓA DỮ LIỆU CỦA RIÊNG TAB CHẤM CÔNG
   window.clearDataTabChamCong = function() {
