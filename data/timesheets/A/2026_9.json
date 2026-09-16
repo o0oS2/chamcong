@@ -42,11 +42,11 @@
     "phuLuongTangCa2": "100",
     "soGioDem2": "10",
     "phuLuongDem2": "100",
-    "cc_ngayCong": "25",
+    "cc_ngayCong": "24.5",
     "cc_tc150": "9",
     "cc_tc200": "22",
-    "cc_tcDem30": "68",
-    "cc_ngayCong200": "2.5",
+    "cc_tcDem30": "72",
+    "cc_ngayCong200": "3",
     "cc_tc300": "0",
     "cc_tc340": "5",
     "cc_tcDem70": "8",
@@ -278,9 +278,9 @@
     },
     "20": {
       "hc": {
-        "label": "Nghỉ sáng",
-        "short": "Nghỉ sáng",
-        "type": "nghi_sang",
+        "label": "Nghỉ chiều",
+        "short": "Nghỉ chiều",
+        "type": "nghi_chieu",
         "value": 4,
         "allowSunday": true
       },
@@ -399,5 +399,5 @@
     }
   },
   "shift_mode": "chuan",
-  "updated_at": "2026-09-16T19:55:52.067Z"
+  "updated_at": "2026-09-16T19:55:55.279Z"
 }
