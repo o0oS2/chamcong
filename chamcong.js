@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!lblKetQua) return;
 
     if (window.currentShiftMode === "chuyen_ngay") {
-      lblKetQua.textContent = "Chuyên ngày";
+      lblKetQua.textContent = "Đang làm chuyên ngày";
       lblKetQua.style.color = "#059669";
       lblKetQua.style.background = "#ecfdf5";
       lblKetQua.style.borderColor = "#a7f3d0";
@@ -89,12 +89,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Dù là Chủ nhật hay Ngày lễ, nếu ca làm là đêm thì hiển thị Ca đêm, ngược lại hiển thị Ca ngày
     if (caHomNay === "dem") {
-      lblKetQua.textContent = "Ca đêm";
+      lblKetQua.textContent = "đang làm ca đêm";
       lblKetQua.style.color = "#1e293b";
       lblKetQua.style.background = "#e2e8f0";
       lblKetQua.style.borderColor = "#cbd5e1";
     } else {
-      lblKetQua.textContent = "Ca ngày";
+      lblKetQua.textContent = "đang làm ca ngày";
       lblKetQua.style.color = "#b45309";
       lblKetQua.style.background = "#fffdf5";
       lblKetQua.style.borderColor = "#fce7b2";
