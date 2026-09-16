@@ -13,8 +13,8 @@
   "extra_fields": {
     "cc_ngayCong": "19",
     "cc_tc150": "0",
-    "cc_tc200": "10",
-    "cc_tcDem30": "64",
+    "cc_tc200": "6",
+    "cc_tcDem30": "40",
     "cc_ngayCong200": "1",
     "cc_tc300": "0",
     "cc_tc340": "2",
@@ -55,7 +55,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "3": {
@@ -66,7 +66,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "4": {
@@ -77,7 +77,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "5": {
@@ -88,7 +88,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "6": {
@@ -99,7 +99,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "7": {
@@ -110,7 +110,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "8": {
@@ -132,7 +132,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "10": {
@@ -143,7 +143,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "11": {
@@ -154,7 +154,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "12": {
@@ -165,7 +165,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "13": {
@@ -176,7 +176,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "14": {
@@ -187,7 +187,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "15": {
@@ -253,7 +253,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "21": {
@@ -264,7 +264,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "22": {
@@ -286,7 +286,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "24": {
@@ -297,7 +297,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "25": {
@@ -308,7 +308,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "26": {
@@ -319,7 +319,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "27": {
@@ -330,7 +330,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "28": {
@@ -341,10 +341,10 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     }
   },
-  "shift_mode": "chuan",
-  "updated_at": "2026-09-16T23:32:59.793Z"
+  "shift_mode": "dao",
+  "updated_at": "2026-09-16T23:33:04.332Z"
 }
