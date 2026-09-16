@@ -51,7 +51,7 @@
     "cc_tc340": "2.5",
     "cc_tcDem70": "8",
     "cc_thongca380": "",
-    "cc_phepNam": "1",
+    "cc_phepNam": "1.5",
     "cc_le": "1",
     "cc_soGioHanhChinh1": "",
     "cc_phuLuongHanhChinh": "",
@@ -267,11 +267,11 @@
     },
     "19": {
       "hc": {
-        "label": "Đi làm đủ",
-        "short": "Đi làm đủ",
-        "type": "du",
-        "value": 0,
-        "allowSunday": true
+        "label": "1/2 phép năm",
+        "short": "½PN",
+        "type": "pn_nua",
+        "value": 4,
+        "allowSunday": false
       },
       "ot": "0",
       "midOt": "0"
@@ -399,5 +399,5 @@
     }
   },
   "shift_mode": "chuan",
-  "updated_at": "2026-09-16T19:11:27.869Z"
+  "updated_at": "2026-09-16T19:11:30.567Z"
 }
