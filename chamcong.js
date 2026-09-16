@@ -1,7 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
   const MOC_CA_DEM = new Date(2026, 8, 7); // Mốc chuẩn: 07/09/2026 bắt đầu ca đêm
   // Chế độ ca: 'chuan' (2 tuần đổi), 'dao' (đã đảo ca), 'chuyen_ngay' (chuyên ca ngày)
-  window.currentShiftMode = window.currentShiftMode || "chuan";
+  // Lưu vào localStorage để không bị mất/đổi lại khi tải lại trang hoặc tải lại dữ liệu
+  window.currentShiftMode = window.currentShiftMode || localStorage.getItem("cc_shiftMode") || "chuan";
 
   const DSHanhChinhChung = [
     { label: "Đi làm đủ", short: "Đi làm đủ", type: "du", value: 0, allowSunday: true },
@@ -139,6 +140,8 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
       window.currentShiftMode = "chuan";
     }
+
+    localStorage.setItem("cc_shiftMode", window.currentShiftMode);
 
     updateDaoCaButtonUI();
     Object.keys(chamCongData).forEach(k => delete chamCongData[k]);

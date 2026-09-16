@@ -276,6 +276,39 @@
       color: #fff !important;
     }
 
+    .user-info-area {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px 10px;
+      justify-content: flex-end;
+    }
+    .user-info-name {
+      font-size: 13px;
+      color: #334155;
+      white-space: nowrap;
+    }
+    .btn-logout {
+      padding: 2px 10px;
+      font-size: 12px;
+      height: 24px;
+      background: #dc3545;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .sync-status {
+      font-size: 11px;
+      color: #16a34a;
+      font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 140px;
+    }
+
     .toast {
       position: fixed;
       top: 20px;
@@ -337,6 +370,19 @@
       #cc_bangPhu table td:nth-child(4), #cc_bangPhu table td:nth-child(4) { width: 15% !important; }
       #bangPhu table th:nth-child(5), #bangPhu table td:nth-child(5),
       #cc_bangPhu table td:nth-child(5), #cc_bangPhu table td:nth-child(5) { width: 28% !important; }
+
+      /* Giữ các nút nhỏ (Xóa, Đổi ca, Đăng xuất, tab) gọn gàng, không kéo full-width */
+      .btn-xoa-tab, .btn-dao-ca, .btn-logout, .tab-btn {
+        width: auto !important;
+        flex: 0 0 auto !important;
+      }
+      .btn-xoa-tab {
+        justify-content: center !important;
+        padding: 4px 10px !important;
+        font-size: 12px !important;
+        height: 28px !important;
+      }
+      .user-info-area { justify-content: flex-start; }
     }
 
     .contact-section { display: flex; gap: 20px; align-items: flex-start; max-width: 100%; margin: 0 auto; }
@@ -765,11 +811,10 @@
         <button type="button" onclick="handleLogin()" style="padding: 4px 12px; font-size: 13px; height: 26px; background: #007bff; border-radius: 4px; border:none; color:#fff; cursor:pointer;">Đăng nhập</button>
         <button type="button" onclick="handleRegister()" style="padding: 4px 12px; font-size: 13px; height: 26px; background: #28a745; border-radius: 4px; border:none; color:#fff; cursor:pointer;">Đăng ký</button>
       </div>
-      <div id="userInfoArea" style="display: none; align-items: center; gap: 10px;">
-        <span style="font-size: 13px; color: #334155;">Xin chào, <b id="lblUsername" style="color: #007bff;"></b></span>
-        <button type="button" onclick="handleRefreshData()" style="padding: 2px 10px; font-size: 12px; height: 24px; background: #fff; border: 1px solid #ccc; border-radius: 4px; cursor:pointer;">🔄 Tải lại</button>
-        <button type="button" onclick="handleLogout()" style="padding: 2px 10px; font-size: 12px; height: 24px; background: #dc3545; color:#fff; border:none; border-radius: 4px; cursor:pointer;">Đăng xuất</button>
-        <span id="syncStatus" style="font-size: 11px; color: #16a34a; font-weight: bold;">(Đã lưu tự động)</span>
+      <div id="userInfoArea" class="user-info-area">
+        <span class="user-info-name">Xin chào, <b id="lblUsername" style="color: #007bff;"></b></span>
+        <button type="button" class="btn-logout" onclick="handleLogout()">Đăng xuất</button>
+        <span id="syncStatus" class="sync-status">Đã lưu</span>
       </div>
     </div>
 

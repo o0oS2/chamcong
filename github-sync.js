@@ -124,18 +124,11 @@ window.handleLogout = function() {
   if (typeof switchTab === "function") switchTab('tabLuong');
 };
 
-// 4. TẢI LẠI DỮ LIỆU
-window.handleRefreshData = async function() {
-  const statusEl = document.getElementById("syncStatus");
-  if (statusEl) statusEl.textContent = "⏳ Đang tải lại...";
-  await window.loadUserDataFromCloud();
-};
-
 // 5. TỰ ĐỘNG LƯU
 window.autoSaveUserData = function() {
   if (!currentUser) return;
   const statusEl = document.getElementById("syncStatus");
-  if (statusEl) statusEl.textContent = "(Đang thay đổi...)";
+  if (statusEl) statusEl.textContent = "Đang thay đổi...";
 
   if (saveTimer) clearTimeout(saveTimer);
 
@@ -180,7 +173,7 @@ window.autoSaveUserData = function() {
       updated_at: new Date().toISOString()
     };
 
-    if (statusEl) statusEl.textContent = "(Đang lưu...)";
+    if (statusEl) statusEl.textContent = "Đang lưu...";
 
     try {
       const res = await fetch(`${API_URL}?action=save`, {
@@ -190,15 +183,86 @@ window.autoSaveUserData = function() {
       });
       const data = await res.json();
       if (res.ok && data.ok) {
-        if (statusEl) statusEl.textContent = "(Đã lưu tự động)";
+        if (statusEl) statusEl.textContent = "Đã lưu";
       } else {
-        if (statusEl) statusEl.textContent = "(Lỗi lưu: " + (data.error || "server") + ")";
+        if (statusEl) statusEl.textContent = "Lỗi lưu: " + (data.error || "server");
       }
     } catch {
-      if (statusEl) statusEl.textContent = "(Mất kết nối)";
+      if (statusEl) statusEl.textContent = "Mất kết nối";
     }
   }, 1500);
 };
+
+// Đổ dữ liệu 1 record (lương, phụ cấp, các ô khác, chấm công) vào form
+function applyRecordToForm(record, formatFn) {
+  const formattedSalary = formatFn(record.base_salary || "");
+  if (document.getElementById("luongCoBan")) document.getElementById("luongCoBan").value = formattedSalary;
+  if (document.getElementById("cc_luongCoBan")) document.getElementById("cc_luongCoBan").value = formattedSalary;
+
+  if (record.allowances) {
+    Object.keys(record.allowances).forEach(k => {
+      const el = document.getElementById(k);
+      if (el) {
+        if (["cc_pcABC", "cc_pcChucVu", "cc_pcDiLai", "cc_pcKhac"].includes(k)) {
+          el.value = formatFn(record.allowances[k]);
+        } else {
+          el.value = record.allowances[k];
+        }
+      }
+    });
+  }
+
+  if (record.extra_fields) {
+    Object.keys(record.extra_fields).forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        if (el.type === "checkbox" || el.type === "radio") {
+          el.checked = Boolean(record.extra_fields[id]);
+        } else {
+          el.value = record.extra_fields[id];
+        }
+      }
+    });
+  }
+
+  if (record.timesheet && window.setChamCongData) {
+    window.setChamCongData(record.timesheet);
+  }
+}
+
+// Lấy lương & phụ cấp (trừ chuyên cần) từ tháng trước để đổ sẵn vào tháng mới chưa có dữ liệu
+async function carryOverFromPrevMonth(year, month, formatFn) {
+  let prevMonth = month - 1;
+  let prevYear = year;
+  if (prevMonth < 1) { prevMonth = 12; prevYear = year - 1; }
+  const prevKey = `${prevYear}_${prevMonth}`;
+
+  try {
+    const res = await fetch(`${API_URL}?action=load&user=${encodeURIComponent(currentUser)}&monthKey=${prevKey}`);
+    const prevRecord = await res.json();
+    if (!prevRecord) return;
+
+    const formattedSalary = formatFn(prevRecord.base_salary || "");
+    if (document.getElementById("luongCoBan")) document.getElementById("luongCoBan").value = formattedSalary;
+    if (document.getElementById("cc_luongCoBan")) document.getElementById("cc_luongCoBan").value = formattedSalary;
+
+    if (prevRecord.allowances) {
+      Object.keys(prevRecord.allowances).forEach(k => {
+        if (k === "cc_pcChuyenCan") return; // Chuyên cần không giữ, để tính lại theo mặc định
+        const el = document.getElementById(k);
+        if (el) {
+          if (["cc_pcABC", "cc_pcChucVu", "cc_pcDiLai", "cc_pcKhac"].includes(k)) {
+            el.value = formatFn(prevRecord.allowances[k]);
+          } else {
+            el.value = prevRecord.allowances[k];
+          }
+        }
+      });
+    }
+  } catch {
+    // Không có/không lấy được dữ liệu tháng trước thì bỏ qua, giữ nguyên form trống
+  }
+}
 
 // 6. TẢI DỮ LIỆU ĐÚNG THÁNG
 window.loadUserDataFromCloud = async function() {
@@ -208,52 +272,20 @@ window.loadUserDataFromCloud = async function() {
   const monthKey = `${year}_${month}`;
 
   const statusEl = document.getElementById("syncStatus");
-  if (statusEl) statusEl.textContent = "⏳ Đang nạp...";
+  if (statusEl) statusEl.textContent = "Đang nạp...";
+
+  const formatFn = window.formatSalaryNumber || function(v){ return v; };
 
   try {
     const res = await fetch(`${API_URL}?action=load&user=${encodeURIComponent(currentUser)}&monthKey=${monthKey}`);
     const record = await res.json();
 
-    const formatFn = window.formatSalaryNumber || function(v){ return v; };
-
     if (record) {
-      const formattedSalary = formatFn(record.base_salary || "");
-      if (document.getElementById("luongCoBan")) document.getElementById("luongCoBan").value = formattedSalary;
-      if (document.getElementById("cc_luongCoBan")) document.getElementById("cc_luongCoBan").value = formattedSalary;
-
-      if (record.allowances) {
-        Object.keys(record.allowances).forEach(k => {
-          const el = document.getElementById(k);
-          if (el) {
-            if (["cc_pcABC", "cc_pcChucVu", "cc_pcDiLai", "cc_pcKhac"].includes(k)) {
-              el.value = formatFn(record.allowances[k]);
-            } else {
-              el.value = record.allowances[k];
-            }
-          }
-        });
-      }
-
-      if (record.extra_fields) {
-        Object.keys(record.extra_fields).forEach(id => {
-          const el = document.getElementById(id);
-          if (el) {
-            if (el.type === "checkbox" || el.type === "radio") {
-              el.checked = Boolean(record.extra_fields[id]);
-            } else {
-              el.value = record.extra_fields[id];
-            }
-          }
-        });
-      }
-
-      if (record.timesheet && window.setChamCongData) {
-        window.setChamCongData(record.timesheet);
-      }
+      applyRecordToForm(record, formatFn);
     } else {
+      // Tháng mới chưa có dữ liệu: xóa trắng lịch chấm công & các ô, sau đó giữ lại
+      // lương + phụ cấp (trừ chuyên cần) từ tháng liền trước
       if (window.clearChamCongData) window.clearChamCongData();
-      if (document.getElementById("luongCoBan")) document.getElementById("luongCoBan").value = "";
-      if (document.getElementById("cc_luongCoBan")) document.getElementById("cc_luongCoBan").value = "";
 
       const excludeIds = ["authUsername", "authPassword"];
       document.querySelectorAll("input, select, textarea").forEach(el => {
@@ -262,6 +294,8 @@ window.loadUserDataFromCloud = async function() {
           else el.value = "";
         }
       });
+
+      await carryOverFromPrevMonth(year, month, formatFn);
 
       if (typeof window.applyDefaultAllowances === "function") {
         window.applyDefaultAllowances();
@@ -274,8 +308,8 @@ window.loadUserDataFromCloud = async function() {
     if (typeof window.tinhLuong === "function") window.tinhLuong();
     if (typeof window.triggerCcComputeEngine === "function") window.triggerCcComputeEngine();
 
-    if (statusEl) statusEl.textContent = "(Đã đồng bộ)";
+    if (statusEl) statusEl.textContent = "Đã đồng bộ";
   } catch {
-    if (statusEl) statusEl.textContent = "(Lỗi nạp dữ liệu)";
+    if (statusEl) statusEl.textContent = "Lỗi nạp dữ liệu";
   }
 };
