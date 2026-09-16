@@ -31,17 +31,17 @@
     "pcTreEm": "50.000",
     "pcKhac": "1.500.000",
     "soGioHanhChinh1": "1",
-    "phuLuongHanhChinh": "",
-    "soGioTangCa1": "",
-    "phuLuongTangCa": "",
-    "soGioDem1": "",
-    "phuLuongDem": "",
-    "soGioHanhChinh2": "",
-    "phuLuongHanhChinh2": "",
-    "soGioTangCa2": "",
-    "phuLuongTangCa2": "",
-    "soGioDem2": "",
-    "phuLuongDem2": "",
+    "phuLuongHanhChinh": "8",
+    "soGioTangCa1": "1",
+    "phuLuongTangCa": "8",
+    "soGioDem1": "1",
+    "phuLuongDem": "8",
+    "soGioHanhChinh2": "1",
+    "phuLuongHanhChinh2": "8",
+    "soGioTangCa2": "1",
+    "phuLuongTangCa2": "8",
+    "soGioDem2": "1",
+    "phuLuongDem2": "8",
     "cc_ngayCong": "24",
     "cc_tc150": "0",
     "cc_tc200": "10",
@@ -398,5 +398,5 @@
       "midOt": "0"
     }
   },
-  "updated_at": "2026-09-16T15:31:32.654Z"
+  "updated_at": "2026-09-16T15:31:47.118Z"
 }
