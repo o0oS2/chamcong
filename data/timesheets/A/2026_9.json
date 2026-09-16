@@ -42,14 +42,14 @@
     "phuLuongTangCa2": "",
     "soGioDem2": "",
     "phuLuongDem2": "",
-    "cc_ngayCong": "24",
+    "cc_ngayCong": "25",
     "cc_tc150": "0",
-    "cc_tc200": "11",
-    "cc_tcDem30": "70",
-    "cc_ngayCong200": "1",
+    "cc_tc200": "0",
+    "cc_tcDem30": "0",
+    "cc_ngayCong200": "0",
     "cc_tc300": "0",
-    "cc_tc340": "2",
-    "cc_tcDem70": "8",
+    "cc_tc340": "0",
+    "cc_tcDem70": "0",
     "cc_thongca380": "",
     "cc_phepNam": "0",
     "cc_le": "1",
@@ -75,7 +75,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "2": {
@@ -97,7 +97,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "4": {
@@ -108,7 +108,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "5": {
@@ -119,7 +119,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "6": {
@@ -295,7 +295,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "22": {
@@ -306,7 +306,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "23": {
@@ -317,7 +317,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "24": {
@@ -328,7 +328,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "25": {
@@ -339,7 +339,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "26": {
@@ -350,7 +350,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "27": {
@@ -372,7 +372,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "29": {
@@ -383,7 +383,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "30": {
@@ -394,9 +394,9 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     }
   },
-  "updated_at": "2026-09-16T16:40:02.737Z"
+  "updated_at": "2026-09-16T16:40:09.077Z"
 }
