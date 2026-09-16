@@ -129,7 +129,12 @@ window.handleLogout = function() {
   clearChamCongTabData();
 
   checkLoginState();
+
+  // Hiện lại cảnh báo "Đăng nhập để lưu thông tin" (kể cả khi trước đó người dùng đã bấm ✕ để đóng)
+  const notice = document.getElementById("ccLoginNotice");
+  if (notice) notice.style.display = "flex";
   if (typeof window.updateCcLoginNotice === "function") window.updateCcLoginNotice();
+
   alert("Đã đăng xuất!");
   if (typeof switchTab === "function") switchTab('tabLuong');
 };

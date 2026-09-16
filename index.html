@@ -244,6 +244,9 @@
       height: 30px !important;
       font-size: 20px !important;
       font-weight: bold;
+      width: 96px;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     /* Ô chọn Tháng/Năm hiển thị popup */
@@ -410,7 +413,7 @@
       #cc_bangPhu table td:nth-child(5), #cc_bangPhu table td:nth-child(5) { width: 28% !important; }
 
       /* Giữ các nút nhỏ (Xóa, Đổi ca, Đăng xuất, tab, đóng cảnh báo) gọn gàng, không kéo full-width */
-      .btn-xoa-tab, .btn-dao-ca, .btn-logout, .tab-btn, .btn-install-app, .notice-close {
+      .btn-xoa-tab, .btn-dao-ca, .btn-logout, .tab-btn, .btn-install-app, .notice-close, .btn-toggle-pwd {
         width: auto !important;
         flex: 0 0 auto !important;
       }
@@ -595,15 +598,20 @@
       .cell-hc { height: auto !important; min-height: 26px !important; line-height: 1.1 !important; white-space: normal !important; }
       body { padding: 10px; }
 
-      /* LCB + Tháng + Năm + nút Xóa gọn trên cùng 1 dòng */
+      /* LCB + Tháng + Năm + nút Xóa gọn trên cùng 1 dòng; nhóm Đổi ca xuống dòng riêng bên dưới */
       .input-row {
-        flex-wrap: nowrap !important;
+        flex-wrap: wrap !important;
         justify-content: flex-start !important;
         gap: 3px !important;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
       }
       .input-row .group { gap: 2px !important; flex: 0 0 auto; }
+      .input-row .shift-group {
+        flex: 1 1 100% !important;
+        margin-top: 6px !important;
+        justify-content: flex-start !important;
+      }
       .input-row label { font-size: 13px !important; margin: 0 !important; }
       #luongCoBan, #cc_luongCoBan {
         width: 78px !important; min-width: 78px !important; font-size: 13px !important; height: 24px !important;
@@ -633,6 +641,14 @@
       .day-card.shift-short { min-height: 52px !important; }
       .input-cell-val { font-size: 11px !important; height: 22px !important; line-height: 20px !important; }
       body { padding: 8px; }
+
+      /* Nhóm Đổi ca + nhãn ca xuống dòng riêng, không chen chung dòng LCB/Tháng/Năm */
+      .input-row { flex-wrap: wrap !important; }
+      .input-row .shift-group {
+        flex: 1 1 100% !important;
+        margin-top: 6px !important;
+        justify-content: flex-start !important;
+      }
     }
 
     .cc-col-right {
@@ -659,6 +675,13 @@
       width: 100%;
     }
     .cc-login-notice .notice-text { flex: 1 1 auto; min-width: 0; }
+    .pwd-wrap { position: relative; display: inline-flex; align-items: center; }
+    .btn-toggle-pwd {
+      position: absolute; right: 3px; top: 50%; transform: translateY(-50%);
+      background: none !important; border: none !important; padding: 0 !important;
+      margin: 0 !important; width: auto !important; height: auto !important;
+      cursor: pointer; font-size: 14px; line-height: 1; color: #666;
+    }
     .cc-login-notice .notice-close {
       flex: 0 0 auto; width: auto; background: none; border: none; color: #9a3412; font-size: 15px;
       font-weight: bold; cursor: pointer; line-height: 1; padding: 2px 4px; margin-top: 1px;
@@ -679,7 +702,10 @@
       <div id="loginFormArea" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
         <span style="font-weight: bold; color: #007bff; font-size: 14px;">👤 Tài khoản chấm công:</span>
         <input type="text" id="authUsername" placeholder="Tên đăng nhập" style="width: 120px; height: 26px; font-size: 13px; padding: 2px 6px; border: 1px solid #ccc; border-radius: 4px;" />
-        <input type="password" id="authPassword" placeholder="Mật khẩu" style="width: 110px; height: 26px; font-size: 13px; padding: 2px 6px; border: 1px solid #ccc; border-radius: 4px;" />
+        <span class="pwd-wrap">
+          <input type="password" id="authPassword" placeholder="Mật khẩu" style="width: 110px; height: 26px; font-size: 13px; padding: 2px 22px 2px 6px; border: 1px solid #ccc; border-radius: 4px;" />
+          <button type="button" class="btn-toggle-pwd" id="btnTogglePwd" onclick="togglePasswordVisibility()" title="Hiện/ẩn mật khẩu">👁️</button>
+        </span>
         <button type="button" onclick="handleLogin()" style="padding: 4px 12px; font-size: 13px; height: 26px; background: #007bff; border-radius: 4px; border:none; color:#fff; cursor:pointer;">Đăng nhập</button>
         <button type="button" onclick="handleRegister()" style="padding: 4px 12px; font-size: 13px; height: 26px; background: #28a745; border-radius: 4px; border:none; color:#fff; cursor:pointer;">Đăng ký</button>
       </div>
@@ -970,7 +996,7 @@
               📲 Cài đặt
             </button>
           </div>
-          <div class="group">
+          <div class="group shift-group">
             <!-- Nút bấm Đổi ca -->
             <button type="button" class="btn-dao-ca" id="btnDaoCa" onclick="toggleDaoCa()" style="white-space: nowrap; margin: 0;">
               <span>⇄</span> <span>Đổi ca</span>
@@ -1162,6 +1188,19 @@
     }, 3000);
   }
   
+  function togglePasswordVisibility() {
+    const pwd = document.getElementById('authPassword');
+    const btn = document.getElementById('btnTogglePwd');
+    if (!pwd) return;
+    if (pwd.type === 'password') {
+      pwd.type = 'text';
+      if (btn) btn.textContent = '🙈';
+    } else {
+      pwd.type = 'password';
+      if (btn) btn.textContent = '👁️';
+    }
+  }
+
   function copySTK() {
     const stkText = document.getElementById("stk").innerText;
     navigator.clipboard.writeText(stkText).then(() => {
