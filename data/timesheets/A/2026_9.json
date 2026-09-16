@@ -3,9 +3,9 @@
   "allowances": {
     "cc_pcABC": "",
     "cc_pcChuyenCan": "200.000",
-    "cc_pcThamNien": "",
+    "cc_pcThamNien": "600.000",
     "cc_pcChucVu": "",
-    "cc_pcDiLai": "",
+    "cc_pcDiLai": "500.000",
     "cc_pcDienThoai": "",
     "cc_pcTreEm": "",
     "cc_pcKhac": ""
@@ -26,7 +26,7 @@
     "pcChuyenCan": "200.000",
     "pcThamNien": "600.000",
     "pcChucVu": "",
-    "pcDiLai": "",
+    "pcDiLai": "500.000",
     "pcDienThoai": "1.500.000",
     "pcTreEm": "50.000",
     "pcKhac": "",
@@ -42,29 +42,29 @@
     "phuLuongTangCa2": "",
     "soGioDem2": "",
     "phuLuongDem2": "",
-    "cc_ngayCong": "24.5",
-    "cc_tc150": "7",
-    "cc_tc200": "0",
-    "cc_tcDem30": "0",
-    "cc_ngayCong200": "0",
-    "cc_tc300": "0",
-    "cc_tc340": "0",
-    "cc_tcDem70": "0",
+    "cc_ngayCong": "",
+    "cc_tc150": "",
+    "cc_tc200": "",
+    "cc_tcDem30": "",
+    "cc_ngayCong200": "",
+    "cc_tc300": "",
+    "cc_tc340": "",
+    "cc_tcDem70": "",
     "cc_thongca380": "",
-    "cc_phepNam": "0.5",
-    "cc_le": "1",
-    "cc_soGioHanhChinh1": "11",
-    "cc_phuLuongHanhChinh": "100",
-    "cc_soGioTangCa1": "11",
-    "cc_phuLuongTangCa": "100",
-    "cc_soGioDem1": "11",
-    "cc_phuLuongDem": "100",
-    "cc_soGioHanhChinh2": "11",
-    "cc_phuLuongHanhChinh2": "1",
-    "cc_soGioTangCa2": "11",
-    "cc_phuLuongTangCa2": "1",
-    "cc_soGioDem2": "11",
-    "cc_phuLuongDem2": "111"
+    "cc_phepNam": "",
+    "cc_le": "",
+    "cc_soGioHanhChinh1": "",
+    "cc_phuLuongHanhChinh": "",
+    "cc_soGioTangCa1": "",
+    "cc_phuLuongTangCa": "",
+    "cc_soGioDem1": "",
+    "cc_phuLuongDem": "",
+    "cc_soGioHanhChinh2": "",
+    "cc_phuLuongHanhChinh2": "",
+    "cc_soGioTangCa2": "",
+    "cc_phuLuongTangCa2": "",
+    "cc_soGioDem2": "",
+    "cc_phuLuongDem2": ""
   },
   "timesheet": {
     "1": {
@@ -141,7 +141,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "8": {
@@ -152,7 +152,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "9": {
@@ -163,7 +163,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "10": {
@@ -174,18 +174,18 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "11": {
       "hc": {
-        "label": "1/2 phép năm",
-        "short": "½PN",
-        "type": "pn_nua",
-        "value": 4,
-        "allowSunday": false
+        "label": "Đi làm đủ",
+        "short": "Đi làm đủ",
+        "type": "du",
+        "value": 0,
+        "allowSunday": true
       },
-      "ot": "7",
+      "ot": "1",
       "midOt": "0"
     },
     "12": {
@@ -196,7 +196,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "13": {
@@ -218,7 +218,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "15": {
@@ -229,7 +229,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "16": {
@@ -240,7 +240,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "17": {
@@ -251,7 +251,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "18": {
@@ -262,7 +262,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "19": {
@@ -273,7 +273,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "20": {
@@ -398,5 +398,5 @@
       "midOt": "0"
     }
   },
-  "updated_at": "2026-09-16T16:43:05.336Z"
+  "updated_at": "2026-09-16T16:56:51.408Z"
 }
