@@ -1,6 +1,6 @@
 // --- CẤU HÌNH KẾT NỐI SUPABASE ---
 const SUPABASE_URL = "https://txdnlqfxxhdskfbytyqo.supabase.co"; 
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4ZG5scWZ4eGhkc2tmYnl0eXFvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEyMTcwNzIsImV4cCI6MjA1Njc5MzA3Mn0.your_anon_key_here"; // Giữ nguyên khóa anon chuẩn của anh
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4ZG5scWZ4eGhkc2tmYnl0eXFvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEyMTcwNzIsImV4cCI6MjA1Njc5MzA3Mn0.your_anon_key_here"; // Dán đúng Key anon của anh
 
 let currentUser = localStorage.getItem("cc_currentUser") || null;
 let saveTimer = null;
@@ -9,118 +9,132 @@ document.addEventListener("DOMContentLoaded", function () {
   checkLoginState();
 });
 
-// Kiểm tra trạng thái đăng nhập để ẩn/hiện form đăng nhập và khu vực "Xin chào"
+// Đồng bộ trạng thái giao diện: Ẩn form đăng nhập, hiện dòng "Xin chào"
 function checkLoginState() {
-  const loginFormArea = document.getElementById("loginFormArea"); 
-  const userInfoArea = document.getElementById("userInfoArea");     
+  const loginForm = document.getElementById("loginFormArea");
+  const userArea = document.getElementById("userInfoArea");
   const lblUser = document.getElementById("lblUsername");
-  const modal = document.getElementById("loginModalOverlay");
 
   if (currentUser) {
-    if (loginFormArea) loginFormArea.style.display = "none";
-    if (userInfoArea) userInfoArea.style.display = "flex";
+    if (loginForm) loginForm.style.display = "none";
+    if (userArea) userArea.style.display = "flex";
     if (lblUser) lblUser.textContent = currentUser;
-    if (modal) modal.style.display = "none";
     loadUserDataFromCloud();
   } else {
-    if (loginFormArea) loginFormArea.style.display = "flex";
-    if (userInfoArea) userInfoArea.style.display = "none";
+    if (loginForm) loginForm.style.display = "flex";
+    if (userArea) userArea.style.display = "none";
   }
 }
 
-// Hàm gửi request tối ưu chống lỗi 404/405
+// Hàm gửi request Supabase chuẩn REST API
 async function supabaseRequest(table, method = "GET", queryParams = "", bodyData = null) {
-  let url = `${SUPABASE_URL}/rest/v1/${table}${queryParams}`;
-  let headers = {
+  const cleanUrl = `${SUPABASE_URL.replace(/\/+$/, '')}/rest/v1/${table}${queryParams}`;
+  const headers = {
     "apikey": SUPABASE_KEY,
     "Authorization": `Bearer ${SUPABASE_KEY}`,
     "Content-Type": "application/json",
-    "Prefer": "return=representation"
+    "Prefer": method === "POST" ? "return=representation" : ""
   };
 
-  let options = { method, headers };
+  const options = { method, headers };
   if (bodyData) options.body = JSON.stringify(bodyData);
 
   try {
-    let response = await fetch(url, options);
-    if (!response.ok) {
-      let errText = await response.text();
-      console.error("Supabase Error Status:", response.status, errText);
+    const res = await fetch(cleanUrl, options);
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error(`[Supabase Error] ${res.status}:`, errText);
       return null;
     }
-    let text = await response.text();
+    const text = await res.text();
     return text ? JSON.parse(text) : [];
   } catch (err) {
-    console.error("Network Error:", err);
+    console.error("[Network Error]:", err);
     return null;
   }
 }
 
-// Đăng ký tài khoản
+// Xử lý Đăng Ký
 window.handleRegister = async function() {
-  const u = document.getElementById("authUsername").value.trim();
-  const p = document.getElementById("authPassword").value.trim();
-  if (!u || !p) { alert("Vui lòng nhập tài khoản và mật khẩu!"); return; }
+  const uInput = document.getElementById("authUsername");
+  const pInput = document.getElementById("authPassword");
+  const u = uInput ? uInput.value.trim() : "";
+  const p = pInput ? pInput.value.trim() : "";
 
-  let check = await supabaseRequest("accounts", "GET", `?username=eq.${encodeURIComponent(u)}`);
-  if (check && check.length > 0) {
-    alert("Tài khoản đã tồn tại!");
+  if (!u || !p) {
+    alert("Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu!");
     return;
   }
 
-  let res = await supabaseRequest("accounts", "POST", "", { username: u, password: p });
-  if (res !== null) {
-    currentUser = u;
-    localStorage.setItem("cc_currentUser", u);
-    alert("Đăng ký thành công!");
-    
-    const modal = document.getElementById("loginModalOverlay");
-    if (modal) modal.style.display = "none";
-
-    checkLoginState();
-  } else {
-    alert("Lỗi đăng ký! Kiểm tra lại kết nối Supabase.");
+  // 1. Kiểm tra tài khoản đã tồn tại chưa
+  const check = await supabaseRequest("accounts", "GET", `?username=eq.${encodeURIComponent(u)}`);
+  if (check === null) {
+    alert("Lỗi kết nối Supabase! Kiểm tra lại URL hoặc Key anon.");
+    return;
   }
-};
+  if (check.length > 0) {
+    alert("Tài khoản này đã tồn tại, vui lòng chọn tên khác!");
+    return;
+  }
 
-// Đăng nhập tài khoản
-window.handleLogin = async function() {
-  const u = document.getElementById("authUsername").value.trim();
-  const p = document.getElementById("authPassword").value.trim();
-  if (!u || !p) { alert("Vui lòng nhập tài khoản và mật khẩu!"); return; }
-
-  let res = await supabaseRequest("accounts", "GET", `?username=eq.${encodeURIComponent(u)}&password=eq.${encodeURIComponent(p)}`);
-  
+  // 2. Tạo tài khoản mới
+  const res = await supabaseRequest("accounts", "POST", "", [{ username: u, password: p }]);
   if (res && res.length > 0) {
     currentUser = u;
     localStorage.setItem("cc_currentUser", u);
-    alert("Đăng nhập thành công!");
-    
-    const modal = document.getElementById("loginModalOverlay");
-    if (modal) modal.style.display = "none";
+    alert("Đăng ký thành công!");
+    if (uInput) uInput.value = "";
+    if (pInput) pInput.value = "";
+    checkLoginState();
+  } else {
+    alert("Không thể tạo tài khoản. Kiểm tra lại quyền bảng accounts trên Supabase!");
+  }
+};
 
+// Xử lý Đăng Nhập
+window.handleLogin = async function() {
+  const uInput = document.getElementById("authUsername");
+  const pInput = document.getElementById("authPassword");
+  const u = uInput ? uInput.value.trim() : "";
+  const p = pInput ? pInput.value.trim() : "";
+
+  if (!u || !p) {
+    alert("Vui lòng nhập tên đăng nhập và mật khẩu!");
+    return;
+  }
+
+  const res = await supabaseRequest(
+    "accounts",
+    "GET",
+    `?username=eq.${encodeURIComponent(u)}&password=eq.${encodeURIComponent(p)}`
+  );
+
+  if (res === null) {
+    alert("Lỗi kết nối máy chủ! Kiểm tra lại internet hoặc cấu hình API.");
+    return;
+  }
+
+  if (res.length > 0) {
+    currentUser = u;
+    localStorage.setItem("cc_currentUser", u);
+    alert(`Đăng nhập thành công! Chào mừng ${u}`);
+    if (uInput) uInput.value = "";
+    if (pInput) pInput.value = "";
     checkLoginState();
   } else {
     alert("Sai tên đăng nhập hoặc mật khẩu!");
   }
 };
 
-// Đăng xuất tài khoản
+// Xử lý Đăng Xuất
 window.handleLogout = function() {
   currentUser = null;
   localStorage.removeItem("cc_currentUser");
-  
-  const loginFormArea = document.getElementById("loginFormArea");
-  const userInfoArea = document.getElementById("userInfoArea");
-  if (loginFormArea) loginFormArea.style.display = "flex";
-  if (userInfoArea) userInfoArea.style.display = "none";
-
   checkLoginState();
-  alert("Đã đăng xuất!");
-  switchTab('tabLuong');
+  alert("Đã đăng xuất tài khoản!");
 };
 
-// Lưu dữ liệu tự động ngầm không giật lag
+// Tự động lưu ngầm khi người dùng thay đổi dữ liệu
 window.autoSaveUserData = function() {
   if (!currentUser) return;
   const statusEl = document.getElementById("syncStatus");
@@ -144,40 +158,45 @@ window.autoSaveUserData = function() {
       cc_pcKhac: document.getElementById("cc_pcKhac")?.value || ""
     };
 
-    let dataPayload = {
+    const dataPayload = [{
       username: currentUser,
       year: parseInt(year),
       month: parseInt(month),
       base_salary: baseSalary,
       allowances_json: JSON.stringify(allowances),
       timesheet_json: JSON.stringify(window.chamCongData || {}),
-      updated_at: new Date()
-    };
+      updated_at: new Date().toISOString()
+    }];
 
-    if (statusEl) statusEl.textContent = "(Đang đồng bộ...)";
+    if (statusEl) statusEl.textContent = "(Đang lưu...)";
 
-    let headers = {
+    const cleanUrl = `${SUPABASE_URL.replace(/\/+$/, '')}/rest/v1/timesheets`;
+    const headers = {
       "apikey": SUPABASE_KEY,
       "Authorization": `Bearer ${SUPABASE_KEY}`,
       "Content-Type": "application/json",
       "Prefer": "resolution=merge-duplicates"
     };
 
-    let res = await fetch(`${SUPABASE_URL}/rest/v1/timesheets`, {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify(dataPayload)
-    });
+    try {
+      const res = await fetch(cleanUrl, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(dataPayload)
+      });
 
-    if (res.ok) {
-      if (statusEl) statusEl.textContent = "(Đã lưu tự động)";
-    } else {
-      if (statusEl) statusEl.textContent = "(Lỗi lưu mây)";
+      if (res.ok) {
+        if (statusEl) statusEl.textContent = "(Đã lưu tự động)";
+      } else {
+        if (statusEl) statusEl.textContent = "(Lỗi lưu mây)";
+      }
+    } catch (e) {
+      if (statusEl) statusEl.textContent = "(Mất kết nối)";
     }
-  }, 2000);
+  }, 1500);
 };
 
-// Tải dữ liệu từ Supabase theo tài khoản và tháng/năm
+// Tải dữ liệu người dùng từ Cloud
 window.loadUserDataFromCloud = async function() {
   if (!currentUser) return;
   const year = document.getElementById("cc_nam")?.value || new Date().getFullYear();
@@ -186,17 +205,23 @@ window.loadUserDataFromCloud = async function() {
   const statusEl = document.getElementById("syncStatus");
   if (statusEl) statusEl.textContent = "(Đang tải dữ liệu...)";
 
-  let res = await supabaseRequest("timesheets", "GET", `?username=eq.${encodeURIComponent(currentUser)}&year=eq.${year}&month=eq.${month}`);
+  const res = await supabaseRequest(
+    "timesheets", 
+    "GET", 
+    `?username=eq.${encodeURIComponent(currentUser)}&year=eq.${year}&month=eq.${month}`
+  );
 
   if (res && res.length > 0) {
-    let row = res[0];
-    if (document.getElementById("cc_luongCoBan")) document.getElementById("cc_luongCoBan").value = row.base_salary || "";
+    const row = res[0];
+    if (document.getElementById("cc_luongCoBan")) {
+      document.getElementById("cc_luongCoBan").value = row.base_salary || "";
+    }
     
     if (row.allowances_json) {
       try {
-        let al = JSON.parse(row.allowances_json);
+        const al = JSON.parse(row.allowances_json);
         Object.keys(al).forEach(k => {
-          let el = document.getElementById(k);
+          const el = document.getElementById(k);
           if (el) el.value = al[k];
         });
       } catch(e) {}
