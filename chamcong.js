@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const MOC_CA_DEM = new Date(2026, 8, 7);
   let isDaoCa = false;
 
-  // Cấu hình giờ hành chính
   const DSHanhChinhChung = [
     { label: "Đi làm đủ", short: "Đi làm đủ", type: "du", value: 0, allowSunday: true },
     { label: "Nghỉ", short: "Nghỉ", type: "nghi", value: 8, allowSunday: true },
@@ -58,11 +57,11 @@ document.addEventListener("DOMContentLoaded", function () {
     Object.keys(chamCongData).forEach(k => delete chamCongData[k]);
   }
 
-  // ĐẢO CA NGÀY / ĐÊM CÓ HỘP THOẠI XÁC NHẬN [OK / HỦY]
+  // Đảo ca ngày/đêm có hộp thoại xác nhận OK / Hủy
   window.toggleDaoCa = function() {
     const xacNhan = confirm("CẢNH BÁO:\nĐảo ca ngày/đêm sẽ thiết lập lại toàn bộ dữ liệu chấm công đã nhập trong tháng này.\n\nBấm [OK] để tiếp tục đảo ca.\nBấm [Hủy] để giữ nguyên dữ liệu hiện tại.");
     if (!xacNhan) {
-      return; // Bấm Hủy -> Giữ nguyên dữ liệu
+      return;
     }
 
     isDaoCa = !isDaoCa;
@@ -177,7 +176,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   let currentPickContext = null;
 
-  // POPUP CHỌN GIỜ HÀNH CHÍNH & TĂNG CA
+  // Popup chọn Giờ hành chính / Tăng ca
   window.openPicker = function(day, type) {
     currentPickContext = { day, type };
     const overlay = document.getElementById("pickerOverlay");
@@ -211,7 +210,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = "picker-btn";
-        btn.textContent = item.label; // Hiện "Muộn 1 giờ", "Về sớm 1 giờ"
+        btn.textContent = item.label;
         btn.onclick = () => selectPickValue(item);
         body.appendChild(btn);
       });
@@ -302,7 +301,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const elHc = document.getElementById(`hc_val_${day}`);
     const elOt = document.getElementById(`ot_val_${day}`);
     const elMidOt = document.getElementById(`mid_ot_val_${day}`);
-    if (elHc) elHc.textContent = data.hc.short; // Hiển thị "Muộn 1", "Về sớm 1"
+    if (elHc) elHc.textContent = data.hc.short;
     if (elOt) elOt.textContent = data.ot;
     if (elMidOt) elMidOt.textContent = data.midOt;
   }
@@ -541,29 +540,6 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   function setupCcLuongEngine() {
-    const lcbInput = document.getElementById("cc_luongCoBan");
-    if (!lcbInput) return;
-
-    const moneyIds = ["cc_luongCoBan", "cc_pcABC", "cc_pcChucVu", "cc_pcDiLai", "cc_pcKhac"];
-    moneyIds.forEach(mId => {
-      const el = document.getElementById(mId);
-      if (el && !el.dataset.formatted) {
-        el.dataset.formatted = "true";
-        el.addEventListener("input", function(e) {
-          let val = e.target.value.replace(/\./g, "").replace(/[^0-9]/g, "");
-          if (val) e.target.value = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-          triggerCcComputeEngine();
-          if (typeof window.autoSaveUserData === "function") window.autoSaveUserData();
-        });
-        el.addEventListener("blur", function(e) {
-          let val = parseInt(e.target.value.replace(/\./g, "")) || 0;
-          if (val > 0) e.target.value = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-          triggerCcComputeEngine();
-          if (typeof window.autoSaveUserData === "function") window.autoSaveUserData();
-        });
-      }
-    });
-
     const ccPane = document.getElementById("paneChamCong");
     if (ccPane) {
       ccPane.querySelectorAll("input, select").forEach(inp => {
@@ -581,8 +557,9 @@ document.addEventListener("DOMContentLoaded", function () {
     triggerCcComputeEngine();
   }
 
-  function triggerCcComputeEngine() {
-    const getVal = (id) => parseInt(document.getElementById(id)?.value?.replace(/\./g, "") || "0") || 0;
+  // TÍNH TOÁN TOÀN BỘ BẢNG LƯƠNG TỪ CHẤM CÔNG VÀ BẢNG PHỤ LỄ TẾT
+  window.triggerCcComputeEngine = function() {
+    const getVal = (id) => parseInt((document.getElementById(id)?.value || "0").toString().replace(/\./g, "")) || 0;
     const getFloat = (id) => parseFloat(document.getElementById(id)?.value || "0") || 0;
 
     const lcb = getVal("cc_luongCoBan");
@@ -624,6 +601,7 @@ document.addEventListener("DOMContentLoaded", function () {
     tong += setTien("cc_tienPhepNam", luongNgayCong * getFloat("cc_phepNam"));
     tong += setTien("cc_tienLe", luongNgayCong * getFloat("cc_le"));
 
+    // TÍNH BẢNG PHỤ LƯƠNG LỄ TẾT CỦA TAB CHẤM CÔNG
     let tienTet = 0;
     function phuLuongCc(soGioId, heSoId, rowTienId, loaiLuong) {
       const gio = getFloat(soGioId);
@@ -638,6 +616,7 @@ document.addEventListener("DOMContentLoaded", function () {
       setTien(rowTienId, tien);
       return tien;
     }
+
     tienTet += phuLuongCc("cc_soGioHanhChinh1", "cc_phuLuongHanhChinh", "cc_tienHanhChinh", "hanhChinh");
     tienTet += phuLuongCc("cc_soGioTangCa1", "cc_phuLuongTangCa", "cc_tienTangCa", "tangCa");
     tienTet += phuLuongCc("cc_soGioDem1", "cc_phuLuongDem", "cc_tienTroCapDem", "dem");
@@ -659,9 +638,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const congDoan = setTien("cc_tienTruCD", luongBH * 0.005);
 
     setTien("cc_thucLinh", tong - bhxh - congDoan);
-  }
+  };
 
-  // ================= MENU POPUP LỰA CHỌN THÁNG HOẶC NĂM =================
+  // Popup chọn Tháng / Năm
   window.openDateMenu = function(type, isChamCongTab = false) {
     const overlay = document.getElementById("pickerOverlay");
     const body = document.getElementById("pickerBody");
@@ -735,7 +714,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   };
 
-  // HÀM CHỈ XÓA DỮ LIỆU CỦA RIÊNG TAB CHẤM CÔNG
+  // Xóa trắng riêng Tab Chấm Công
   window.clearDataTabChamCong = function() {
     if (!confirm("Bạn có chắc chắn muốn xóa lịch chấm công và bảng lương tạo từ chấm công của tháng này?")) return;
 
@@ -754,6 +733,10 @@ document.addEventListener("DOMContentLoaded", function () {
       const el = document.getElementById(id);
       if (el) el.value = "";
     });
+
+    if (typeof window.applyDefaultAllowances === "function") {
+      window.applyDefaultAllowances();
+    }
 
     triggerCcComputeEngine();
     if (typeof window.autoSaveUserData === "function") window.autoSaveUserData();
