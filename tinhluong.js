@@ -1,42 +1,11 @@
+// Biến lưu trữ ngày tháng toàn cục cho cả hệ thống
+const curDateObj = new Date();
+window.selectedMonth = (curDateObj.getDate() < 11) ? (curDateObj.getMonth() === 0 ? 12 : curDateObj.getMonth()) : (curDateObj.getMonth() + 1);
+window.selectedYear = (curDateObj.getMonth() === 0 && curDateObj.getDate() < 11) ? curDateObj.getFullYear() - 1 : curDateObj.getFullYear();
+
 document.addEventListener("DOMContentLoaded", function () {
-  const thangSelect = document.getElementById("thang");
-  const namSelect = document.getElementById("nam");
+  updateAllDateLabels();
 
-  const today = new Date();
-  const currentMonth = today.getMonth() + 1;
-  const currentYear = today.getFullYear();
-  const currentDate = today.getDate();
-
-  let defaultMonth = (currentDate < 11) ? (currentMonth === 1 ? 12 : currentMonth - 1) : currentMonth;
-  let defaultYear = (currentMonth === 1 && currentDate < 11) ? currentYear - 1 : currentYear;
-
-  // Gán tháng (1-12)
-  if (thangSelect) {
-    thangSelect.innerHTML = "";
-    for (let i = 1; i <= 12; i++) {
-      const option = document.createElement("option");
-      option.value = i;
-      option.text = i.toString().padStart(2, '0');
-      if (i === defaultMonth) option.selected = true;
-      thangSelect.appendChild(option);
-    }
-  }
-
-  // Gán năm: từ 2020 đến năm sau năm hiện tại (currentYear + 1)
-  if (namSelect) {
-    namSelect.innerHTML = "";
-    for (let y = 2020; y <= currentYear + 1; y++) {
-      const option = document.createElement("option");
-      option.value = y;
-      option.text = y;
-      if (y === defaultYear) option.selected = true;
-      namSelect.appendChild(option);
-    }
-  }
-
-  updateDisplayMonthYearLabels();
-
-  // === Định dạng số cho tất cả input tiền ===
   function formatNumber(num) {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
@@ -77,7 +46,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // Giá trị mặc định phụ cấp
   const defaultValues = {
     pcDiLai: 500000,
     pcChuyenCan: 200000,
@@ -92,8 +60,8 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   function tinhNgayCongChuan() {
-    const thang = +document.getElementById("thang")?.value || 1;
-    const nam = +document.getElementById("nam")?.value || new Date().getFullYear();
+    const thang = window.selectedMonth || 1;
+    const nam = window.selectedYear || new Date().getFullYear();
 
     const soNgayTrongThang = new Date(nam, thang, 0).getDate();
     let soNgayChuNhat = 0;
@@ -124,16 +92,6 @@ document.addEventListener("DOMContentLoaded", function () {
       input.addEventListener("change", () => {
         tinhLuong();
         if (typeof window.autoSaveUserData === "function") window.autoSaveUserData();
-      });
-    }
-  });
-
-  ["thang", "nam"].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.addEventListener("change", () => {
-        updateDisplayMonthYearLabels();
-        tinhLuong();
       });
     }
   });
@@ -234,12 +192,43 @@ document.addEventListener("DOMContentLoaded", function () {
     return tongPhu;
   }
 
-  function updateDisplayMonthYearLabels() {
-    const t = document.getElementById("thang")?.value || (new Date().getMonth() + 1);
-    const n = document.getElementById("nam")?.value || new Date().getFullYear();
-    const lblLuong = document.getElementById("displayMonthYearLuong");
-    if (lblLuong) lblLuong.innerText = `Tháng ${t}/${n}`;
-  }
+  // HÀM CHỈ XÓA DỮ LIỆU CỦA RIÊNG TAB TÍNH LƯƠNG
+  window.clearDataTabLuong = function() {
+    if (!confirm("Bạn có chắc chắn muốn xóa dữ liệu bảng Tính Lương tháng này?")) return;
+
+    const ids = [
+      "luongCoBan", "ngayCong", "tc150", "tc200", "tcDem30", 
+      "ngayCong200", "tc300", "tc340", "tcDem70", "thongca380", "phepNam", "le",
+      "pcABC", "pcChucVu", "pcDiLai", "pcKhac",
+      "soGioHanhChinh1", "phuLuongHanhChinh", "soGioTangCa1", "phuLuongTangCa", "soGioDem1", "phuLuongDem",
+      "soGioHanhChinh2", "phuLuongHanhChinh2", "soGioTangCa2", "phuLuongTangCa2", "soGioDem2", "phuLuongDem2"
+    ];
+
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = "";
+    });
+
+    tinhLuong();
+    if (typeof window.autoSaveUserData === "function") window.autoSaveUserData();
+    alert("Đã xóa sạch dữ liệu bảng Tính Lương!");
+  };
 
   tinhLuong();
 });
+
+// Cập nhật nhãn nút Tháng và Năm trên toàn hệ thống
+window.updateAllDateLabels = function() {
+  const m = (window.selectedMonth || 1).toString().padStart(2, '0');
+  const y = (window.selectedYear || new Date().getFullYear()).toString();
+
+  const l1 = document.getElementById("lblThangLuong");
+  const l2 = document.getElementById("lblNamLuong");
+  const l3 = document.getElementById("lblThangCC");
+  const l4 = document.getElementById("lblNamCC");
+
+  if (l1) l1.innerText = m;
+  if (l2) l2.innerText = y;
+  if (l3) l3.innerText = m;
+  if (l4) l4.innerText = y;
+};
