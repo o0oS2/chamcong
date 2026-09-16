@@ -1,5 +1,5 @@
 // Dán link Worker ở Bước 2 vào đây:
-const API_URL = "https://api-tinhluong.ten-anh.workers.dev";
+const API_URL = "https://api-chamcong.o0os2.workers.dev/";
 
 let currentUser = localStorage.getItem("cc_currentUser") || null;
 let saveTimer = null;
