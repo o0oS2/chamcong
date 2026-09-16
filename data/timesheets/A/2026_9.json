@@ -43,7 +43,7 @@
     "soGioDem2": "",
     "phuLuongDem2": "",
     "cc_ngayCong": "24",
-    "cc_tc150": "6",
+    "cc_tc150": "7",
     "cc_tc200": "19",
     "cc_tcDem30": "64",
     "cc_ngayCong200": "1",
@@ -383,7 +383,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "30": {
@@ -399,5 +399,5 @@
     }
   },
   "shift_mode": "chuan",
-  "updated_at": "2026-09-16T19:46:10.463Z"
+  "updated_at": "2026-09-16T19:46:13.703Z"
 }
