@@ -1,47 +1,21 @@
+// Biến lưu trữ ngày tháng toàn cục cho cả hệ thống
+const curDateObj = new Date();
+const cMonth = curDateObj.getMonth() + 1;
+const cYear = curDateObj.getFullYear();
+const cDate = curDateObj.getDate();
+
+// Quy tắc mùng 10: Sau mùng 10 là tháng hiện tại; mùng 10 đổ về trước là tháng trước
+if (cDate <= 10) {
+  window.selectedMonth = (cMonth === 1) ? 12 : cMonth - 1;
+  window.selectedYear = (cMonth === 1) ? cYear - 1 : cYear;
+} else {
+  window.selectedMonth = cMonth;
+  window.selectedYear = cYear;
+}
+
 document.addEventListener("DOMContentLoaded", function () {
-  const thangSelect = document.getElementById("thang");
-  const namSelect = document.getElementById("nam");
+  updateDateDisplays();
 
-  const today = new Date();
-  const currentMonth = today.getMonth() + 1;
-  const currentYear = today.getFullYear();
-  const currentDate = today.getDate();
-
-  // Mặc định: Sau mùng 10 là tháng hiện tại; Mùng 10 đổ về trước là tháng trước
-  let defaultMonth, defaultYear;
-  if (currentDate <= 10) {
-    defaultMonth = (currentMonth === 1) ? 12 : currentMonth - 1;
-    defaultYear = (currentMonth === 1) ? currentYear - 1 : currentYear;
-  } else {
-    defaultMonth = currentMonth;
-    defaultYear = currentYear;
-  }
-
-  // Khởi tạo tháng (01 - 12)
-  if (thangSelect) {
-    thangSelect.innerHTML = "";
-    for (let i = 1; i <= 12; i++) {
-      const option = document.createElement("option");
-      option.value = i;
-      option.text = i.toString().padStart(2, '0');
-      if (i === defaultMonth) option.selected = true;
-      thangSelect.appendChild(option);
-    }
-  }
-
-  // Khởi tạo năm (từ 2020 đến năm sau của năm hiện tại)
-  if (namSelect) {
-    namSelect.innerHTML = "";
-    for (let y = 2020; y <= currentYear + 1; y++) {
-      const option = document.createElement("option");
-      option.value = y;
-      option.text = y;
-      if (y === defaultYear) option.selected = true;
-      namSelect.appendChild(option);
-    }
-  }
-
-  // Định dạng số tiền
   function formatNumber(num) {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
@@ -96,8 +70,8 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   function tinhNgayCongChuan() {
-    const thang = +document.getElementById("thang")?.value || defaultMonth;
-    const nam = +document.getElementById("nam")?.value || defaultYear;
+    const thang = window.selectedMonth || 1;
+    const nam = window.selectedYear || new Date().getFullYear();
 
     const soNgayTrongThang = new Date(nam, thang, 0).getDate();
     let soNgayChuNhat = 0;
@@ -128,21 +102,6 @@ document.addEventListener("DOMContentLoaded", function () {
       input.addEventListener("change", () => {
         tinhLuong();
         if (typeof window.autoSaveUserData === "function") window.autoSaveUserData();
-      });
-    }
-  });
-
-  // Khi đổi tháng hoặc năm ở Tab 1 -> đồng bộ sang Tab 2 và nạp dữ liệu
-  ["thang", "nam"].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.addEventListener("change", () => {
-        const ccEl = document.getElementById("cc_" + id);
-        if (ccEl) ccEl.value = el.value;
-        tinhLuong();
-        if (typeof window.loadUserDataFromCloud === "function" && localStorage.getItem("cc_currentUser")) {
-          window.loadUserDataFromCloud();
-        }
       });
     }
   });
@@ -267,3 +226,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
   tinhLuong();
 });
+
+// Cập nhật text hiển thị trên các ô chọn Tháng và Năm
+window.updateDateDisplays = function() {
+  const m = (window.selectedMonth || 1).toString().padStart(2, '0');
+  const y = (window.selectedYear || new Date().getFullYear()).toString();
+
+  const t1 = document.getElementById("txtThangLuong");
+  const n1 = document.getElementById("txtNamLuong");
+  const t2 = document.getElementById("txtThangCC");
+  const n2 = document.getElementById("txtNamCC");
+
+  if (t1) t1.innerText = m;
+  if (n1) n1.innerText = y;
+  if (t2) t2.innerText = m;
+  if (n2) n2.innerText = y;
+};
