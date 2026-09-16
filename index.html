@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tính Lương & Chấm Công</title>
+  <title>Tính Lương</title>
   <link rel="icon" href="https://raw.githubusercontent.com/o0oS2/Tinh-luong/main/Image/Icon.png" type="image/png" />
   <style>
     body {
@@ -198,72 +198,71 @@
       vertical-align: middle;
     }
 
-    /* ===== LƯƠNG CƠ BẢN VÀ CÁC NÚT ĐIỀU HƯỚNG ===== */
+    /* ===== LƯƠNG CƠ BẢN VÀ NÚT CHỌN THÁNG/NĂM ===== */
     .input-row {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 6px;
-      justify-content: space-between;
-      background: #fff;
-      padding: 6px 10px;
-      border-radius: 6px;
-      border: 1px solid #ddd;
+      gap: 4px;
+      margin-bottom: 4px;
+      justify-content: center;
     }
 
     .input-row .group {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
     }
 
     .input-row label {
       white-space: nowrap;
-      font-size: 16px;
+      font-size: 18px;
       color: green;
     }
 
     .input-row input[type="text"] {
-      width: 130px;
+      width: 140px;
       min-width: 40px;
       text-align: right;
-      font-size: 17px;
-      padding: 2px 6px;
-      height: 26px;
+      font-size: 20px;
+      padding: 2px 4px;
+      height: 24px;
       border: 1px solid #ccc;
-      border-radius: 4px;
+      border-radius: 3px;
+    }
+    #luongCoBan, #cc_luongCoBan {
+      height: 26px !important;
+      font-size: 18px !important;
       font-weight: bold;
     }
 
-    .btn-picker-my {
-      background: #f8fafc !important;
+    .btn-month-year-picker {
+      padding: 3px 8px !important;
+      font-size: 13px !important;
+      font-weight: bold !important;
+      background: #fff !important;
       color: #007bff !important;
       border: 1.5px solid #007bff !important;
       border-radius: 4px !important;
-      padding: 4px 10px !important;
-      font-size: 13px !important;
-      font-weight: bold !important;
       cursor: pointer !important;
+      height: 30px !important;
       display: inline-flex !important;
       align-items: center !important;
       gap: 4px !important;
     }
-    .btn-picker-my:hover {
-      background: #e0f2fe !important;
-    }
 
-    .btn-clear-month {
+    .btn-del-tab {
+      padding: 3px 8px !important;
+      font-size: 12px !important;
+      font-weight: bold !important;
       background: #ffebee !important;
       color: #dc3545 !important;
       border: 1px solid #dc3545 !important;
       border-radius: 4px !important;
-      padding: 4px 10px !important;
-      font-size: 13px !important;
-      font-weight: bold !important;
       cursor: pointer !important;
+      height: 30px !important;
     }
-    .btn-clear-month:hover {
+    .btn-del-tab:hover {
       background: #dc3545 !important;
       color: #fff !important;
     }
@@ -285,17 +284,194 @@
       transition: opacity 0.3s ease-in-out;
     }
     
-    .toast.show { opacity: 1; }
-    .toast::before { content: "✓ "; margin-right: 5px; }
+    .toast.show {
+      opacity: 1;
+    }
+    
+    .toast::before {
+      content: "✓ ";
+      margin-right: 5px;
+    }
+
+    @media screen and (max-width: 768px) {
+      .main-container {
+        display: block;
+      }
+      .left-column, .right-column {
+        flex: none;
+        width: 100%;
+      }
+      body {
+        padding: 10px;
+      }
+      table {
+        font-size: 14px;
+      }
+      table input[type="number"],
+      table input[type="text"],
+      table select {
+        width: 100%;
+        font-size: 16px;
+        padding: 10px 8px;
+      }
+      label, select {
+        display: block;
+        margin-top: 2px;
+        margin-bottom: 2px;
+      }
+      button {
+        width: 100%;
+        font-size: 16px;
+      }
+      th, td {
+        padding: 6px;
+      }
+      h1 {
+        font-size: 22px;
+      }
+
+      .input-row label {
+        font-size: 18px;
+      }
+
+      .input-row input[type="text"] {
+        width: 110px;
+        font-size: 16px;
+        height: 22px;
+        text-align: center;
+      }
+      #luongCoBan, #cc_luongCoBan {
+        height: 24px !important;
+        font-size: 17px !important;
+        font-weight: bold;
+        width: 120px !important;
+      }
+      
+      #luongContainer table th:nth-child(1), #luongContainer table td:nth-child(1),
+      #cc_luongContainer table th:nth-child(1), #cc_luongContainer table td:nth-child(1) {
+        width: 45% !important;
+      }
+
+      #luongContainer table th:nth-child(2), #luongContainer table td:nth-child(2),
+      #cc_luongContainer table th:nth-child(2), #cc_luongContainer table td:nth-child(2) {
+        width: 20% !important;
+      }
+
+      #luongContainer table th:nth-child(3), #luongContainer table td:nth-child(3),
+      #cc_luongContainer table th:nth-child(3), #cc_luongContainer table td:nth-child(3) {
+        width: 35% !important;
+      }
+      
+      #bangPhu table th:nth-child(1), #bangPhu table td:nth-child(1),
+      #cc_bangPhu table th:nth-child(1), #cc_bangPhu table td:nth-child(1) {
+        width: 12% !important;
+      }
+      #bangPhu table th:nth-child(2), #bangPhu table td:nth-child(2),
+      #cc_bangPhu table td:nth-child(2), #cc_bangPhu table td:nth-child(2) {
+        width: 30% !important;
+      }
+      #bangPhu table th:nth-child(3), #bangPhu table td:nth-child(3),
+      #cc_bangPhu table td:nth-child(3), #cc_bangPhu table td:nth-child(3) {
+        width: 15% !important;
+        max-width: 50px;
+      }
+      #bangPhu table th:nth-child(4), #bangPhu table td:nth-child(4),
+      #cc_bangPhu table th:nth-child(4), #cc_bangPhu table td:nth-child(4) {
+        width: 15% !important;
+      }
+      #bangPhu table th:nth-child(5), #bangPhu table td:nth-child(5),
+      #cc_bangPhu table td:nth-child(5), #cc_bangPhu table td:nth-child(5) {
+        width: 28% !important;
+      }
+    }
+
+    .contact-section {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      max-width: 100%;
+      margin: 0 auto;
+    }
+
+    .contact-info {
+      flex: 1 1 65%;
+      min-width: 250px;
+    }
+
+    .contact-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+      margin-bottom: 0;
+      line-height: 1.5;
+    }
+
+    .bank-info {
+      text-align: center;
+      margin-top: 3px;
+      font-weight: bold;
+      line-height: 1.5;
+    }
+
+    .bank-info p { margin: 8px 0; }
+
+    .qr-section {
+      flex: 1 1 30%;
+      min-width: 180px;
+      text-align: center;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    .qr-image {
+      width: 160px;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+
+    .social-link { text-decoration: none; display: inline-flex; align-items: center; }
+    .social-icon { margin-right: 4px; }
+    .facebook-text { color: #1877F2; font-weight: bold; }
+    .zalo-text { color: #0068FF; font-weight: bold; }
+    .vietin-red { color: red; }
+    .bank-blue { color: blue; }
+
+    .copy-btn {
+      margin-left: 5px; padding: 0 6px; font-size: 12px; height: 20px;
+      border: none; border-radius: 4px; background-color: #007bff; color: white;
+      cursor: pointer; white-space: nowrap; vertical-align: middle;
+    }
+
+    .stk-container { display: inline-flex; align-items: center; flex-wrap: nowrap; }
+    .copy-btn:hover { background-color: #0056b3; }
+
+    #luongCoBan::placeholder, #cc_luongCoBan::placeholder {
+      font-size: 14px;
+      color: #aaa;
+      font-weight: normal;
+    }
+  
+    .footer {
+      text-align: center;
+      font-size: 14px;
+      color: #555;
+      margin-top: 20px;
+      padding: 10px 0;
+      border-top: 1px solid #ccc;
+    }
 
     .tab-bar {
       display: flex;
       gap: 10px;
-      margin-bottom: 12px;
+      margin-bottom: 20px;
       justify-content: flex-start;
     }
     .tab-btn {
-      padding: 8px 20px;
+      padding: 10px 24px;
       font-size: 15px;
       font-weight: bold;
       border: 1.5px solid #007bff;
@@ -316,10 +492,10 @@
     .cc-col-left { flex: 1; }
     .cc-col-right {
       flex: 0 0 450px;
-      background: transparent !important;
-      border: none !important;
-      box-shadow: none !important;
-      padding: 0 !important;
+      background: #fff;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
     }
 
     .chamcong-tools { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
@@ -396,19 +572,18 @@
     .cell-ot { background-color: #fff7ed; color: #9a3412; border: 1px solid #fed7aa; }
     .cell-mid-ot { background-color: #f5f3ff; color: #5b21b6; border: 1px solid #ddd6fe; }
 
-    /* CỬA SỔ POPUP MODAL CHUNG */
     .picker-overlay {
       display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0, 0, 0, 0.45); z-index: 9999; justify-content: center; align-items: center; padding: 10px;
     }
     .picker-modal {
-      background: #fff; border-radius: 8px; max-width: 380px; width: 100%;
+      background: #fff; border-radius: 8px; max-width: 360px; width: 100%;
       box-shadow: 0 4px 20px rgba(0,0,0,0.25); overflow: hidden; animation: popIn 0.15s ease-out;
     }
     @keyframes popIn { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     .picker-header {
       background: #007bff; color: #fff; font-size: 14.5px; font-weight: bold;
-      padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;
+      padding: 9px 14px; display: flex; justify-content: space-between; align-items: center;
     }
     .picker-body {
       display: grid; grid-template-columns: repeat(2, 1fr); gap: 7px; padding: 12px; max-height: 450px; overflow-y: auto;
@@ -419,83 +594,132 @@
     }
     .picker-btn:hover, .picker-btn:active { background: #007bff; color: #fff; border-color: #007bff; }
 
-    .contact-section { display: flex; gap: 20px; align-items: flex-start; max-width: 100%; margin: 0 auto; }
-    .contact-info { flex: 1 1 65%; min-width: 250px; }
-    .contact-links { display: flex; align-items: center; justify-content: center; gap: 15px; margin-top: 20px; margin-bottom: 0; line-height: 1.5; }
-    .bank-info { text-align: center; margin-top: 3px; font-weight: bold; line-height: 1.5; }
-    .bank-info p { margin: 8px 0; }
-    .qr-section { flex: 1 1 30%; min-width: 180px; text-align: center; display: flex; align-items: flex-start; justify-content: center; }
-    .qr-image { width: 160px; height: 160px; object-fit: cover; border-radius: 6px; }
-    .social-link { text-decoration: none; display: inline-flex; align-items: center; }
-    .social-icon { margin-right: 4px; }
-    .facebook-text { color: #1877F2; font-weight: bold; }
-    .zalo-text { color: #0068FF; font-weight: bold; }
-    .vietin-red { color: red; }
-    .bank-blue { color: blue; }
-    .copy-btn { margin-left: 5px; padding: 0 6px; font-size: 12px; height: 20px; border: none; border-radius: 4px; background-color: #007bff; color: white; cursor: pointer; white-space: nowrap; vertical-align: middle; }
-    .stk-container { display: inline-flex; align-items: center; flex-wrap: nowrap; }
-    .copy-btn:hover { background-color: #0056b3; }
+    @media screen and (max-width: 768px) and (orientation: portrait) {
+      .main-container {
+        display: block !important;
+      }
+      .left-column, .right-column {
+        flex: none !important;
+        width: 100% !important;
+      }
+      .cc-desktop-layout {
+        display: block !important;
+      }
+      .cc-col-right {
+        margin-top: 15px !important;
+        padding: 10px !important;
+        background: #fff !important;
+        border: 1px solid #ddd !important;
+      }
+      .input-cell-val {
+        font-size: 7.5px !important;
+        height: 17px !important;
+        line-height: 16px !important;
+        letter-spacing: -0.5px;
+        padding: 0 1px;
+      }
+      body {
+        padding: 10px;
+      }
+    }
 
-    .footer { text-align: center; font-size: 14px; color: #555; margin-top: 20px; padding: 10px 0; border-top: 1px solid #ccc; }
+    @media screen and (max-width: 900px) and (orientation: landscape) {
+      .main-container {
+        display: block !important;
+        max-width: 100% !important;
+      }
+      .tab-bar {
+        display: flex !important;
+        width: 100% !important;
+        margin-bottom: 10px !important;
+      }
+      .tab-pane.active .main-container {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 15px !important;
+      }
+      .left-column {
+        flex: 0 0 55% !important;
+        min-width: unset !important;
+      }
+      .right-column {
+        flex: 1 !important;
+      }
+      .cc-desktop-layout {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 15px !important;
+        align-items: flex-start !important;
+      }
+      .cc-col-left { 
+        flex: 1 !important; 
+      }
+      .cc-col-right {
+        flex: 0 0 400px !important;
+        margin-top: 0 !important;
+        padding: 10px !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+      }
+      .calendar-grid {
+        gap: 2px;
+      }
+      .day-card {
+        min-height: 50px !important;
+        padding: 2px !important;
+      }
+      .input-cell-val {
+        font-size: 7.5px !important;
+        height: 15px !important;
+        line-height: 14px !important;
+      }
+      body {
+        padding: 8px;
+      }
+    }
 
-    @media screen and (max-width: 768px) {
-      .main-container { display: block; }
-      .left-column, .right-column { flex: none; width: 100%; }
-      body { padding: 10px; }
-      .contact-section { flex-direction: column; gap: 10px; align-items: center; }
-      .input-row { flex-direction: column; align-items: stretch; gap: 6px; }
-      .input-row .group { justify-content: space-between; }
+    .cc-col-right {
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
     }
   </style>
 </head>
 <body>
 <div class="main-container" style="display:block;">
 
-  <!-- ================= KHU VỰC TÀI KHOẢN & ĐỒNG BỘ ================= -->
-  <div id="authContainer" style="background: #fff; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-    <div id="loginFormArea" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-      <span style="font-weight: bold; color: #007bff; font-size: 14px;">👤 Tài khoản:</span>
-      <input type="text" id="authUsername" placeholder="Tên đăng nhập" style="width: 120px; height: 26px; font-size: 13px; padding: 2px 6px; border: 1px solid #ccc; border-radius: 4px;" />
-      <input type="password" id="authPassword" placeholder="Mật khẩu" style="width: 110px; height: 26px; font-size: 13px; padding: 2px 6px; border: 1px solid #ccc; border-radius: 4px;" />
-      <button type="button" onclick="handleLogin()" style="padding: 4px 12px; font-size: 13px; height: 26px; background: #007bff; border-radius: 4px; border:none; color:#fff; cursor:pointer;">Đăng nhập</button>
-      <button type="button" onclick="handleRegister()" style="padding: 4px 12px; font-size: 13px; height: 26px; background: #28a745; border-radius: 4px; border:none; color:#fff; cursor:pointer;">Đăng ký</button>
-    </div>
-    <div id="userInfoArea" style="display: none; align-items: center; gap: 8px;">
-      <span style="font-size: 13px; color: #334155;">Xin chào, <b id="lblUsername" style="color: #007bff;"></b></span>
-      <button type="button" onclick="handleRefreshData()" style="padding: 2px 8px; font-size: 12px; height: 24px; background: #fff; border: 1px solid #ccc; border-radius: 4px; cursor: pointer;">🔄 Tải lại</button>
-      <button type="button" onclick="handleLogout()" style="padding: 2px 8px; font-size: 12px; height: 24px; background: #dc3545; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Đăng xuất</button>
-      <span id="syncStatus" style="font-size: 11.5px; color: #16a34a; font-weight: bold;">(Đã lưu tự động)</span>
-    </div>
-  </div>
-
-  <!-- SELECT ẨN DUY TRÌ TƯƠNG THÍCH CODE CŨ -->
+  <!-- SELECT ẨN DUY TRÌ TƯƠNG THÍCH DỮ LIỆU -->
   <select id="thang" style="display:none;"></select>
   <select id="nam" style="display:none;"></select>
   <select id="cc_thang" style="display:none;"></select>
   <select id="cc_nam" style="display:none;"></select>
 
-  <!-- TAB ĐIỀU HƯỚNG TRÊN CÙNG -->
+  <!-- CỤM 2 TAB ĐIỀU HƯỚNG TRÊN CÙNG -->
   <div class="tab-bar">
     <button type="button" class="tab-btn active" id="btnTabLuong" onclick="switchTab('tabLuong')">💰 Tính Lương</button>
     <button type="button" class="tab-btn" id="btnTabChamCong" onclick="switchTab('tabChamCong')">📅 Chấm Công</button>
   </div>
 
-  <!-- ================= TAB 1: TÍNH LƯƠNG ================= -->
+  <!-- ================= TAB 1: TÍNH LƯƠNG (GỐC) ================= -->
   <div id="paneLuong" class="tab-pane active">
     <div class="main-container">
       <div class="left-column">
         <div class="input-row">
           <div class="group">
             <label for="luongCoBan"><strong>LCB:</strong></label>
-            <input type="text" id="luongCoBan" inputmode="numeric" placeholder="nhập LCB" />
+            <input type="text" id="luongCoBan" inputmode="numeric" placeholder="nhập lương cơ bản" style="height: 20px;" />
           </div>
 
-          <div class="group">
-            <button type="button" class="btn-picker-my" onclick="openMonthYearPicker(false)">
+          <div class="group date-group">
+            <!-- Nút mở cửa sổ chọn Tháng / Năm -->
+            <button type="button" class="btn-month-year-picker" onclick="openMonthYearPicker(false)">
               📅 <span id="displayMonthYearLuong">Chọn Tháng / Năm</span> ▾
             </button>
-            <button type="button" class="btn-clear-month" onclick="clearAllDataBothTabs()">
-              🗑 Xóa dữ liệu tháng
+            <!-- Nút chỉ xóa dữ liệu của riêng Tab 1 -->
+            <button type="button" class="btn-del-tab" onclick="clearDataTabLuong()">
+              🗑 Xóa dữ liệu
             </button>
           </div>
         </div>
@@ -715,20 +939,38 @@
 
   <!-- ================= TAB 2: CHẤM CÔNG ================= -->
   <div id="paneChamCong" class="tab-pane">
+    <!-- KHUNG ĐĂNG NHẬP / TÀI KHOẢN ĐẶT NGUYÊN BẢN TRONG TAB CHẤM CÔNG -->
+    <div id="authContainer" style="background: #fff; padding: 10px 15px; border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+      <div id="loginFormArea" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+        <span style="font-weight: bold; color: #007bff; font-size: 14px;">👤 Tài khoản chấm công:</span>
+        <input type="text" id="authUsername" placeholder="Tên đăng nhập" style="width: 120px; height: 26px; font-size: 13px; padding: 2px 6px; border: 1px solid #ccc; border-radius: 4px;" />
+        <input type="password" id="authPassword" placeholder="Mật khẩu" style="width: 110px; height: 26px; font-size: 13px; padding: 2px 6px; border: 1px solid #ccc; border-radius: 4px;" />
+        <button type="button" onclick="handleLogin()" style="padding: 4px 12px; font-size: 13px; height: 26px; background: #007bff; border-radius: 4px; border:none; color:#fff; cursor:pointer;">Đăng nhập</button>
+        <button type="button" onclick="handleRegister()" style="padding: 4px 12px; font-size: 13px; height: 26px; background: #28a745; border-radius: 4px; border:none; color:#fff; cursor:pointer;">Đăng ký</button>
+      </div>
+      <div id="userInfoArea" style="display: none; align-items: center; gap: 10px;">
+        <span style="font-size: 13px; color: #334155;">Xin chào, <b id="lblUsername" style="color: #007bff;"></b></span>
+        <button type="button" onclick="handleRefreshData()" style="padding: 2px 10px; font-size: 12px; height: 24px; background: #fff; border: 1px solid #ccc; border-radius: 4px; cursor:pointer;">🔄 Tải lại</button>
+        <button type="button" onclick="handleLogout()" style="padding: 2px 10px; font-size: 12px; height: 24px; background: #dc3545; color:#fff; border:none; border-radius: 4px; cursor:pointer;">Đăng xuất</button>
+        <span id="syncStatus" style="font-size: 11px; color: #16a34a; font-weight: bold;">(Đã lưu tự động)</span>
+      </div>
+    </div>
+
     <div class="cc-desktop-layout">
       <div class="cc-col-left">
         <div class="input-row">
           <div class="group">
             <label for="cc_luongCoBan"><strong>LCB:</strong></label>
-            <input type="text" id="cc_luongCoBan" inputmode="numeric" placeholder="lương cơ bản" />
+            <input type="text" id="cc_luongCoBan" inputmode="numeric" class="lcb-input" placeholder="lương cơ bản" />
           </div>
-
-          <div class="group">
-            <button type="button" class="btn-picker-my" onclick="openMonthYearPicker(true)">
+          <div class="group date-group">
+            <!-- Nút mở cửa sổ chọn Tháng / Năm cho tab Chấm công -->
+            <button type="button" class="btn-month-year-picker" onclick="openMonthYearPicker(true)">
               📅 <span id="displayMonthYearChamCong">Chọn Tháng / Năm</span> ▾
             </button>
-            <button type="button" class="btn-clear-month" onclick="clearAllDataBothTabs()">
-              🗑 Xóa dữ liệu tháng
+            <!-- Nút chỉ xóa dữ liệu của riêng Tab 2 -->
+            <button type="button" class="btn-del-tab" onclick="clearDataTabChamCong()">
+              🗑 Xóa dữ liệu
             </button>
           </div>
         </div>
@@ -889,7 +1131,7 @@
 
 </div>
 
-<!-- ================= CỬA SỔ POPUP MODAL ================= -->
+<!-- POPUP PICKER CHỌN GIỜ & THÁNG NĂM -->
 <div class="picker-overlay" id="pickerOverlay" onclick="closePicker(event)">
   <div class="picker-modal">
     <div class="picker-header">
