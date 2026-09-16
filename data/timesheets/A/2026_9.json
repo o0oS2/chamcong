@@ -12,16 +12,16 @@
   },
   "extra_fields": {
     "cc_ngayCong": "25",
-    "cc_tc150": "0",
-    "cc_tc200": "0",
-    "cc_tcDem30": "0",
-    "cc_ngayCong200": "0",
-    "cc_tc300": "0",
-    "cc_tc340": "0",
-    "cc_tcDem70": "1",
-    "cc_thongca380": "",
-    "cc_phepNam": "0",
-    "cc_le": "1",
+    "cc_tc150": "10",
+    "cc_tc200": "10",
+    "cc_tcDem30": "10",
+    "cc_ngayCong200": "10",
+    "cc_tc300": "10",
+    "cc_tc340": "10",
+    "cc_tcDem70": "11",
+    "cc_thongca380": "1",
+    "cc_phepNam": "10",
+    "cc_le": "11",
     "cc_soGioHanhChinh1": "",
     "cc_phuLuongHanhChinh": "",
     "cc_soGioTangCa1": "",
@@ -368,5 +368,5 @@
     }
   },
   "shift_mode": "chuyen_ngay",
-  "updated_at": "2026-09-16T23:50:00.343Z"
+  "updated_at": "2026-09-16T23:50:11.373Z"
 }
