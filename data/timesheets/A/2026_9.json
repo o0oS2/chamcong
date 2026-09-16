@@ -1,5 +1,5 @@
 {
-  "base_salary": "5430000",
+  "base_salary": "5.430.000",
   "allowances": {
     "cc_pcABC": "",
     "cc_pcChuyenCan": "",
@@ -22,7 +22,7 @@
     "thongca380": "",
     "phepNam": "",
     "le": "",
-    "pcABC": "",
+    "pcABC": "1.000.000",
     "pcChuyenCan": "200.000",
     "pcThamNien": "600.000",
     "pcChucVu": "",
@@ -398,5 +398,5 @@
       "midOt": "0"
     }
   },
-  "updated_at": "2026-09-16T15:33:33.844Z"
+  "updated_at": "2026-09-16T15:34:31.290Z"
 }
