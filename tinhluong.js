@@ -1,10 +1,9 @@
-// Biến lưu trữ ngày tháng toàn cục cho cả hệ thống
+// Thiết lập ngày tháng toàn cục theo quy tắc ngày 10
 const curDateObj = new Date();
 const cMonth = curDateObj.getMonth() + 1;
 const cYear = curDateObj.getFullYear();
 const cDate = curDateObj.getDate();
 
-// Quy tắc mùng 10: Sau mùng 10 là tháng hiện tại; mùng 10 đổ về trước là tháng trước
 if (cDate <= 10) {
   window.selectedMonth = (cMonth === 1) ? 12 : cMonth - 1;
   window.selectedYear = (cMonth === 1) ? cYear - 1 : cYear;
@@ -17,7 +16,9 @@ document.addEventListener("DOMContentLoaded", function () {
   updateDateDisplays();
 
   function formatNumber(num) {
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    if (!num && num !== 0) return "";
+    let str = num.toString().replace(/\./g, "").replace(/[^0-9]/g, "");
+    return str.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
 
   function parseNumber(str) {
@@ -27,47 +28,66 @@ document.addEventListener("DOMContentLoaded", function () {
   window.parseSalaryNumber = parseNumber;
   window.formatSalaryNumber = formatNumber;
 
+  // Danh sách các ô tiền có dấu chấm phân cách
   const moneyInputIds = [
-    "luongCoBan", "pcABC", "pcChuyenCan", "pcThamNien",
-    "pcChucVu", "pcDiLai", "pcDienThoai", "pcTreEm", "pcKhac"
+    "luongCoBan", "cc_luongCoBan",
+    "pcABC", "cc_pcABC",
+    "pcChucVu", "cc_pcChucVu",
+    "pcDiLai", "cc_pcDiLai",
+    "pcKhac", "cc_pcKhac"
   ];
 
   moneyInputIds.forEach(inputId => {
     const input = document.getElementById(inputId);
     if (input) {
       input.addEventListener("input", function(e) {
-        let value = e.target.value.replace(/\./g, "").replace(/[^0-9]/g, "");
-        if (value) e.target.value = formatNumber(value);
+        let val = e.target.value.replace(/\./g, "").replace(/[^0-9]/g, "");
+        e.target.value = formatNumber(val);
         tinhLuong();
+        if (typeof window.triggerCcComputeEngine === "function") window.triggerCcComputeEngine();
         if (typeof window.autoSaveUserData === "function") window.autoSaveUserData();
       });
 
       input.addEventListener("blur", function(e) {
-        let value = parseNumber(e.target.value);
-        if (value > 0) e.target.value = formatNumber(value);
+        let val = parseNumber(e.target.value);
+        if (val > 0) e.target.value = formatNumber(val);
         tinhLuong();
+        if (typeof window.triggerCcComputeEngine === "function") window.triggerCcComputeEngine();
         if (typeof window.autoSaveUserData === "function") window.autoSaveUserData();
       });
 
       input.addEventListener("focus", function(e) {
-        let value = parseNumber(e.target.value);
-        if (value > 0) e.target.value = value.toString();
+        let val = parseNumber(e.target.value);
+        if (val > 0) e.target.value = val.toString();
       });
     }
   });
 
-  const defaultValues = {
-    pcDiLai: 500000,
-    pcChuyenCan: 200000,
-    pcThamNien: 600000
+  // Tự điền giá trị mặc định cho các phụ cấp
+  window.applyDefaultAllowances = function() {
+    ["pcDiLai", "cc_pcDiLai"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el && (!el.value || el.value === "0")) {
+        el.value = formatNumber(500000);
+      }
+    });
+
+    ["pcChuyenCan", "cc_pcChuyenCan"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el && !el.value) {
+        el.value = "200.000";
+      }
+    });
+
+    ["pcThamNien", "cc_pcThamNien"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el && !el.value) {
+        el.value = "600.000";
+      }
+    });
   };
 
-  Object.keys(defaultValues).forEach(id => {
-    const input = document.getElementById(id);
-    if (input && !input.value) {
-      input.value = formatNumber(defaultValues[id]);
-    }
-  });
+  window.applyDefaultAllowances();
 
   function tinhNgayCongChuan() {
     const thang = window.selectedMonth || 1;
@@ -202,7 +222,7 @@ document.addEventListener("DOMContentLoaded", function () {
     return tongPhu;
   }
 
-  // HÀM CHỈ XÓA DỮ LIỆU BẢNG TÍNH LƯƠNG (TAB 1)
+  // Xóa trắng riêng Tab Tính Lương
   window.clearDataTabLuong = function() {
     if (!confirm("Bạn có chắc chắn muốn xóa dữ liệu bảng Tính Lương tháng này?")) return;
 
@@ -219,6 +239,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (el) el.value = "";
     });
 
+    window.applyDefaultAllowances();
     tinhLuong();
     if (typeof window.autoSaveUserData === "function") window.autoSaveUserData();
     alert("Đã xóa sạch dữ liệu bảng Tính Lương!");
@@ -227,7 +248,6 @@ document.addEventListener("DOMContentLoaded", function () {
   tinhLuong();
 });
 
-// Cập nhật text hiển thị trên các ô chọn Tháng và Năm
 window.updateDateDisplays = function() {
   const m = (window.selectedMonth || 1).toString().padStart(2, '0');
   const y = (window.selectedYear || new Date().getFullYear()).toString();
