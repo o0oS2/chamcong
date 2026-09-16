@@ -27,9 +27,9 @@
     "pcThamNien": "600.000",
     "pcChucVu": "100.000",
     "pcDiLai": "500.000",
-    "pcDienThoai": "",
-    "pcTreEm": "",
-    "pcKhac": "",
+    "pcDienThoai": "1.500.000",
+    "pcTreEm": "50.000",
+    "pcKhac": "1.500.000",
     "soGioHanhChinh1": "",
     "phuLuongHanhChinh": "",
     "soGioTangCa1": "",
@@ -398,5 +398,5 @@
       "midOt": "0"
     }
   },
-  "updated_at": "2026-09-16T15:31:13.687Z"
+  "updated_at": "2026-09-16T15:31:22.183Z"
 }
