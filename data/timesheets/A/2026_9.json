@@ -42,7 +42,7 @@
     "phuLuongTangCa2": "",
     "soGioDem2": "",
     "phuLuongDem2": "",
-    "cc_ngayCong": "18.88",
+    "cc_ngayCong": "19.38",
     "cc_tc150": "9",
     "cc_tc200": "0",
     "cc_tcDem30": "0",
@@ -69,10 +69,10 @@
   "timesheet": {
     "1": {
       "hc": {
-        "label": "Nghỉ",
-        "short": "Nghỉ",
-        "type": "nghi",
-        "value": 8,
+        "label": "Nghỉ chiều",
+        "short": "Nghỉ chiều",
+        "type": "nghi_chieu",
+        "value": 4,
         "allowSunday": true
       },
       "ot": "0",
@@ -410,5 +410,5 @@
     }
   },
   "shift_mode": "chuyen_ngay",
-  "updated_at": "2026-09-16T19:37:37.407Z"
+  "updated_at": "2026-09-16T19:41:29.193Z"
 }
