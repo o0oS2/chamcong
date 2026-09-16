@@ -17,7 +17,7 @@
     "tcDem30": "1",
     "ngayCong200": "1",
     "tc300": "1",
-    "tc340": "1",
+    "tc340": "2",
     "tcDem70": "1",
     "thongca380": "1",
     "phepNam": "1",
@@ -46,8 +46,8 @@
     "cc_tc150": "9",
     "cc_tc200": "22",
     "cc_tcDem30": "72",
-    "cc_ngayCong200": "3",
-    "cc_tc300": "0",
+    "cc_ngayCong200": "4.81",
+    "cc_tc300": "6",
     "cc_tc340": "5",
     "cc_tcDem70": "8",
     "cc_thongca380": "",
@@ -399,5 +399,5 @@
     }
   },
   "shift_mode": "chuan",
-  "updated_at": "2026-09-16T19:55:55.279Z"
+  "updated_at": "2026-09-16T20:01:20.169Z"
 }
