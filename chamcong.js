@@ -382,13 +382,23 @@ document.addEventListener("DOMContentLoaded", function () {
     currentPickContext = null;
   };
 
+  // "Đi làm đủ" -> xanh (hc-full); Muộn/Về sớm/Nghỉ (mọi kiểu nghỉ) -> đỏ nhạt (hc-off)
+  // để nhìn vào ô là biết ngay hôm đó có nghỉ/muộn/về sớm hay không.
+  function getHcStatusClass(hcType) {
+    return hcType === "du" ? "hc-full" : "hc-off";
+  }
+
   function updateDayDisplay(day) {
     const data = chamCongData[day];
     if (!data) return;
     const elHc = document.getElementById(`hc_val_${day}`);
     const elOt = document.getElementById(`ot_val_${day}`);
     const elMidOt = document.getElementById(`mid_ot_val_${day}`);
-    if (elHc) elHc.textContent = data.hc.short;
+    if (elHc) {
+      elHc.textContent = data.hc.short;
+      elHc.classList.remove("hc-full", "hc-off");
+      elHc.classList.add(getHcStatusClass(data.hc.type));
+    }
     if (elOt) elOt.textContent = data.ot;
     if (elMidOt) elMidOt.textContent = data.midOt;
   }
@@ -449,7 +459,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <span class="solar-num">${dayCounter}</span>
             <span class="lunar-num">${lunarLabel}</span>
           </div>
-          <div class="input-cell-val cell-hc" id="hc_val_${dayCounter}" onclick="openPicker(${dayCounter}, 'hc')" title="Giờ hành chính">${data.hc.short}</div>
+          <div class="input-cell-val cell-hc ${getHcStatusClass(data.hc.type)}" id="hc_val_${dayCounter}" onclick="openPicker(${dayCounter}, 'hc')" title="Giờ hành chính">${data.hc.short}</div>
           <div class="input-cell-val cell-ot" id="ot_val_${dayCounter}" onclick="openPicker(${dayCounter}, 'ot')" title="Tăng ca">${data.ot}</div>
         `;
 

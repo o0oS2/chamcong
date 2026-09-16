@@ -12,6 +12,8 @@ function bindGlobalAutoSave() {
   document.addEventListener("input", function (e) {
     if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "SELECT" || e.target.tagName === "TEXTAREA")) {
       if (e.target.id === "authUsername" || e.target.id === "authPassword") return;
+      // Chỉ Tab Chấm Công mới đồng bộ lên máy chủ; Tab Tính Lương không lưu server
+      if (!e.target.closest || !e.target.closest("#paneChamCong")) return;
       window.autoSaveUserData();
     }
   });
@@ -19,6 +21,7 @@ function bindGlobalAutoSave() {
   document.addEventListener("change", function (e) {
     if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "SELECT")) {
       if (e.target.id === "authUsername" || e.target.id === "authPassword") return;
+      if (!e.target.closest || !e.target.closest("#paneChamCong")) return;
       window.autoSaveUserData();
     }
   });
@@ -38,6 +41,8 @@ function checkLoginState() {
     if (form) form.style.display = "flex";
     if (info) info.style.display = "none";
   }
+
+  if (typeof window.updateCcLoginNotice === "function") window.updateCcLoginNotice();
 }
 
 // 1. ĐĂNG KÝ
@@ -119,10 +124,38 @@ window.handleLogin = async function() {
 window.handleLogout = function() {
   currentUser = null;
   localStorage.removeItem("cc_currentUser");
+
+  // Xóa sạch dữ liệu Tab Chấm Công khi đăng xuất, tránh lộ/lẫn dữ liệu sang tài khoản khác
+  clearChamCongTabData();
+
   checkLoginState();
+  if (typeof window.updateCcLoginNotice === "function") window.updateCcLoginNotice();
   alert("Đã đăng xuất!");
   if (typeof switchTab === "function") switchTab('tabLuong');
 };
+
+function clearChamCongTabData() {
+  if (window.clearChamCongData) window.clearChamCongData();
+  window.currentShiftMode = "chuan";
+
+  const ccIds = [
+    "cc_luongCoBan", "cc_ngayCong", "cc_tc150", "cc_tc200", "cc_tcDem30",
+    "cc_ngayCong200", "cc_tc300", "cc_tc340", "cc_tcDem70", "cc_thongca380", "cc_phepNam", "cc_le",
+    "cc_pcABC", "cc_pcChuyenCan", "cc_pcThamNien", "cc_pcChucVu", "cc_pcDiLai", "cc_pcDienThoai", "cc_pcTreEm", "cc_pcKhac",
+    "cc_soGioHanhChinh1", "cc_phuLuongHanhChinh", "cc_soGioTangCa1", "cc_phuLuongTangCa", "cc_soGioDem1", "cc_phuLuongDem",
+    "cc_soGioHanhChinh2", "cc_phuLuongHanhChinh2", "cc_soGioTangCa2", "cc_phuLuongTangCa2", "cc_soGioDem2", "cc_phuLuongDem2"
+  ];
+  ccIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = "";
+  });
+
+  if (typeof window.applyDefaultAllowances === "function") window.applyDefaultAllowances();
+  if (typeof window.updateDaoCaButtonUI === "function") window.updateDaoCaButtonUI();
+  if (window.renderLichChamCong) window.renderLichChamCong();
+  if (window.syncChamCongToTinhLuong) window.syncChamCongToTinhLuong();
+  else if (typeof window.triggerCcComputeEngine === "function") window.triggerCcComputeEngine();
+}
 
 // 5. TỰ ĐỘNG LƯU
 window.autoSaveUserData = function() {
@@ -152,13 +185,15 @@ window.autoSaveUserData = function() {
 
     const extraInputs = {};
     const excludeIds = [
-      "authUsername", "authPassword", "luongCoBan", "cc_luongCoBan",
+      "cc_luongCoBan",
       "cc_pcABC", "cc_pcChuyenCan", "cc_pcThamNien", "cc_pcChucVu",
       "cc_pcDiLai", "cc_pcDienThoai", "cc_pcTreEm", "cc_pcKhac"
     ];
 
+    // Chỉ lấy dữ liệu các ô thuộc Tab Chấm Công (id bắt đầu bằng "cc_").
+    // Tab Tính Lương không đồng bộ lên máy chủ.
     document.querySelectorAll("input, select, textarea").forEach(el => {
-      if (el.id && !excludeIds.includes(el.id)) {
+      if (el.id && el.id.startsWith("cc_") && !excludeIds.includes(el.id)) {
         if (el.type === "checkbox" || el.type === "radio") {
           extraInputs[el.id] = el.checked;
         } else {
@@ -168,7 +203,7 @@ window.autoSaveUserData = function() {
     });
 
     const payload = {
-      base_salary: document.getElementById("cc_luongCoBan")?.value || document.getElementById("luongCoBan")?.value || "",
+      base_salary: document.getElementById("cc_luongCoBan")?.value || "",
       allowances: allowances,
       extra_fields: extraInputs,
       timesheet: window.chamCongData || {},

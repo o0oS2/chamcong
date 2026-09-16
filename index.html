@@ -207,17 +207,20 @@
     /* ===== LƯƠNG CƠ BẢN VÀ CÁC NÚT ĐIỀU HƯỚNG ===== */
     .input-row {
       display: flex;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       align-items: center;
-      gap: 2px;
+      gap: 6px;
       margin-bottom: 2px;
-      justify-content: center;
+      justify-content: flex-start;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     .input-row .group {
       display: flex;
       align-items: center;
       gap: 4px;
+      flex: 0 0 auto;
     }
 
     .input-row label {
@@ -238,8 +241,8 @@
       border-radius: 3px;
     }
     #luongCoBan, #cc_luongCoBan {
-      height: 26px !important;
-      font-size: 18px !important;
+      height: 32px !important;
+      font-size: 22px !important;
       font-weight: bold;
     }
 
@@ -544,7 +547,11 @@
       white-space: normal; line-height: 1.1; font-size: 11px; word-break: break-word;
       display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
       height: auto; min-height: 26px; align-items: center;
+      -webkit-box-pack: center; justify-content: center;
     }
+    /* Đi làm đủ -> xanh; Muộn/Về sớm/Nghỉ -> đỏ nhạt, để nhìn phát biết ngay có nghỉ hay không */
+    .cell-hc.hc-full { background-color: #dcfce7; color: #166534; border-color: #86efac; }
+    .cell-hc.hc-off { background-color: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
     .cell-ot { background-color: #fff7ed; color: #9a3412; border: 1px solid #fed7aa; }
     .cell-mid-ot { background-color: #f5f3ff; color: #5b21b6; border: 1px solid #ddd6fe; }
 
@@ -624,6 +631,25 @@
       border: none !important;
       box-shadow: none !important;
       padding: 0 !important;
+    }
+
+    .cc-login-notice {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      color: #9a3412;
+      font-size: 12.5px;
+      line-height: 1.4;
+      border-radius: 6px;
+      padding: 8px 10px;
+      margin-bottom: 8px;
+    }
+    .cc-login-notice .notice-text { flex: 1 1 auto; }
+    .cc-login-notice .notice-close {
+      flex: 0 0 auto; background: none; border: none; color: #9a3412; font-size: 15px;
+      font-weight: bold; cursor: pointer; line-height: 1; padding: 2px 4px;
     }
   </style>
 </head>
@@ -903,7 +929,14 @@
   <div id="paneChamCong" class="tab-pane">
     <div class="cc-desktop-layout">
       <div class="cc-col-left">
-        <!-- HÀNG LCB TAB CHẤM CÔNG CHỈ CÓ LCB, DROPDOWN THÁNG VÀ NĂM -->
+
+        <!-- CẢNH BÁO: cần đăng nhập để lưu dữ liệu chấm công lên máy chủ -->
+        <div id="ccLoginNotice" class="cc-login-notice">
+          <span class="notice-text">🔒 Đăng nhập để lưu thông tin chấm công. Dữ liệu được lưu trên máy chủ, có thể đăng nhập lại ở mọi nơi, mọi thiết bị.</span>
+          <button type="button" class="notice-close" onclick="document.getElementById('ccLoginNotice').style.display='none';" title="Đóng">✕</button>
+        </div>
+
+        <!-- HÀNG LCB, THÁNG, NĂM, XÓA, CÀI ĐẶT CÙNG 1 DÒNG (giống Tab Tính Lương) -->
         <div class="input-row">
           <div class="group">
             <label for="cc_luongCoBan"><strong>LCB:</strong></label>
@@ -913,42 +946,38 @@
             <div id="btnThangCC" class="btn-dropdown-select" onclick="openDateMenu('month', true)" style="width: 58px;">
               <span id="txtThangCC">--</span>&nbsp;▾
             </div>
-            <label>/</label>
+            <label style="margin-left: 2px;">/</label>
             <div id="btnNamCC" class="btn-dropdown-select" onclick="openDateMenu('year', true)" style="width: 78px;">
               <span id="txtNamCC">----</span>&nbsp;▾
             </div>
+
+            <button type="button" class="btn-xoa-tab" onclick="clearDataTabChamCong()" title="Chỉ xóa lịch chấm công và bảng lương tạo từ chấm công" style="margin-left: 4px;">
+              🗑 Xóa
+            </button>
+            <button type="button" class="btn-install-app" onclick="handleInstallApp()" title="Cài ứng dụng / mở bằng trình duyệt Chrome hoặc Safari">
+              📲 Cài đặt
+            </button>
           </div>
         </div>
 
         <div class="chamcong-tools">
-          <div class="tools-header-row" style="display: flex; align-items: center; justify-content: space-between; gap: 6px; flex-wrap: wrap; row-gap: 6px;">
-            <div style="display: inline-flex; align-items: center; gap: 6px; flex: 1 1 auto; min-width: 0;">
-              <!-- Nút bấm Đổi ca -->
-              <button type="button" class="btn-dao-ca" id="btnDaoCa" onclick="toggleDaoCa()" style="white-space: nowrap; margin: 0;">
-                <span>⇄</span> <span>Đổi ca</span>
-              </button>
-              <!-- Kết quả ca hiển thị ngay bên cạnh -->
-              <span id="lblKetQuaCa" style="display: inline-flex; align-items: center; font-size: 13px; font-weight: bold; padding: 6px 10px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff; white-space: nowrap;">
-                Ca chuẩn
-              </span>
-            </div>
-
-            <div style="display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto;">
-              <!-- Nút Xóa dữ liệu của riêng Tab 2 -->
-              <button type="button" class="btn-xoa-tab" onclick="clearDataTabChamCong()" style="height: 30px !important; padding: 4px 10px !important; font-size: 12px !important; white-space: nowrap; margin: 0;" title="Chỉ xóa lịch chấm công và bảng lương tạo từ chấm công">
-                🗑 Xóa
-              </button>
-              <button type="button" class="btn-install-app" onclick="handleInstallApp()" style="height: 30px !important; padding: 4px 8px !important; font-size: 12px !important; white-space: nowrap; margin: 0;" title="Cài ứng dụng / mở bằng trình duyệt Chrome hoặc Safari">
-                📲 Cài
-              </button>
-            </div>
+          <div class="tools-header-row" style="display: flex; align-items: center; justify-content: flex-start; gap: 6px; flex-wrap: wrap; row-gap: 6px;">
+            <!-- Nút bấm Đổi ca -->
+            <button type="button" class="btn-dao-ca" id="btnDaoCa" onclick="toggleDaoCa()" style="white-space: nowrap; margin: 0;">
+              <span>⇄</span> <span>Đổi ca</span>
+            </button>
+            <!-- Kết quả ca hiển thị ngay bên cạnh -->
+            <span id="lblKetQuaCa" style="display: inline-flex; align-items: center; font-size: 13px; font-weight: bold; padding: 6px 10px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff; white-space: nowrap;">
+              Ca chuẩn
+            </span>
           </div>
 
           <div class="legend-box">
             <div class="legend-item"><span class="dot-sample" style="background:#fffdf5; border-color:#fce7b2;"></span> Ca ngày</div>
             <div class="legend-item"><span class="dot-sample" style="background:#e2e8f0; border-color:#cbd5e1;"></span> Ca đêm</div>
             <div class="legend-item"><span class="dot-sample" style="background:#fee2e2; border-color:#fca5a5;"></span> Chủ nhật, ngày lễ, tết</div>
-            <div class="legend-item"><span class="dot-sample" style="background:#ecfdf5; border-color:#a7f3d0;"></span> Giờ hành chính</div>
+            <div class="legend-item"><span class="dot-sample" style="background:#dcfce7; border-color:#86efac;"></span> Đi làm đủ</div>
+            <div class="legend-item"><span class="dot-sample" style="background:#fee2e2; border-color:#fca5a5;"></span> Muộn / Về sớm / Nghỉ</div>
             <div class="legend-item"><span class="dot-sample" style="background:#fff7ed; border-color:#fed7aa;"></span> Tăng ca</div>
             <div class="legend-item"><span class="dot-sample" style="background:#f5f3ff; border-color:#ddd6fe;"></span> Tăng ca giữa giờ đêm</div>
           </div>
@@ -1191,6 +1220,14 @@
     alert("Vui lòng mở trang này bằng Chrome (Android) hoặc Safari (iPhone/iPad) để cài đặt ứng dụng.");
   };
 
+  // Hiện/ẩn cảnh báo "Đăng nhập để lưu thông tin chấm công" tùy trạng thái đăng nhập
+  window.updateCcLoginNotice = function () {
+    const notice = document.getElementById('ccLoginNotice');
+    if (!notice) return;
+    const daDangNhap = !!localStorage.getItem('cc_currentUser');
+    notice.style.display = daDangNhap ? 'none' : 'flex';
+  };
+
   function switchTab(tabId) {
     document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -1204,6 +1241,7 @@
       document.getElementById('btnTabChamCong').classList.add('active');
       if (typeof window.updateDaoCaButtonUI === 'function') window.updateDaoCaButtonUI();
       if (typeof syncChamCongToTinhLuong === 'function') syncChamCongToTinhLuong();
+      window.updateCcLoginNotice();
     }
   }
 </script>
