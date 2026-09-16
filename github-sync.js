@@ -130,6 +130,8 @@ window.autoSaveUserData = function() {
   const statusEl = document.getElementById("syncStatus");
   if (statusEl) statusEl.textContent = "Đang thay đổi...";
 
+  // Debounce: chỉ thực sự gửi lên server sau khi người dùng ngừng gõ/chỉnh sửa 2 giây,
+  // tránh gọi API liên tục gây quá tải mỗi lần gõ phím.
   if (saveTimer) clearTimeout(saveTimer);
 
   saveTimer = setTimeout(async () => {
@@ -170,6 +172,7 @@ window.autoSaveUserData = function() {
       allowances: allowances,
       extra_fields: extraInputs,
       timesheet: window.chamCongData || {},
+      shift_mode: window.currentShiftMode || "chuan",
       updated_at: new Date().toISOString()
     };
 
@@ -190,7 +193,7 @@ window.autoSaveUserData = function() {
     } catch {
       if (statusEl) statusEl.textContent = "Mất kết nối";
     }
-  }, 1500);
+  }, 2000);
 };
 
 // Đổ dữ liệu 1 record (lương, phụ cấp, các ô khác, chấm công) vào form
@@ -228,6 +231,11 @@ function applyRecordToForm(record, formatFn) {
   if (record.timesheet && window.setChamCongData) {
     window.setChamCongData(record.timesheet);
   }
+
+  if (record.shift_mode) {
+    window.currentShiftMode = record.shift_mode;
+  }
+  if (typeof window.updateDaoCaButtonUI === "function") window.updateDaoCaButtonUI();
 }
 
 // Lấy lương & phụ cấp (trừ chuyên cần) từ tháng trước để đổ sẵn vào tháng mới chưa có dữ liệu
@@ -258,6 +266,11 @@ async function carryOverFromPrevMonth(year, month, formatFn) {
           }
         }
       });
+    }
+
+    if (prevRecord.shift_mode) {
+      window.currentShiftMode = prevRecord.shift_mode;
+      if (typeof window.updateDaoCaButtonUI === "function") window.updateDaoCaButtonUI();
     }
   } catch {
     // Không có/không lấy được dữ liệu tháng trước thì bỏ qua, giữ nguyên form trống
