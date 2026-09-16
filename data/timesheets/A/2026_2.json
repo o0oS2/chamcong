@@ -15,7 +15,7 @@
     "cc_tc150": "0",
     "cc_tc200": "0",
     "cc_tcDem30": "0",
-    "cc_ngayCong200": "0",
+    "cc_ngayCong200": "1",
     "cc_tc300": "0",
     "cc_tc340": "0",
     "cc_tcDem70": "0",
@@ -38,10 +38,10 @@
   "timesheet": {
     "1": {
       "hc": {
-        "label": "Nghỉ",
-        "short": "Nghỉ",
-        "type": "nghi",
-        "value": 8,
+        "label": "Đi làm đủ",
+        "short": "Đi làm đủ",
+        "type": "du",
+        "value": 0,
         "allowSunday": true
       },
       "ot": "0",
@@ -346,5 +346,5 @@
     }
   },
   "shift_mode": "chuyen_ngay",
-  "updated_at": "2026-09-16T23:32:34.650Z"
+  "updated_at": "2026-09-16T23:32:56.725Z"
 }
