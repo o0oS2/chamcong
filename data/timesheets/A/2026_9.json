@@ -42,7 +42,7 @@
     "phuLuongTangCa2": "",
     "soGioDem2": "",
     "phuLuongDem2": "",
-    "cc_ngayCong": "24",
+    "cc_ngayCong": "23",
     "cc_tc150": "34",
     "cc_tc200": "21",
     "cc_tcDem30": "64",
@@ -344,10 +344,10 @@
     },
     "26": {
       "hc": {
-        "label": "Đi làm đủ",
-        "short": "Đi làm đủ",
-        "type": "du",
-        "value": 0,
+        "label": "Nghỉ",
+        "short": "Nghỉ",
+        "type": "nghi",
+        "value": 8,
         "allowSunday": true
       },
       "ot": "2.5",
@@ -398,5 +398,5 @@
       "midOt": "0"
     }
   },
-  "updated_at": "2026-09-16T18:09:16.130Z"
+  "updated_at": "2026-09-16T18:09:57.001Z"
 }
