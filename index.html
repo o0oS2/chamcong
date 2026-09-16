@@ -198,7 +198,7 @@
       vertical-align: middle;
     }
 
-    /* ===== LƯƠNG CƠ BẢN VÀ NGÀY CÔNG CHUẨN CÙNG DÒNG ===== */
+    /* ===== LƯƠNG CƠ BẢN VÀ CÁC NÚT ĐIỀU HƯỚNG ===== */
     .input-row {
       display: flex;
       flex-wrap: wrap;
@@ -237,33 +237,30 @@
       font-weight: bold;
     }
 
-    /* Ô NÚT CHỌN THÁNG / NĂM KIỂU POPUP MENU */
-    .box-date-select {
+    /* Ô chọn Tháng/Năm hiển thị popup */
+    .btn-dropdown-select {
+      height: 32px;
+      border: 1px solid #007bff;
+      background: #fff;
+      color: #007bff;
+      font-weight: bold;
+      border-radius: 4px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 3px;
-      background: #fff;
-      border: 1.5px solid #007bff;
-      border-radius: 4px;
-      font-weight: bold;
-      color: #007bff;
       cursor: pointer;
-      padding: 0 6px;
+      font-size: 14px;
+      padding: 0 4px;
       box-sizing: border-box;
       user-select: none;
     }
-    .box-date-select:hover {
+    .btn-dropdown-select:hover {
       background: #f0f7ff;
-    }
-    .box-date-select .arrow-down {
-      font-size: 9px;
-      color: #007bff;
     }
 
     .btn-xoa-tab {
       padding: 2px 8px !important;
-      height: 32px !important;
+      height: 30px !important;
       font-size: 12px !important;
       font-weight: bold !important;
       background: #ffebee !important;
@@ -390,7 +387,7 @@
 
     .cc-desktop-layout { display: flex; gap: 20px; align-items: flex-start; }
     .cc-col-left { flex: 1; }
-    .cc-col-right { flex: 0 0 450px; background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important; }
+    .cc-col-right { flex: 0 0 450px; background: #fff; padding: 15px; border: 1px solid #ddd; border-radius: 6px; }
 
     .chamcong-tools { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
     .tools-header-row { display: flex; justify-content: space-between; align-items: center; }
@@ -499,6 +496,13 @@
       .input-cell-val { font-size: 7.5px !important; height: 15px !important; line-height: 14px !important; }
       body { padding: 8px; }
     }
+
+    .cc-col-right {
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+    }
   </style>
 </head>
 <body>
@@ -510,7 +514,7 @@
     <button type="button" class="tab-btn" id="btnTabChamCong" onclick="switchTab('tabChamCong')">📅 Chấm Công</button>
   </div>
 
-  <!-- ================= TAB 1: TÍNH LƯƠNG ================= -->
+  <!-- ================= TAB 1: TÍNH LƯƠNG (GỐC) ================= -->
   <div id="paneLuong" class="tab-pane active">
     <div class="main-container">
       <div class="left-column">
@@ -520,21 +524,19 @@
             <input type="text" id="luongCoBan" inputmode="numeric" placeholder="nhập lương cơ bản" style="height: 20px;" />
           </div>
 
-          <!-- Ô THÁNG, NĂM CẠNH NHAU NHƯ GỐC (BẤM HIỆN POPUP MENU) + NÚT XÓA DỮ LIỆU TAB 1 -->
+          <!-- DROPDOWN THÁNG, NĂM CẠNH NHAU NHƯ GỐC KÈM NÚT XÓA TAB 1 -->
           <div class="group date-group">
             <label style="margin-left: 5px;"></label>
-            <div id="thang" class="box-date-select" onclick="openDateMenu('month', false)" style="width: 58px; height: 32px; font-size: 15px;">
-              <span id="txtThangLuong">--</span>
-              <span class="arrow-down">▼</span>
+            <div id="btnThangLuong" class="btn-dropdown-select" onclick="openDateMenu('month', false)" style="width: 58px;">
+              <span id="txtThangLuong">--</span>&nbsp;▾
             </div>
 
             <label style="margin-left: 2px;">/</label>
-            <div id="nam" class="box-date-select" onclick="openDateMenu('year', false)" style="width: 78px; height: 32px; font-size: 15px;">
-              <span id="txtNamLuong">----</span>
-              <span class="arrow-down">▼</span>
+            <div id="btnNamLuong" class="btn-dropdown-select" onclick="openDateMenu('year', false)" style="width: 78px;">
+              <span id="txtNamLuong">----</span>&nbsp;▾
             </div>
 
-            <button type="button" class="btn-xoa-tab" onclick="clearDataTabLuong()" title="Chỉ xóa bảng tính lương" style="margin-left: 4px;">
+            <button type="button" class="btn-xoa-tab" onclick="clearDataTabLuong()" title="Chỉ xóa dữ liệu của bảng tính lương" style="margin-left: 4px;">
               🗑 Xóa dữ liệu
             </button>
           </div>
@@ -748,7 +750,7 @@
             <p>🔗 <a href="https://chanquangcao.pages.dev/" target="_blank" style="text-decoration: none; color: #0073e6;">DNS - VPN Cloudflare chặn quảng cáo</a></p>
           </div>
         </div>
-        <div class="footer">• Phiên bản 2.0, cập nhật năm 2026 •</div>
+        <div class="footer">• Phiên bản 1.9, cập nhật ngày 28/09/2025 •</div>
       </div>
     </div>
   </div>
@@ -773,21 +775,19 @@
 
     <div class="cc-desktop-layout">
       <div class="cc-col-left">
-        <!-- HÀNG LCB TAB CHẤM CÔNG CHỈ CÓ LCB, Ô THÁNG VÀ NĂM -->
+        <!-- HÀNG LCB TAB CHẤM CÔNG CHỈ CÓ LCB, DROPDOWN THÁNG VÀ NĂM -->
         <div class="input-row">
           <div class="group">
             <label for="cc_luongCoBan"><strong>LCB:</strong></label>
             <input type="text" id="cc_luongCoBan" inputmode="numeric" class="lcb-input" placeholder="lương cơ bản" />
           </div>
           <div class="group date-group">
-            <div id="cc_thang" class="box-date-select" onclick="openDateMenu('month', true)" style="width: 58px; height: 32px; font-size: 15px;">
-              <span id="txtThangCC">--</span>
-              <span class="arrow-down">▼</span>
+            <div id="btnThangCC" class="btn-dropdown-select" onclick="openDateMenu('month', true)" style="width: 58px;">
+              <span id="txtThangCC">--</span>&nbsp;▾
             </div>
             <label>/</label>
-            <div id="cc_nam" class="box-date-select" onclick="openDateMenu('year', true)" style="width: 78px; height: 32px; font-size: 15px;">
-              <span id="txtNamCC">----</span>
-              <span class="arrow-down">▼</span>
+            <div id="btnNamCC" class="btn-dropdown-select" onclick="openDateMenu('year', true)" style="width: 78px;">
+              <span id="txtNamCC">----</span>&nbsp;▾
             </div>
           </div>
         </div>
@@ -797,7 +797,7 @@
             <button type="button" class="btn-dao-ca" id="btnDaoCa" onclick="toggleDaoCa()">
               <span>⇄</span> <span id="lblDaoCa">Đảo ca ngày/đêm</span>
             </button>
-            <!-- NÚT XÓA DỮ LIỆU ĐẶT CẠNH NÚT ĐẢO CA NGÀY ĐÊM -->
+            <!-- NÚT XÓA DỮ LIỆU ĐẶT NGAY CẠNH NÚT ĐẢO CA NGÀY ĐÊM -->
             <button type="button" class="btn-xoa-tab" onclick="clearDataTabChamCong()" style="height: 34px !important; padding: 4px 12px !important; font-size: 13px !important;" title="Chỉ xóa lịch chấm công và bảng lương tạo từ chấm công">
               🗑 Xóa dữ liệu
             </button>
