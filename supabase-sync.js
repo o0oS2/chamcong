@@ -1,6 +1,6 @@
 // --- CẤU HÌNH KẾT NỐI SUPABASE ---
-const SUPABASE_URL = "https://txdnlqfxxhdskfbytyqo.supabase.co";
-const SUPABASE_KEY = "sb_publishable_9Ur3wbPXyBJR2M_IzhbyvQ_RCl9Lda-"; // Dán API Key (anon) của anh vào đây
+const SUPABASE_URL = "https://txdnlqfxxhdskfbytyqo.supabase.co"; 
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4ZG5scWZ4eGhkc2tmYnl0eXFvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEyMTcwNzIsImV4cCI6MjA1Njc5MzA3Mn0.your_anon_key_here"; // Lưu ý giữ nguyên key anon chuẩn của anh
 
 let currentUser = localStorage.getItem("cc_currentUser") || null;
 let saveTimer = null;
@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
   checkLoginState();
 });
 
+// Kiểm tra trạng thái đăng nhập để hiển thị thanh chào mừng hoặc ẩn modal
 function checkLoginState() {
   const userInfoBar = document.getElementById("userInfoBar");
   const lblUser = document.getElementById("lblUsername");
@@ -24,7 +25,7 @@ function checkLoginState() {
   }
 }
 
-// Hàm gửi lệnh chung tới Supabase REST API (siêu nhanh, không cần thư viện nặng)
+// Hàm gửi request tối ưu chống lỗi 404/405
 async function supabaseRequest(table, method = "GET", queryParams = "", bodyData = null) {
   let url = `${SUPABASE_URL}/rest/v1/${table}${queryParams}`;
   let headers = {
@@ -39,11 +40,15 @@ async function supabaseRequest(table, method = "GET", queryParams = "", bodyData
 
   try {
     let response = await fetch(url, options);
-    if (!response.ok) return null;
+    if (!response.ok) {
+      let errText = await response.text();
+      console.error("Supabase Error Status:", response.status, errText);
+      return null;
+    }
     let text = await response.text();
     return text ? JSON.parse(text) : [];
   } catch (err) {
-    console.error("Supabase Error:", err);
+    console.error("Network Error:", err);
     return null;
   }
 }
@@ -54,24 +59,25 @@ window.handleRegister = async function() {
   const p = document.getElementById("authPassword").value.trim();
   if (!u || !p) { alert("Vui lòng nhập tài khoản và mật khẩu!"); return; }
 
-  // Kiểm tra xem tài khoản đã tồn tại chưa
   let check = await supabaseRequest("accounts", "GET", `?username=eq.${encodeURIComponent(u)}`);
   if (check && check.length > 0) {
     alert("Tài khoản đã tồn tại!");
     return;
   }
 
-  // Thêm tài khoản mới
   let res = await supabaseRequest("accounts", "POST", "", { username: u, password: p });
-  if (res) {
+  if (res !== null) {
     currentUser = u;
     localStorage.setItem("cc_currentUser", u);
     alert("Đăng ký thành công!");
-    checkLoginState();
+    
+    // Ép ẩn modal ngay lập tức
     const modal = document.getElementById("loginModalOverlay");
     if (modal) modal.style.display = "none";
+
+    checkLoginState();
   } else {
-    alert("Lỗi đăng ký!");
+    alert("Lỗi đăng ký! Kiểm tra lại kết nối Supabase.");
   }
 };
 
@@ -87,14 +93,18 @@ window.handleLogin = async function() {
     currentUser = u;
     localStorage.setItem("cc_currentUser", u);
     alert("Đăng nhập thành công!");
-    checkLoginState();
+    
+    // Ép ẩn modal ngay lập tức và hiện thông báo chào mừng
     const modal = document.getElementById("loginModalOverlay");
     if (modal) modal.style.display = "none";
+
+    checkLoginState();
   } else {
     alert("Sai tên đăng nhập hoặc mật khẩu!");
   }
 };
 
+// Đăng xuất tài khoản
 window.handleLogout = function() {
   currentUser = null;
   localStorage.removeItem("cc_currentUser");
@@ -103,10 +113,9 @@ window.handleLogout = function() {
   switchTab('tabLuong');
 };
 
-// Lưu dữ liệu ngầm không giật lag (Debounce 2s)
+// Lưu dữ liệu tự động ngầm không giật lag
 window.autoSaveUserData = function() {
   if (!currentUser) return;
-
   const statusEl = document.getElementById("syncStatus");
   if (statusEl) statusEl.textContent = "(Đang thay đổi...)";
 
@@ -140,7 +149,6 @@ window.autoSaveUserData = function() {
 
     if (statusEl) statusEl.textContent = "(Đang đồng bộ...)";
 
-    // Upsert (Thêm mới hoặc cập nhật nếu đã có dòng dữ liệu của tháng/năm đó)
     let headers = {
       "apikey": SUPABASE_KEY,
       "Authorization": `Bearer ${SUPABASE_KEY}`,
@@ -162,7 +170,7 @@ window.autoSaveUserData = function() {
   }, 2000);
 };
 
-// Tải dữ liệu từ Supabase
+// Tải dữ liệu từ Supabase theo tài khoản và tháng/năm
 window.loadUserDataFromCloud = async function() {
   if (!currentUser) return;
   const year = document.getElementById("cc_nam")?.value || new Date().getFullYear();
