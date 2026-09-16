@@ -71,13 +71,13 @@ document.addEventListener("DOMContentLoaded", function () {
     return ca;
   }
 
- // Cập nhật nhãn ca bên cạnh nút Đổi ca (Chỉ hiển thị: Ca ngày hoặc Ca đêm)
+  // Cập nhật nhãn ca bên cạnh nút Đổi ca
   window.updateDaoCaButtonUI = function() {
     const lblKetQua = document.getElementById("lblKetQuaCa");
     if (!lblKetQua) return;
 
     if (window.currentShiftMode === "chuyen_ngay") {
-      lblKetQua.textContent = "đang làm chuyên ngày";
+      lblKetQua.textContent = "Chuyên ngày";
       lblKetQua.style.color = "#059669";
       lblKetQua.style.background = "#ecfdf5";
       lblKetQua.style.borderColor = "#a7f3d0";
@@ -87,21 +87,19 @@ document.addEventListener("DOMContentLoaded", function () {
     const today = new Date();
     const caHomNay = xacDinhCa(today.getFullYear(), today.getMonth() + 1, today.getDate());
 
-    // Dù là Chủ nhật hay Ngày lễ, nếu ca làm là đêm thì hiển thị Ca đêm, ngược lại hiển thị Ca ngày
     if (caHomNay === "dem") {
-      lblKetQua.textContent = "đang làm ca đêm";
+      lblKetQua.textContent = "Ca đêm";
       lblKetQua.style.color = "#1e293b";
       lblKetQua.style.background = "#e2e8f0";
       lblKetQua.style.borderColor = "#cbd5e1";
     } else {
-      lblKetQua.textContent = "đang làm ca ngày";
+      lblKetQua.textContent = "Ca ngày";
       lblKetQua.style.color = "#b45309";
       lblKetQua.style.background = "#fffdf5";
       lblKetQua.style.borderColor = "#fce7b2";
     }
   };
 
-  // Kiểm tra dữ liệu sửa đổi để quyết định có cảnh báo hay không
   function hasUserModifiedData() {
     const thang = getActiveMonth();
     const nam = getActiveYear();
@@ -126,8 +124,6 @@ document.addEventListener("DOMContentLoaded", function () {
     return false;
   }
 
-  // Khi sang tháng/năm mới (chưa có dữ liệu lưu sẵn): chỉ xóa lịch chấm công
-  // và bảng "Lương ngày lễ, tết" (cả 2 tab), GIỮ NGUYÊN lương cơ bản & các phụ cấp
   window.clearAttendanceAndHolidayForNewMonth = function() {
     Object.keys(chamCongData).forEach(k => delete chamCongData[k]);
     renderLichChamCong();
@@ -148,7 +144,6 @@ document.addEventListener("DOMContentLoaded", function () {
     triggerCcComputeEngine();
   };
 
-  // Đổi ca xoay vòng 3 nấc
   window.toggleDaoCa = function() {
     if (hasUserModifiedData()) {
       const xacNhan = confirm("CẢNH BÁO:\nThay đổi chế độ ca sẽ thiết lập lại toàn bộ dữ liệu chấm công đã sửa trong tháng này.\n\nBấm [OK] để tiếp tục.\nBấm [Hủy] để giữ nguyên.");
@@ -263,7 +258,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   let currentPickContext = null;
 
-  // Cửa sổ popup chọn Giờ hành chính / Tăng ca
   window.openPicker = function(day, type) {
     currentPickContext = { day, type };
     const overlay = document.getElementById("pickerOverlay");
@@ -382,8 +376,6 @@ document.addEventListener("DOMContentLoaded", function () {
     currentPickContext = null;
   };
 
-  // "Đi làm đủ" -> xanh (hc-full); Muộn/Về sớm/Nghỉ (mọi kiểu nghỉ) -> đỏ nhạt (hc-off)
-  // để nhìn vào ô là biết ngay hôm đó có nghỉ/muộn/về sớm hay không.
   function getHcStatusClass(hcType) {
     return hcType === "du" ? "hc-full" : "hc-off";
   }
@@ -609,6 +601,12 @@ document.addEventListener("DOMContentLoaded", function () {
           if (hcType === "vesom") dem30_cn = Math.max(0, 4 - hcVal);
           else if (hcType === "nghi_sang") dem30_cn = 0;
           tongTCDem30 += dem30_cn;
+
+          // ĐÃ CHỈNH SỬA: Ca đêm Chủ Nhật chỉ tính tối đa 2 tiếng đêm (22h -> 24h)
+          let dem70_cn = 2;
+          if (hcType === "muon" && hcVal > 2) dem70_cn = Math.max(0, 2 - (hcVal - 2));
+          else if (hcType === "nghi_sang" || hcType === "nghi") dem70_cn = 0;
+          tongTCDem70 += dem70_cn;
         }
       }
     }
@@ -665,8 +663,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function setTien(idTien, amt) {
       const el = document.getElementById(idTien);
-      if (el) el.textContent = Math.round(amt).toLocaleString("vi-VN");
-      return Math.round(amt);
+      const roundedAmt = Math.round(amt);
+      if (el) {
+        if (el.tagName === "INPUT" || el.tagName === "SELECT") {
+          el.value = roundedAmt.toLocaleString("vi-VN");
+        } else {
+          el.textContent = roundedAmt.toLocaleString("vi-VN");
+        }
+      }
+      return roundedAmt;
     }
 
     let tong = 0;
@@ -677,7 +682,10 @@ document.addEventListener("DOMContentLoaded", function () {
     tong += setTien("cc_tienCong200", luongNgayCong * 2 * getFloat("cc_ngayCong200"));
     tong += setTien("cc_tienTC300", luongTC * 3 * getFloat("cc_tc300"));
     tong += setTien("cc_tienTC340", luongTC * 3.4 * getFloat("cc_tc340"));
-    tong += setTien("cc_tienDem70", troCapDemVal * 0.7 * getFloat("cc_tcDem70"));
+    
+    // Cập nhật thành tiền Trợ cấp đêm 70% (khớp id "cc_tienTCDem70" trong index.html)
+    tong += setTien("cc_tienTCDem70", troCapDemVal * 0.7 * getFloat("cc_tcDem70"));
+    
     tong += setTien("cc_tienthongca380", luongTC * 3.8 * getFloat("cc_thongca380"));
     tong += setTien("cc_tienPhepNam", luongNgayCong * getFloat("cc_phepNam"));
     tong += setTien("cc_tienLe", luongNgayCong * getFloat("cc_le"));
