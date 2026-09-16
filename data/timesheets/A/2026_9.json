@@ -333,9 +333,9 @@
     },
     "25": {
       "hc": {
-        "label": "Muộn 1.5 giờ",
-        "short": "Muộn 1.5",
-        "type": "muon",
+        "label": "Về sớm 1.5 giờ",
+        "short": "Về sớm 1.5",
+        "type": "vesom",
         "value": 1.5,
         "allowSunday": true
       },
@@ -398,5 +398,5 @@
       "midOt": "0"
     }
   },
-  "updated_at": "2026-09-16T15:32:06.789Z"
+  "updated_at": "2026-09-16T15:32:08.563Z"
 }
