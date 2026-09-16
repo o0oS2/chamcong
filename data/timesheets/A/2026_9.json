@@ -355,10 +355,10 @@
     },
     "27": {
       "hc": {
-        "label": "Đi làm đủ",
-        "short": "Đi làm đủ",
-        "type": "du",
-        "value": 0,
+        "label": "Nghỉ",
+        "short": "Nghỉ",
+        "type": "nghi",
+        "value": 8,
         "allowSunday": true
       },
       "ot": "0",
@@ -399,5 +399,5 @@
     }
   },
   "shift_mode": "chuan",
-  "updated_at": "2026-09-16T19:46:25.991Z"
+  "updated_at": "2026-09-16T19:46:30.747Z"
 }
