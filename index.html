@@ -105,7 +105,7 @@
       max-width: 60px;
     }
     #bangPhu table td:nth-child(4), #bangPhu table th:nth-child(4),
-    #cc_bangPhu table td:nth-child(4), #cc_bangPhu table th:nth-child(4) {
+    #cc_bangPhu table td:nth-child(4), #cc_bangPhu table td:nth-child(4) {
       width: 15%;
     }
     #bangPhu table td:nth-child(5), #bangPhu table th:nth-child(5),
@@ -238,26 +238,9 @@
       font-weight: bold;
     }
 
-    /* Nút Tháng / Năm giao diện mới */
-    .btn-pop-date {
-      padding: 2px 8px !important;
-      height: 28px !important;
-      font-size: 14px !important;
-      font-weight: bold !important;
-      background: #fff !important;
-      color: #007bff !important;
-      border: 1.5px solid #007bff !important;
-      border-radius: 4px !important;
-      cursor: pointer !important;
-      min-width: 45px !important;
-    }
-    .btn-pop-date:hover {
-      background: #e0f2fe !important;
-    }
-
     .btn-xoa-tab {
       padding: 2px 8px !important;
-      height: 28px !important;
+      height: 26px !important;
       font-size: 12px !important;
       font-weight: bold !important;
       background: #ffebee !important;
@@ -265,6 +248,8 @@
       border: 1px solid #dc3545 !important;
       border-radius: 4px !important;
       cursor: pointer !important;
+      display: inline-flex !important;
+      align-items: center !important;
     }
     .btn-xoa-tab:hover {
       background: #dc3545 !important;
@@ -655,12 +640,6 @@
 <body>
 <div class="main-container" style="display:block;">
 
-  <!-- SELECT ẨN DUY TRÌ TƯƠNG THÍCH DỮ LIỆU CŨ -->
-  <select id="thang" style="display:none;"></select>
-  <select id="nam" style="display:none;"></select>
-  <select id="cc_thang" style="display:none;"></select>
-  <select id="cc_nam" style="display:none;"></select>
-
   <!-- CỤM 2 TAB ĐIỀU HƯỚNG TRÊN CÙNG -->
   <div class="tab-bar">
     <button type="button" class="tab-btn active" id="btnTabLuong" onclick="switchTab('tabLuong')">💰 Tính Lương</button>
@@ -677,16 +656,15 @@
             <input type="text" id="luongCoBan" inputmode="numeric" placeholder="nhập lương cơ bản" style="height: 20px;" />
           </div>
 
-          <!-- NÚT THÁNG VÀ NĂM RIÊNG BIỆT KÈM NÚT XÓA DỮ LIỆU TAB LƯƠNG -->
+          <!-- DROPDOWN THÁNG, NĂM CẠNH NHAU NHƯ GỐC KÈM NÚT XÓA TAB 1 -->
           <div class="group date-group">
-            <button type="button" class="btn-pop-date" onclick="openSinglePicker('month', false)" title="Chọn tháng">
-              <span id="lblThangLuong">Tháng</span> ▾
-            </button>
-            <label>/</label>
-            <button type="button" class="btn-pop-date" onclick="openSinglePicker('year', false)" title="Chọn năm">
-              <span id="lblNamLuong">Năm</span> ▾
-            </button>
-            <button type="button" class="btn-xoa-tab" onclick="clearDataTabLuong()" title="Chỉ xóa bảng tính lương">
+            <label for="thang" style="margin-left: 5px;"></label>
+            <select id="thang" name="thang" style="width: 55px; height: 32px; text-align: center;"></select>
+
+            <label for="nam" style="margin-left: 2px;">/</label>
+            <select id="nam" name="nam" style="width: 75px; height: 32px; text-align: center;"></select>
+
+            <button type="button" class="btn-xoa-tab" onclick="clearDataTabLuong()" title="Chỉ xóa dữ liệu của bảng tính lương" style="margin-left: 4px;">
               🗑 Xóa dữ liệu
             </button>
           </div>
@@ -925,20 +903,16 @@
 
     <div class="cc-desktop-layout">
       <div class="cc-col-left">
-        <!-- HÀNG LCB TAB CHẤM CÔNG CHỈ CÓ LCB, THÁNG VÀ NĂM -->
+        <!-- HÀNG LCB TAB CHẤM CÔNG CHỈ CÓ LCB, DROPDOWN THÁNG VÀ NĂM -->
         <div class="input-row">
           <div class="group">
             <label for="cc_luongCoBan"><strong>LCB:</strong></label>
             <input type="text" id="cc_luongCoBan" inputmode="numeric" class="lcb-input" placeholder="lương cơ bản" />
           </div>
           <div class="group date-group">
-            <button type="button" class="btn-pop-date" onclick="openSinglePicker('month', true)" title="Chọn tháng">
-              <span id="lblThangCC">Tháng</span> ▾
-            </button>
+            <select id="cc_thang" name="cc_thang" style="width: 55px; height: 32px; text-align: center;"></select>
             <label>/</label>
-            <button type="button" class="btn-pop-date" onclick="openSinglePicker('year', true)" title="Chọn năm">
-              <span id="lblNamCC">Năm</span> ▾
-            </button>
+            <select id="cc_nam" name="cc_nam" style="width: 75px; height: 32px; text-align: center;"></select>
           </div>
         </div>
 
@@ -947,7 +921,7 @@
             <button type="button" class="btn-dao-ca" id="btnDaoCa" onclick="toggleDaoCa()">
               <span>⇄</span> <span id="lblDaoCa">Đảo ca ngày/đêm</span>
             </button>
-            <!-- NÚT XÓA DỮ LIỆU ĐẶT CẠNH NÚT ĐẢO CA NGÀY ĐÊM -->
+            <!-- NÚT XÓA DỮ LIỆU ĐẶT NGAY CẠNH NÚT ĐẢO CA NGÀY ĐÊM -->
             <button type="button" class="btn-xoa-tab" onclick="clearDataTabChamCong()" style="height: 34px !important; padding: 4px 12px !important; font-size: 13px !important;" title="Chỉ xóa lịch chấm công và bảng lương tạo từ chấm công">
               🗑 Xóa dữ liệu
             </button>
@@ -1102,7 +1076,7 @@
 
 </div>
 
-<!-- CỬA SỔ POPUP MODAL CHỌN GIỜ & THÁNG / NĂM -->
+<!-- CỬA SỔ POPUP MODAL CHỌN GIỜ HÀNH CHÍNH & TĂNG CA -->
 <div class="picker-overlay" id="pickerOverlay" onclick="closePicker(event)">
   <div class="picker-modal">
     <div class="picker-header">
