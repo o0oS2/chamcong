@@ -42,7 +42,7 @@
     "phuLuongTangCa2": "",
     "soGioDem2": "",
     "phuLuongDem2": "",
-    "cc_ngayCong": "21.56",
+    "cc_ngayCong": "21.38",
     "cc_tc150": "9",
     "cc_tc200": "0",
     "cc_tcDem30": "0",
@@ -113,10 +113,10 @@
     },
     "5": {
       "hc": {
-        "label": "Đi làm đủ",
-        "short": "Đi làm đủ",
-        "type": "du",
-        "value": 0,
+        "label": "Muộn 1.5 giờ",
+        "short": "Muộn 1.5",
+        "type": "muon",
+        "value": 1.5,
         "allowSunday": true
       },
       "ot": "1",
@@ -410,5 +410,5 @@
     }
   },
   "shift_mode": "chuyen_ngay",
-  "updated_at": "2026-09-16T19:41:34.496Z"
+  "updated_at": "2026-09-16T19:41:36.599Z"
 }
