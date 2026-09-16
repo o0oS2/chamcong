@@ -42,14 +42,14 @@
     "phuLuongTangCa2": "",
     "soGioDem2": "",
     "phuLuongDem2": "",
-    "cc_ngayCong": "27",
-    "cc_tc150": "15",
-    "cc_tc200": "0",
-    "cc_tcDem30": "0",
-    "cc_ngayCong200": "0",
+    "cc_ngayCong": "25.5",
+    "cc_tc150": "0",
+    "cc_tc200": "12",
+    "cc_tcDem30": "78",
+    "cc_ngayCong200": "1.5",
     "cc_tc300": "0",
-    "cc_tc340": "0",
-    "cc_tcDem70": "0",
+    "cc_tc340": "3",
+    "cc_tcDem70": "12",
     "cc_thongca380": "",
     "cc_phepNam": "0",
     "cc_le": "0",
@@ -75,7 +75,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "5",
+      "ot": "1",
       "midOt": "0"
     },
     "2": {
@@ -86,7 +86,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "5",
+      "ot": "1",
       "midOt": "0"
     },
     "3": {
@@ -97,7 +97,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "5",
+      "ot": "1",
       "midOt": "0"
     },
     "4": {
@@ -273,7 +273,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "20": {
@@ -284,7 +284,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "21": {
@@ -295,7 +295,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "22": {
@@ -306,7 +306,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "23": {
@@ -317,7 +317,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "24": {
@@ -328,7 +328,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "25": {
@@ -350,7 +350,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "27": {
@@ -361,7 +361,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "28": {
@@ -372,7 +372,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "29": {
@@ -383,7 +383,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "30": {
@@ -394,7 +394,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "31": {
@@ -405,9 +405,9 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     }
   },
-  "updated_at": "2026-09-16T18:25:15.861Z"
+  "updated_at": "2026-09-16T18:25:47.518Z"
 }
