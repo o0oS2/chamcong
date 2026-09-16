@@ -1,11 +1,47 @@
-// Biến lưu trữ ngày tháng toàn cục cho cả hệ thống
-const curDateObj = new Date();
-window.selectedMonth = (curDateObj.getDate() < 11) ? (curDateObj.getMonth() === 0 ? 12 : curDateObj.getMonth()) : (curDateObj.getMonth() + 1);
-window.selectedYear = (curDateObj.getMonth() === 0 && curDateObj.getDate() < 11) ? curDateObj.getFullYear() - 1 : curDateObj.getFullYear();
-
 document.addEventListener("DOMContentLoaded", function () {
-  updateAllDateLabels();
+  const thangSelect = document.getElementById("thang");
+  const namSelect = document.getElementById("nam");
 
+  const today = new Date();
+  const currentMonth = today.getMonth() + 1;
+  const currentYear = today.getFullYear();
+  const currentDate = today.getDate();
+
+  // Mặc định: Sau mùng 10 là tháng hiện tại; Mùng 10 đổ về trước là tháng trước
+  let defaultMonth, defaultYear;
+  if (currentDate <= 10) {
+    defaultMonth = (currentMonth === 1) ? 12 : currentMonth - 1;
+    defaultYear = (currentMonth === 1) ? currentYear - 1 : currentYear;
+  } else {
+    defaultMonth = currentMonth;
+    defaultYear = currentYear;
+  }
+
+  // Khởi tạo tháng (01 - 12)
+  if (thangSelect) {
+    thangSelect.innerHTML = "";
+    for (let i = 1; i <= 12; i++) {
+      const option = document.createElement("option");
+      option.value = i;
+      option.text = i.toString().padStart(2, '0');
+      if (i === defaultMonth) option.selected = true;
+      thangSelect.appendChild(option);
+    }
+  }
+
+  // Khởi tạo năm (từ 2020 đến năm sau của năm hiện tại)
+  if (namSelect) {
+    namSelect.innerHTML = "";
+    for (let y = 2020; y <= currentYear + 1; y++) {
+      const option = document.createElement("option");
+      option.value = y;
+      option.text = y;
+      if (y === defaultYear) option.selected = true;
+      namSelect.appendChild(option);
+    }
+  }
+
+  // Định dạng số tiền
   function formatNumber(num) {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
@@ -60,8 +96,8 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   function tinhNgayCongChuan() {
-    const thang = window.selectedMonth || 1;
-    const nam = window.selectedYear || new Date().getFullYear();
+    const thang = +document.getElementById("thang")?.value || defaultMonth;
+    const nam = +document.getElementById("nam")?.value || defaultYear;
 
     const soNgayTrongThang = new Date(nam, thang, 0).getDate();
     let soNgayChuNhat = 0;
@@ -92,6 +128,21 @@ document.addEventListener("DOMContentLoaded", function () {
       input.addEventListener("change", () => {
         tinhLuong();
         if (typeof window.autoSaveUserData === "function") window.autoSaveUserData();
+      });
+    }
+  });
+
+  // Khi đổi tháng hoặc năm ở Tab 1 -> đồng bộ sang Tab 2 và nạp dữ liệu
+  ["thang", "nam"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener("change", () => {
+        const ccEl = document.getElementById("cc_" + id);
+        if (ccEl) ccEl.value = el.value;
+        tinhLuong();
+        if (typeof window.loadUserDataFromCloud === "function" && localStorage.getItem("cc_currentUser")) {
+          window.loadUserDataFromCloud();
+        }
       });
     }
   });
@@ -192,7 +243,7 @@ document.addEventListener("DOMContentLoaded", function () {
     return tongPhu;
   }
 
-  // HÀM CHỈ XÓA DỮ LIỆU CỦA RIÊNG TAB TÍNH LƯƠNG
+  // HÀM CHỈ XÓA DỮ LIỆU BẢNG TÍNH LƯƠNG (TAB 1)
   window.clearDataTabLuong = function() {
     if (!confirm("Bạn có chắc chắn muốn xóa dữ liệu bảng Tính Lương tháng này?")) return;
 
@@ -216,19 +267,3 @@ document.addEventListener("DOMContentLoaded", function () {
 
   tinhLuong();
 });
-
-// Cập nhật nhãn nút Tháng và Năm trên toàn hệ thống
-window.updateAllDateLabels = function() {
-  const m = (window.selectedMonth || 1).toString().padStart(2, '0');
-  const y = (window.selectedYear || new Date().getFullYear()).toString();
-
-  const l1 = document.getElementById("lblThangLuong");
-  const l2 = document.getElementById("lblNamLuong");
-  const l3 = document.getElementById("lblThangCC");
-  const l4 = document.getElementById("lblNamCC");
-
-  if (l1) l1.innerText = m;
-  if (l2) l2.innerText = y;
-  if (l3) l3.innerText = m;
-  if (l4) l4.innerText = y;
-};
