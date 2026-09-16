@@ -10,10 +10,9 @@ document.addEventListener("DOMContentLoaded", function () {
   let defaultMonth = (currentDate < 11) ? (currentMonth === 1 ? 12 : currentMonth - 1) : currentMonth;
   let defaultYear = (currentMonth === 1 && currentDate < 11) ? currentYear - 1 : currentYear;
 
-  if (ccThangSelect && ccNamSelect) {
+  // Khởi tạo select tháng (1-12)
+  if (ccThangSelect) {
     ccThangSelect.innerHTML = "";
-    ccNamSelect.innerHTML = "";
-
     for (let i = 1; i <= 12; i++) {
       const opt = document.createElement("option");
       opt.value = i;
@@ -21,40 +20,56 @@ document.addEventListener("DOMContentLoaded", function () {
       if (i === defaultMonth) opt.selected = true;
       ccThangSelect.appendChild(opt);
     }
+  }
 
-    for (let y = currentYear - 1; y <= currentYear + 1; y++) {
+  // Khởi tạo select năm: từ 2020 đến năm sau năm hiện tại (currentYear + 1)
+  if (ccNamSelect) {
+    ccNamSelect.innerHTML = "";
+    for (let y = 2020; y <= currentYear + 1; y++) {
       const opt = document.createElement("option");
       opt.value = y;
       opt.text = y;
       if (y === defaultYear) opt.selected = true;
       ccNamSelect.appendChild(opt);
     }
+  }
 
+  function updateDisplayMonthYearLabelsCC() {
+    const t = document.getElementById("cc_thang")?.value || (new Date().getMonth() + 1);
+    const n = document.getElementById("cc_nam")?.value || new Date().getFullYear();
+    const lblCC = document.getElementById("displayMonthYearChamCong");
+    if (lblCC) lblCC.innerText = `Tháng ${t}/${n}`;
+  }
+
+  updateDisplayMonthYearLabelsCC();
+
+  if (ccThangSelect && ccNamSelect) {
     ccThangSelect.addEventListener("change", () => {
-      if (typeof window.loadUserDataFromCloud === "function" && localStorage.getItem("cc_currentUser")) {
-        window.loadUserDataFromCloud();
-      } else {
-        resetChamCongDataThangMoi();
-        renderLichChamCong();
-        syncChamCongToTinhLuong();
-      }
+      updateDisplayMonthYearLabelsCC();
+      handleMonthYearChanged();
     });
     ccNamSelect.addEventListener("change", () => {
-      if (typeof window.loadUserDataFromCloud === "function" && localStorage.getItem("cc_currentUser")) {
-        window.loadUserDataFromCloud();
-      } else {
-        resetChamCongDataThangMoi();
-        renderLichChamCong();
-        syncChamCongToTinhLuong();
-      }
+      updateDisplayMonthYearLabelsCC();
+      handleMonthYearChanged();
     });
+  }
+
+  function handleMonthYearChanged() {
+    if (typeof window.loadUserDataFromCloud === "function" && localStorage.getItem("cc_currentUser")) {
+      window.loadUserDataFromCloud();
+    } else {
+      resetChamCongDataThangMoi();
+      renderLichChamCong();
+      syncChamCongToTinhLuong();
+    }
   }
 
   setupCcLuongEngine();
 
-  const MOC_CA_DEM = new Date(2026, 8, 7); // 07/09/2026 bắt đầu ca đêm
+  const MOC_CA_DEM = new Date(2026, 8, 7);
   let isDaoCa = false;
 
+  // Danh mục giờ hành chính: Nhãn đầy đủ - Text hiển thị trên ô rút gọn
   const DSHanhChinhChung = [
     { label: "Đi làm đủ", short: "Đi làm đủ", type: "du", value: 0, allowSunday: true },
     { label: "Nghỉ", short: "Nghỉ", type: "nghi", value: 8, allowSunday: true },
@@ -65,11 +80,11 @@ document.addEventListener("DOMContentLoaded", function () {
   ];
 
   const DSMuon = [1, 1.5, 2, 2.5, 3, 3.5].map(v => ({
-    label: `Muộn ${v}h`, short: `M ${v}`, type: "muon", value: v, allowSunday: true
+    label: `Muộn ${v} giờ`, short: `Muộn ${v}`, type: "muon", value: v, allowSunday: true
   }));
 
   const DSVeSom = [1, 1.5, 2, 2.5, 3, 3.5].map(v => ({
-    label: `Sớm ${v}h`, short: `V ${v}`, type: "vesom", value: v, allowSunday: true
+    label: `Về sớm ${v} giờ`, short: `Về sớm ${v}`, type: "vesom", value: v, allowSunday: true
   }));
 
   const DSTangCaFull = [];
@@ -80,7 +95,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const DSMidOtFull = ["0", "1"];
   const chamCongData = {};
 
-  // Gán ra window để file google-sync.js có thể gọi tương tác
   window.chamCongData = chamCongData;
   window.setChamCongData = function(data) {
     Object.keys(chamCongData).forEach(k => delete chamCongData[k]);
@@ -130,6 +144,7 @@ document.addEventListener("DOMContentLoaded", function () {
     syncChamCongToTinhLuong();
   };
 
+  // Tính lịch âm
   const TZ = 7;
   const PI = Math.PI;
   function INT(d) { return Math.floor(d); }
@@ -222,6 +237,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   let currentPickContext = null;
 
+  // POPUP CHỌN GIỜ HÀNH CHÍNH / TĂNG CA
   window.openPicker = function(day, type) {
     currentPickContext = { day, type };
     const overlay = document.getElementById("pickerOverlay");
@@ -242,6 +258,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (type === "hc") {
       title.textContent = `Ngày ${day}: Giờ hành chính`;
       body.className = "picker-body";
+      body.style.gridTemplateColumns = "repeat(2, 1fr)";
 
       const list = [];
       DSHanhChinhChung.forEach(item => {
@@ -254,13 +271,14 @@ document.addEventListener("DOMContentLoaded", function () {
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = "picker-btn";
-        btn.textContent = item.label;
+        btn.textContent = item.label; // Hiện "Muộn 1 giờ", "Về sớm 1 giờ"
         btn.onclick = () => selectPickValue(item);
         body.appendChild(btn);
       });
     } else if (type === "ot") {
       title.textContent = `Ngày ${day}: Tăng ca (giờ)`;
       body.className = "picker-body";
+      body.style.gridTemplateColumns = "repeat(4, 1fr)";
       DSTangCaFull.forEach(val => {
         const btn = document.createElement("button");
         btn.type = "button";
@@ -272,6 +290,7 @@ document.addEventListener("DOMContentLoaded", function () {
     } else if (type === "mid-ot") {
       title.textContent = `Ngày ${day}: TC giữa giờ đêm`;
       body.className = "picker-body";
+      body.style.gridTemplateColumns = "repeat(2, 1fr)";
       DSMidOtFull.forEach(val => {
         const btn = document.createElement("button");
         btn.type = "button";
@@ -322,7 +341,6 @@ document.addEventListener("DOMContentLoaded", function () {
     updateDayDisplay(day);
     syncChamCongToTinhLuong();
     
-    // Tự động kích hoạt lưu sau khi thay đổi chấm công
     if (typeof window.autoSaveUserData === "function") {
       window.autoSaveUserData();
     }
@@ -333,7 +351,8 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   window.forceClosePicker = function() {
-    document.getElementById("pickerOverlay").style.display = "none";
+    const overlay = document.getElementById("pickerOverlay");
+    if (overlay) overlay.style.display = "none";
     currentPickContext = null;
   };
 
@@ -343,7 +362,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const elHc = document.getElementById(`hc_val_${day}`);
     const elOt = document.getElementById(`ot_val_${day}`);
     const elMidOt = document.getElementById(`mid_ot_val_${day}`);
-    if (elHc) elHc.textContent = data.hc.short;
+    if (elHc) elHc.textContent = data.hc.short; // Hiển thị "Muộn 1", "Về sớm 1"
     if (elOt) elOt.textContent = data.ot;
     if (elMidOt) elMidOt.textContent = data.midOt;
   }
@@ -382,7 +401,6 @@ document.addEventListener("DOMContentLoaded", function () {
         else if (ca === "dem") caClass = "ca-dem";
 
         cell.className = `day-card ${caClass}`;
-
         const lunarLabel = (lunar.day === 1) ? `${lunar.day}/${lunar.month}` : `${lunar.day}`;
 
         if (!chamCongData[dayCounter]) {
@@ -702,6 +720,132 @@ document.addEventListener("DOMContentLoaded", function () {
 
     setTien("cc_thucLinh", tong - bhxh - congDoan);
   }
+
+  // CỬA SỔ POPUP CHỌN THÁNG / NĂM TRỰC QUAN
+  window.openMonthYearPicker = function(isChamCongTab = false) {
+    const overlay = document.getElementById("pickerOverlay");
+    const body = document.getElementById("pickerBody");
+    const title = document.getElementById("pickerTitle");
+    if (!overlay || !body) return;
+
+    title.innerText = "Chọn Năm";
+    body.innerHTML = "";
+    body.style.gridTemplateColumns = "repeat(4, 1fr)";
+
+    const prefix = isChamCongTab ? "cc_" : "";
+    const selectNam = document.getElementById(prefix + "nam");
+    const currentSelectedYear = parseInt(selectNam?.value) || new Date().getFullYear();
+
+    // Năm từ 2020 đến năm sau của năm hiện tại
+    const maxYear = new Date().getFullYear() + 1;
+    for (let y = 2020; y <= maxYear; y++) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "picker-btn";
+      if (y === currentSelectedYear) {
+        btn.style.background = "#007bff";
+        btn.style.color = "#fff";
+      }
+      btn.innerText = y;
+      btn.onclick = () => {
+        openMonthSelectGrid(isChamCongTab, y);
+      };
+      body.appendChild(btn);
+    }
+
+    overlay.style.display = "flex";
+  };
+
+  function openMonthSelectGrid(isChamCongTab, chosenYear) {
+    const body = document.getElementById("pickerBody");
+    const title = document.getElementById("pickerTitle");
+    title.innerText = `Năm ${chosenYear}: Chọn Tháng`;
+    body.innerHTML = "";
+    body.style.gridTemplateColumns = "repeat(3, 1fr)";
+
+    const prefix = isChamCongTab ? "cc_" : "";
+    const selectThang = document.getElementById(prefix + "thang");
+    const selectNam = document.getElementById(prefix + "nam");
+    const currentSelectedMonth = parseInt(selectThang?.value) || (new Date().getMonth() + 1);
+
+    for (let m = 1; m <= 12; m++) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "picker-btn";
+      if (m === currentSelectedMonth && chosenYear === parseInt(selectNam?.value)) {
+        btn.style.background = "#28a745";
+        btn.style.color = "#fff";
+      }
+      btn.innerText = `Tháng ${m}`;
+      btn.onclick = () => {
+        // Đồng bộ cả 2 cặp select của 2 tab
+        ["", "cc_"].forEach(p => {
+          const sN = document.getElementById(p + "nam");
+          const sT = document.getElementById(p + "thang");
+          if (sN) sN.value = chosenYear;
+          if (sT) sT.value = m;
+        });
+
+        // Cập nhật nhãn nút hiển thị
+        const lblLuong = document.getElementById("displayMonthYearLuong");
+        const lblCC = document.getElementById("displayMonthYearChamCong");
+        if (lblLuong) lblLuong.innerText = `Tháng ${m}/${chosenYear}`;
+        if (lblCC) lblCC.innerText = `Tháng ${m}/${chosenYear}`;
+
+        forceClosePicker();
+
+        // Kích hoạt nạp dữ liệu đám mây cho tháng mới
+        if (typeof window.loadUserDataFromCloud === "function" && localStorage.getItem("cc_currentUser")) {
+          window.loadUserDataFromCloud();
+        } else {
+          resetChamCongDataThangMoi();
+          renderLichChamCong();
+          syncChamCongToTinhLuong();
+          if (typeof window.tinhLuong === "function") window.tinhLuong();
+        }
+      };
+      body.appendChild(btn);
+    }
+  }
+
+  // NÚT XÓA TOÀN BỘ DỮ LIỆU CẢ 2 TAB
+  window.clearAllDataBothTabs = function() {
+    if (!confirm("Bạn có chắc chắn muốn xóa toàn bộ dữ liệu của tháng này trên cả 2 tab?")) {
+      return;
+    }
+
+    // 1. Xóa dữ liệu chấm công
+    Object.keys(chamCongData).forEach(k => delete chamCongData[k]);
+    renderLichChamCong();
+
+    // 2. Xóa các ô nhập liệu của cả 2 tab
+    const idsToClear = [
+      "luongCoBan", "cc_luongCoBan",
+      "ngayCong", "tc150", "tc200", "tcDem30", "ngayCong200", "tc300", "tc340", "tcDem70", "thongca380", "phepNam", "le",
+      "cc_ngayCong", "cc_tc150", "cc_tc200", "cc_tcDem30", "cc_ngayCong200", "cc_tc300", "cc_tc340", "cc_tcDem70", "cc_thongca380", "cc_phepNam", "cc_le",
+      "pcABC", "cc_pcABC", "pcChucVu", "cc_pcChucVu", "pcDiLai", "cc_pcDiLai", "pcKhac", "cc_pcKhac",
+      "soGioHanhChinh1", "phuLuongHanhChinh", "soGioTangCa1", "phuLuongTangCa", "soGioDem1", "phuLuongDem",
+      "soGioHanhChinh2", "phuLuongHanhChinh2", "soGioTangCa2", "phuLuongTangCa2", "soGioDem2", "phuLuongDem2",
+      "cc_soGioHanhChinh1", "cc_phuLuongHanhChinh", "cc_soGioTangCa1", "cc_phuLuongTangCa", "cc_soGioDem1", "cc_phuLuongDem",
+      "cc_soGioHanhChinh2", "cc_phuLuongHanhChinh2", "cc_soGioTangCa2", "cc_phuLuongTangCa2", "cc_soGioDem2", "cc_phuLuongDem2"
+    ];
+
+    idsToClear.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = "";
+    });
+
+    // 3. Tính toán lại
+    triggerCcComputeEngine();
+    if (typeof window.tinhLuong === "function") window.tinhLuong();
+
+    // 4. Kích hoạt tự lưu bản trắng
+    if (typeof window.autoSaveUserData === "function") {
+      window.autoSaveUserData();
+    }
+
+    alert("Đã xóa trắng toàn bộ dữ liệu tháng này!");
+  };
 
   renderLichChamCong();
   syncChamCongToTinhLuong();
