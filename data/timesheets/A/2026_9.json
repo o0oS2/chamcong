@@ -55,8 +55,8 @@
     "cc_le": "1",
     "cc_soGioHanhChinh1": "1",
     "cc_phuLuongHanhChinh": "1",
-    "cc_soGioTangCa1": "",
-    "cc_phuLuongTangCa": "",
+    "cc_soGioTangCa1": "1",
+    "cc_phuLuongTangCa": "1",
     "cc_soGioDem1": "",
     "cc_phuLuongDem": "",
     "cc_soGioHanhChinh2": "",
@@ -398,5 +398,5 @@
       "midOt": "0"
     }
   },
-  "updated_at": "2026-09-16T18:08:30.054Z"
+  "updated_at": "2026-09-16T18:08:34.665Z"
 }
