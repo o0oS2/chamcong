@@ -131,7 +131,7 @@ window.handleRefreshData = async function() {
   await window.loadUserDataFromCloud();
 };
 
-// 5. TỰ ĐỘNG LƯU DỮ LIỆU THÁNG
+// 5. TỰ ĐỘNG LƯU
 window.autoSaveUserData = function() {
   if (!currentUser) return;
   const statusEl = document.getElementById("syncStatus");
@@ -173,7 +173,7 @@ window.autoSaveUserData = function() {
     });
 
     const payload = {
-      base_salary: document.getElementById("luongCoBan")?.value || document.getElementById("cc_luongCoBan")?.value || "0",
+      base_salary: document.getElementById("cc_luongCoBan")?.value || document.getElementById("luongCoBan")?.value || "0",
       allowances: allowances,
       extra_fields: extraInputs,
       timesheet: window.chamCongData || {},
@@ -214,14 +214,23 @@ window.loadUserDataFromCloud = async function() {
     const res = await fetch(`${API_URL}?action=load&user=${encodeURIComponent(currentUser)}&monthKey=${monthKey}`);
     const record = await res.json();
 
+    const formatFn = window.formatSalaryNumber || function(v){ return v; };
+
     if (record) {
-      if (document.getElementById("luongCoBan")) document.getElementById("luongCoBan").value = record.base_salary || "";
-      if (document.getElementById("cc_luongCoBan")) document.getElementById("cc_luongCoBan").value = record.base_salary || "";
+      const formattedSalary = formatFn(record.base_salary || "");
+      if (document.getElementById("luongCoBan")) document.getElementById("luongCoBan").value = formattedSalary;
+      if (document.getElementById("cc_luongCoBan")) document.getElementById("cc_luongCoBan").value = formattedSalary;
 
       if (record.allowances) {
         Object.keys(record.allowances).forEach(k => {
           const el = document.getElementById(k);
-          if (el) el.value = record.allowances[k];
+          if (el) {
+            if (["cc_pcABC", "cc_pcChucVu", "cc_pcDiLai", "cc_pcKhac"].includes(k)) {
+              el.value = formatFn(record.allowances[k]);
+            } else {
+              el.value = record.allowances[k];
+            }
+          }
         });
       }
 
@@ -253,12 +262,17 @@ window.loadUserDataFromCloud = async function() {
           else el.value = "";
         }
       });
+
+      if (typeof window.applyDefaultAllowances === "function") {
+        window.applyDefaultAllowances();
+      }
     }
 
     if (typeof window.updateDateDisplays === "function") window.updateDateDisplays();
     if (window.renderLichChamCong) window.renderLichChamCong();
     if (window.syncChamCongToTinhLuong) window.syncChamCongToTinhLuong();
     if (typeof window.tinhLuong === "function") window.tinhLuong();
+    if (typeof window.triggerCcComputeEngine === "function") window.triggerCcComputeEngine();
 
     if (statusEl) statusEl.textContent = "(Đã đồng bộ)";
   } catch {
