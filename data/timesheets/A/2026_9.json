@@ -60,11 +60,11 @@
     "cc_soGioDem1": "11",
     "cc_phuLuongDem": "1",
     "cc_soGioHanhChinh2": "1",
-    "cc_phuLuongHanhChinh2": "",
-    "cc_soGioTangCa2": "",
-    "cc_phuLuongTangCa2": "",
-    "cc_soGioDem2": "",
-    "cc_phuLuongDem2": ""
+    "cc_phuLuongHanhChinh2": "1",
+    "cc_soGioTangCa2": "1",
+    "cc_phuLuongTangCa2": "1",
+    "cc_soGioDem2": "1",
+    "cc_phuLuongDem2": "1"
   },
   "timesheet": {
     "1": {
@@ -399,5 +399,5 @@
     }
   },
   "shift_mode": "chuan",
-  "updated_at": "2026-09-16T19:54:27.912Z"
+  "updated_at": "2026-09-16T19:54:35.026Z"
 }
