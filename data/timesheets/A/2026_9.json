@@ -6,7 +6,7 @@
     "cc_pcThamNien": "600.000",
     "cc_pcChucVu": "",
     "cc_pcDiLai": "500.000",
-    "cc_pcDienThoai": "1.500.000",
+    "cc_pcDienThoai": "",
     "cc_pcTreEm": "",
     "cc_pcKhac": ""
   },
@@ -27,8 +27,8 @@
     "pcThamNien": "600.000",
     "pcChucVu": "",
     "pcDiLai": "500.000",
-    "pcDienThoai": "1.500.000",
-    "pcTreEm": "50.000",
+    "pcDienThoai": "",
+    "pcTreEm": "",
     "pcKhac": "",
     "soGioHanhChinh1": "",
     "phuLuongHanhChinh": "",
@@ -42,17 +42,17 @@
     "phuLuongTangCa2": "",
     "soGioDem2": "",
     "phuLuongDem2": "",
-    "cc_ngayCong": "21.13",
-    "cc_tc150": "14",
-    "cc_tc200": "13",
-    "cc_tcDem30": "64",
-    "cc_ngayCong200": "1",
+    "cc_ngayCong": "23.88",
+    "cc_tc150": "11.5",
+    "cc_tc200": "0",
+    "cc_tcDem30": "0",
+    "cc_ngayCong200": "0",
     "cc_tc300": "0",
-    "cc_tc340": "5",
-    "cc_tcDem70": "8",
+    "cc_tc340": "0",
+    "cc_tcDem70": "0",
     "cc_thongca380": "",
     "cc_phepNam": "0",
-    "cc_le": "1",
+    "cc_le": "0",
     "cc_soGioHanhChinh1": "",
     "cc_phuLuongHanhChinh": "",
     "cc_soGioTangCa1": "",
@@ -69,13 +69,13 @@
   "timesheet": {
     "1": {
       "hc": {
-        "label": "Đi làm đủ",
-        "short": "Đi làm đủ",
-        "type": "du",
-        "value": 0,
+        "label": "Nghỉ",
+        "short": "Nghỉ",
+        "type": "nghi",
+        "value": 8,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "2": {
@@ -97,32 +97,10 @@
         "value": 8,
         "allowSunday": true
       },
-      "ot": "3",
+      "ot": "0",
       "midOt": "0"
     },
     "4": {
-      "hc": {
-        "label": "Đi làm đủ",
-        "short": "Đi làm đủ",
-        "type": "du",
-        "value": 0,
-        "allowSunday": true
-      },
-      "ot": "1",
-      "midOt": "1"
-    },
-    "5": {
-      "hc": {
-        "label": "Đi làm đủ",
-        "short": "Đi làm đủ",
-        "type": "du",
-        "value": 0,
-        "allowSunday": true
-      },
-      "ot": "3",
-      "midOt": "1"
-    },
-    "6": {
       "hc": {
         "label": "Nghỉ",
         "short": "Nghỉ",
@@ -133,37 +111,59 @@
       "ot": "0",
       "midOt": "0"
     },
-    "7": {
+    "5": {
       "hc": {
-        "label": "Nghỉ",
-        "short": "Nghỉ",
-        "type": "nghi",
-        "value": 8,
+        "label": "Đi làm đủ",
+        "short": "Đi làm đủ",
+        "type": "du",
+        "value": 0,
         "allowSunday": true
       },
-      "ot": "4.5",
+      "ot": "1",
       "midOt": "0"
     },
-    "8": {
+    "6": {
       "hc": {
-        "label": "Nghỉ chiều",
-        "short": "Nghỉ chiều",
-        "type": "nghi_chieu",
-        "value": 4,
+        "label": "Đi làm đủ",
+        "short": "Đi làm đủ",
+        "type": "du",
+        "value": 0,
         "allowSunday": true
       },
       "ot": "2.5",
       "midOt": "0"
     },
-    "9": {
+    "7": {
       "hc": {
-        "label": "Muộn 3 giờ",
-        "short": "Muộn 3",
-        "type": "muon",
-        "value": 3,
+        "label": "Đi làm đủ",
+        "short": "Đi làm đủ",
+        "type": "du",
+        "value": 0,
+        "allowSunday": true
+      },
+      "ot": "0",
+      "midOt": "0"
+    },
+    "8": {
+      "hc": {
+        "label": "Đi làm đủ",
+        "short": "Đi làm đủ",
+        "type": "du",
+        "value": 0,
         "allowSunday": true
       },
       "ot": "3",
+      "midOt": "0"
+    },
+    "9": {
+      "hc": {
+        "label": "Đi làm đủ",
+        "short": "Đi làm đủ",
+        "type": "du",
+        "value": 0,
+        "allowSunday": true
+      },
+      "ot": "0",
       "midOt": "0"
     },
     "10": {
@@ -174,18 +174,18 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "5",
       "midOt": "0"
     },
     "11": {
       "hc": {
-        "label": "Đi làm đủ",
-        "short": "Đi làm đủ",
-        "type": "du",
-        "value": 0,
+        "label": "Nghỉ",
+        "short": "Nghỉ",
+        "type": "nghi",
+        "value": 8,
         "allowSunday": true
       },
-      "ot": "3",
+      "ot": "0",
       "midOt": "0"
     },
     "12": {
@@ -201,10 +201,10 @@
     },
     "13": {
       "hc": {
-        "label": "Nghỉ",
-        "short": "Nghỉ",
-        "type": "nghi",
-        "value": 8,
+        "label": "Đi làm đủ",
+        "short": "Đi làm đủ",
+        "type": "du",
+        "value": 0,
         "allowSunday": true
       },
       "ot": "0",
@@ -212,10 +212,10 @@
     },
     "14": {
       "hc": {
-        "label": "Đi làm đủ",
-        "short": "Đi làm đủ",
-        "type": "du",
-        "value": 0,
+        "label": "Về sớm 1 giờ",
+        "short": "Về sớm 1",
+        "type": "vesom",
+        "value": 1,
         "allowSunday": true
       },
       "ot": "0",
@@ -256,10 +256,10 @@
     },
     "18": {
       "hc": {
-        "label": "Đi làm đủ",
-        "short": "Đi làm đủ",
-        "type": "du",
-        "value": 0,
+        "label": "Nghỉ",
+        "short": "Nghỉ",
+        "type": "nghi",
+        "value": 8,
         "allowSunday": true
       },
       "ot": "0",
@@ -278,10 +278,10 @@
     },
     "20": {
       "hc": {
-        "label": "Nghỉ",
-        "short": "Nghỉ",
-        "type": "nghi",
-        "value": 8,
+        "label": "Đi làm đủ",
+        "short": "Đi làm đủ",
+        "type": "du",
+        "value": 0,
         "allowSunday": true
       },
       "ot": "0",
@@ -295,7 +295,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "22": {
@@ -306,7 +306,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "23": {
@@ -317,7 +317,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "24": {
@@ -328,18 +328,18 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "25": {
       "hc": {
-        "label": "Đi làm đủ",
-        "short": "Đi làm đủ",
-        "type": "du",
-        "value": 0,
+        "label": "Nghỉ",
+        "short": "Nghỉ",
+        "type": "nghi",
+        "value": 8,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "26": {
@@ -350,15 +350,15 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "27": {
       "hc": {
-        "label": "Nghỉ",
-        "short": "Nghỉ",
-        "type": "nghi",
-        "value": 8,
+        "label": "Đi làm đủ",
+        "short": "Đi làm đủ",
+        "type": "du",
+        "value": 0,
         "allowSunday": true
       },
       "ot": "0",
@@ -372,7 +372,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "29": {
@@ -383,7 +383,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "30": {
@@ -394,10 +394,21 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "0",
+      "midOt": "0"
+    },
+    "31": {
+      "hc": {
+        "label": "Đi làm đủ",
+        "short": "Đi làm đủ",
+        "type": "du",
+        "value": 0,
+        "allowSunday": true
+      },
+      "ot": "0",
       "midOt": "0"
     }
   },
-  "shift_mode": "dao",
-  "updated_at": "2026-09-16T19:12:24.347Z"
+  "shift_mode": "chuyen_ngay",
+  "updated_at": "2026-09-16T19:13:47.744Z"
 }
