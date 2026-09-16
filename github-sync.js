@@ -139,6 +139,53 @@ window.handleLogout = function() {
   if (typeof switchTab === "function") switchTab('tabLuong');
 };
 
+// 4. ĐỔI MẬT KHẨU
+window.handleChangePassword = async function() {
+  if (!currentUser) return alert("Bạn cần đăng nhập trước!");
+
+  const oldPwd = document.getElementById("cpOldPwd")?.value.trim() || "";
+  const newPwd = document.getElementById("cpNewPwd")?.value.trim() || "";
+  const confirmPwd = document.getElementById("cpConfirmPwd")?.value.trim() || "";
+
+  if (!oldPwd || !newPwd || !confirmPwd) return alert("Vui lòng nhập đầy đủ thông tin!");
+  if (newPwd.length < 4) return alert("Mật khẩu mới phải có ít nhất 4 ký tự!");
+  if (newPwd !== confirmPwd) return alert("Mật khẩu mới xác nhận không khớp!");
+  if (newPwd === oldPwd) return alert("Mật khẩu mới phải khác mật khẩu hiện tại!");
+
+  const btn = document.querySelector("button[onclick*='handleChangePassword']");
+  const originalText = btn ? btn.innerText : "Xác nhận đổi mật khẩu";
+  if (btn) {
+    btn.disabled = true;
+    btn.innerText = "⏳ Đang xử lý...";
+  }
+
+  try {
+    const res = await fetch(`${API_URL}?action=changepassword`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: currentUser, oldPassword: oldPwd, newPassword: newPwd })
+    });
+    const data = await res.json();
+    if (res.ok && data.ok) {
+      alert("Đổi mật khẩu thành công!");
+      ["cpOldPwd", "cpNewPwd", "cpConfirmPwd"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = "";
+      });
+      if (typeof window.closeChangePwdModal === "function") window.closeChangePwdModal();
+    } else {
+      alert(data.error || "Đổi mật khẩu thất bại! Sai mật khẩu hiện tại hoặc lỗi máy chủ.");
+    }
+  } catch {
+    alert("Không thể kết nối đến máy chủ Cloudflare Worker!");
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerText = originalText;
+    }
+  }
+};
+
 function clearChamCongTabData() {
   if (window.clearChamCongData) window.clearChamCongData();
   window.currentShiftMode = "chuan";

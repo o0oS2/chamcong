@@ -1,4 +1,4 @@
-w<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
@@ -340,6 +340,17 @@ w<!DOCTYPE html>
       cursor: pointer;
       white-space: nowrap;
     }
+    .btn-change-pwd {
+      padding: 2px 10px;
+      font-size: 12px;
+      height: 24px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
     .sync-status {
       font-size: 11px;
       color: #16a34a;
@@ -391,7 +402,7 @@ w<!DOCTYPE html>
         width: 90px; font-size: 14px; height: 18px; text-align: center;
       }
       #luongCoBan, #cc_luongCoBan {
-        height: 22px !important; font-size: 18px !important; font-weight: bold; width: 393px !important;
+        height: 22px !important; font-size: 18px !important; font-weight: bold; width: 140px !important;
       }
       
       #luongContainer table th:nth-child(1), #luongContainer table td:nth-child(1),
@@ -413,7 +424,7 @@ w<!DOCTYPE html>
       #cc_bangPhu table td:nth-child(5), #cc_bangPhu table td:nth-child(5) { width: 28% !important; }
 
       /* Giữ các nút nhỏ (Xóa, Đổi ca, Đăng xuất, tab, đóng cảnh báo) gọn gàng, không kéo full-width */
-      .btn-xoa-tab, .btn-dao-ca, .btn-logout, .tab-btn, .btn-install-app, .notice-close, .btn-toggle-pwd {
+      .btn-xoa-tab, .btn-dao-ca, .btn-logout, .tab-btn, .btn-install-app, .notice-close, .btn-toggle-pwd, .btn-change-pwd {
         width: auto !important;
         flex: 0 0 auto !important;
       }
@@ -614,7 +625,7 @@ w<!DOCTYPE html>
       }
       .input-row label { font-size: 13px !important; margin: 0 !important; }
       #luongCoBan, #cc_luongCoBan {
-        width: 86px !important; min-width: 86px !important; font-size: 13px !important; height: 24px !important;
+        width: 78px !important; min-width: 78px !important; font-size: 13px !important; height: 24px !important;
       }
       .input-row .btn-dropdown-select {
         font-size: 11px !important; padding: 0 2px !important; height: 24px !important;
@@ -704,13 +715,15 @@ w<!DOCTYPE html>
         <input type="text" id="authUsername" placeholder="Tên đăng nhập" style="width: 120px; height: 26px; font-size: 13px; padding: 2px 6px; border: 1px solid #ccc; border-radius: 4px;" />
         <span class="pwd-wrap">
           <input type="password" id="authPassword" placeholder="Mật khẩu" style="width: 110px; height: 26px; font-size: 13px; padding: 2px 22px 2px 6px; border: 1px solid #ccc; border-radius: 4px;" />
-          <button type="button" class="btn-toggle-pwd" id="btnTogglePwd" onclick="togglePasswordVisibility()" title="Hiện/ẩn mật khẩu">👁️</button>
+          <button type="button" class="btn-toggle-pwd" id="btnTogglePwd" onclick="toggleInputVisibility('authPassword', this)" title="Hiện/ẩn mật khẩu">👁️</button>
         </span>
         <button type="button" onclick="handleLogin()" style="padding: 4px 12px; font-size: 13px; height: 26px; background: #007bff; border-radius: 4px; border:none; color:#fff; cursor:pointer;">Đăng nhập</button>
         <button type="button" onclick="handleRegister()" style="padding: 4px 12px; font-size: 13px; height: 26px; background: #28a745; border-radius: 4px; border:none; color:#fff; cursor:pointer;">Đăng ký</button>
+        <a href="javascript:void(0)" onclick="openForgotPwdModal()" style="font-size: 12px; color: #007bff; text-decoration: underline; white-space: nowrap;">Quên mật khẩu?</a>
       </div>
       <div id="userInfoArea" class="user-info-area">
         <span class="user-info-name">Xin chào, <b id="lblUsername" style="color: #007bff;"></b></span>
+        <button type="button" class="btn-change-pwd" onclick="openChangePwdModal()">🔑 Đổi mật khẩu</button>
         <button type="button" class="btn-logout" onclick="handleLogout()">Đăng xuất</button>
         <span id="syncStatus" class="sync-status">Đã lưu</span>
       </div>
@@ -724,7 +737,7 @@ w<!DOCTYPE html>
         <div class="input-row">
           <div class="group">
             <label for="luongCoBan"><strong>LCB:</strong></label>
-            <input type="text" id="luongCoBan" inputmode="numeric" placeholder="nhập lương cơ bản" style="height: 20px;" />
+            <input type="text" id="luongCoBan" inputmode="numeric" placeholder="lương cơ bản" style="height: 20px;" />
           </div>
 
           <!-- DROPDOWN THÁNG, NĂM CẠNH NHAU NHƯ GỐC KÈM NÚT XÓA TAB 1 -->
@@ -978,7 +991,7 @@ w<!DOCTYPE html>
         <div class="input-row">
           <div class="group">
             <label for="cc_luongCoBan"><strong>LCB:</strong></label>
-            <input type="text" id="cc_luongCoBan" inputmode="numeric" class="lcb-input" placeholder="nhập lương cơ bản" />
+            <input type="text" id="cc_luongCoBan" inputmode="numeric" class="lcb-input" placeholder="lương cơ bản" />
           </div>
           <div class="group date-group">
             <div id="btnThangCC" class="btn-dropdown-select" onclick="openDateMenu('month', true)" style="width: 44px;">
@@ -1171,6 +1184,57 @@ w<!DOCTYPE html>
   </div>
 </div>
 
+<!-- CỬA SỔ POPUP MODAL: ĐỔI MẬT KHẨU -->
+<div class="picker-overlay" id="changePwdOverlay" onclick="closeChangePwdModal(event)">
+  <div class="picker-modal">
+    <div class="picker-header">
+      <span>🔑 Đổi mật khẩu</span>
+      <span style="cursor:pointer;" onclick="closeChangePwdModal()">✕</span>
+    </div>
+    <div style="padding: 14px; display:flex; flex-direction:column; gap:8px;">
+      <label style="font-size:13px; font-weight:bold; color:#334155;">Mật khẩu hiện tại</label>
+      <span class="pwd-wrap" style="width:100%;">
+        <input type="password" id="cpOldPwd" style="width:100%; box-sizing:border-box; height:30px; font-size:13px; padding:4px 26px 4px 8px; border:1px solid #ccc; border-radius:4px;" />
+        <button type="button" class="btn-toggle-pwd" onclick="toggleInputVisibility('cpOldPwd', this)">👁️</button>
+      </span>
+      <label style="font-size:13px; font-weight:bold; color:#334155;">Mật khẩu mới</label>
+      <span class="pwd-wrap" style="width:100%;">
+        <input type="password" id="cpNewPwd" style="width:100%; box-sizing:border-box; height:30px; font-size:13px; padding:4px 26px 4px 8px; border:1px solid #ccc; border-radius:4px;" />
+        <button type="button" class="btn-toggle-pwd" onclick="toggleInputVisibility('cpNewPwd', this)">👁️</button>
+      </span>
+      <label style="font-size:13px; font-weight:bold; color:#334155;">Xác nhận mật khẩu mới</label>
+      <span class="pwd-wrap" style="width:100%;">
+        <input type="password" id="cpConfirmPwd" style="width:100%; box-sizing:border-box; height:30px; font-size:13px; padding:4px 26px 4px 8px; border:1px solid #ccc; border-radius:4px;" />
+        <button type="button" class="btn-toggle-pwd" onclick="toggleInputVisibility('cpConfirmPwd', this)">👁️</button>
+      </span>
+      <button type="button" onclick="handleChangePassword()" style="margin-top:6px; padding:9px; background:#28a745; color:#fff; border:none; border-radius:5px; font-size:14px; font-weight:bold; cursor:pointer;">Xác nhận đổi mật khẩu</button>
+    </div>
+  </div>
+</div>
+
+<!-- CỬA SỔ POPUP MODAL: QUÊN MẬT KHẨU -->
+<div class="picker-overlay" id="forgotPwdOverlay" onclick="closeForgotPwdModal(event)">
+  <div class="picker-modal">
+    <div class="picker-header">
+      <span>🔒 Quên mật khẩu?</span>
+      <span style="cursor:pointer;" onclick="closeForgotPwdModal()">✕</span>
+    </div>
+    <div style="padding: 16px; font-size: 14px; line-height: 1.6; text-align:center; color:#334155;">
+      <p style="margin: 0 0 10px;">Vui lòng liên hệ tôi qua Facebook hoặc Zalo bên dưới để được hỗ trợ lấy lại mật khẩu:</p>
+      <p class="contact-links" style="margin-top: 8px;">
+        <a href="https://m.facebook.com/tdt93/" target="_blank" class="social-link">
+          <img src="https://raw.githubusercontent.com/o0oS2/Tinh-luong/main/Image/Facebook.png" width="20" height="20" class="social-icon">
+          <span class="facebook-text">Facebook</span>
+        </a>
+        <a href="http://zalo.me/trungpl" target="_blank" class="social-link">
+          <img src="https://raw.githubusercontent.com/o0oS2/Tinh-luong/main/Image/Zalo.png" alt="Zalo" width="20" height="20" class="social-icon">
+          <span class="zalo-text">Zalo</span>
+        </a>
+      </p>
+    </div>
+  </div>
+</div>
+
 <script>
   function showToast(message) {
     const existingToast = document.querySelector('.toast');
@@ -1188,18 +1252,44 @@ w<!DOCTYPE html>
     }, 3000);
   }
   
-  function togglePasswordVisibility() {
-    const pwd = document.getElementById('authPassword');
-    const btn = document.getElementById('btnTogglePwd');
-    if (!pwd) return;
-    if (pwd.type === 'password') {
-      pwd.type = 'text';
-      if (btn) btn.textContent = '🙈';
+  // Hàm tổng quát: hiện/ẩn nội dung 1 ô mật khẩu bất kỳ (dùng cho đăng nhập lẫn đổi mật khẩu)
+  function toggleInputVisibility(inputId, btnEl) {
+    const inp = document.getElementById(inputId);
+    if (!inp) return;
+    if (inp.type === 'password') {
+      inp.type = 'text';
+      if (btnEl) btnEl.textContent = '🙈';
     } else {
-      pwd.type = 'password';
-      if (btn) btn.textContent = '👁️';
+      inp.type = 'password';
+      if (btnEl) btnEl.textContent = '👁️';
     }
   }
+
+  // ==== MODAL: ĐỔI MẬT KHẨU ====
+  function openChangePwdModal() {
+    const overlay = document.getElementById('changePwdOverlay');
+    if (overlay) overlay.style.display = 'flex';
+  }
+  function closeChangePwdModal(e) {
+    if (e && e.target && e.target.id !== 'changePwdOverlay') return;
+    const overlay = document.getElementById('changePwdOverlay');
+    if (overlay) overlay.style.display = 'none';
+  }
+  window.openChangePwdModal = openChangePwdModal;
+  window.closeChangePwdModal = closeChangePwdModal;
+
+  // ==== MODAL: QUÊN MẬT KHẨU ====
+  function openForgotPwdModal() {
+    const overlay = document.getElementById('forgotPwdOverlay');
+    if (overlay) overlay.style.display = 'flex';
+  }
+  function closeForgotPwdModal(e) {
+    if (e && e.target && e.target.id !== 'forgotPwdOverlay') return;
+    const overlay = document.getElementById('forgotPwdOverlay');
+    if (overlay) overlay.style.display = 'none';
+  }
+  window.openForgotPwdModal = openForgotPwdModal;
+  window.closeForgotPwdModal = closeForgotPwdModal;
 
   function copySTK() {
     const stkText = document.getElementById("stk").innerText;
