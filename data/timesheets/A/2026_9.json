@@ -11,22 +11,22 @@
     "cc_pcKhac": ""
   },
   "extra_fields": {
-    "ngayCong": "",
-    "tc150": "",
-    "tc200": "",
-    "tcDem30": "",
-    "ngayCong200": "",
-    "tc300": "",
-    "tc340": "",
-    "tcDem70": "",
-    "thongca380": "",
-    "phepNam": "",
-    "le": "",
-    "pcABC": "",
-    "pcChuyenCan": "",
-    "pcThamNien": "",
-    "pcChucVu": "",
-    "pcDiLai": "",
+    "ngayCong": "1",
+    "tc150": "1",
+    "tc200": "1",
+    "tcDem30": "1",
+    "ngayCong200": "1",
+    "tc300": "1",
+    "tc340": "1",
+    "tcDem70": "1",
+    "thongca380": "1",
+    "phepNam": "1",
+    "le": "1",
+    "pcABC": "100.000",
+    "pcChuyenCan": "200.000",
+    "pcThamNien": "600.000",
+    "pcChucVu": "100.000",
+    "pcDiLai": "500.000",
     "pcDienThoai": "",
     "pcTreEm": "",
     "pcKhac": "",
@@ -398,5 +398,5 @@
       "midOt": "0"
     }
   },
-  "updated_at": "2026-09-16T15:30:54.110Z"
+  "updated_at": "2026-09-16T15:31:13.687Z"
 }
