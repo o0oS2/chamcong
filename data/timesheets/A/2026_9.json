@@ -42,17 +42,17 @@
     "phuLuongTangCa2": "",
     "soGioDem2": "",
     "phuLuongDem2": "",
-    "cc_ngayCong": "",
-    "cc_tc150": "",
-    "cc_tc200": "",
-    "cc_tcDem30": "",
-    "cc_ngayCong200": "",
-    "cc_tc300": "",
-    "cc_tc340": "",
-    "cc_tcDem70": "",
+    "cc_ngayCong": "23.5",
+    "cc_tc150": "0",
+    "cc_tc200": "9",
+    "cc_tcDem30": "64",
+    "cc_ngayCong200": "1",
+    "cc_tc300": "0",
+    "cc_tc340": "2",
+    "cc_tcDem70": "8",
     "cc_thongca380": "",
-    "cc_phepNam": "",
-    "cc_le": "",
+    "cc_phepNam": "0.5",
+    "cc_le": "1",
     "cc_soGioHanhChinh1": "",
     "cc_phuLuongHanhChinh": "",
     "cc_soGioTangCa1": "",
@@ -179,13 +179,13 @@
     },
     "11": {
       "hc": {
-        "label": "Đi làm đủ",
-        "short": "Đi làm đủ",
-        "type": "du",
-        "value": 0,
-        "allowSunday": true
+        "label": "1/2 phép năm",
+        "short": "½PN",
+        "type": "pn_nua",
+        "value": 4,
+        "allowSunday": false
       },
-      "ot": "1",
+      "ot": "0",
       "midOt": "0"
     },
     "12": {
@@ -398,5 +398,5 @@
       "midOt": "0"
     }
   },
-  "updated_at": "2026-09-16T16:56:51.408Z"
+  "updated_at": "2026-09-16T16:57:11.886Z"
 }
