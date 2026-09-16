@@ -1,6 +1,6 @@
 // --- CẤU HÌNH KẾT NỐI SUPABASE ---
 const SUPABASE_URL = "https://txdnlqfxxhdskfbytyqo.supabase.co"; 
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4ZG5scWZ4eGhkc2tmYnl0eXFvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEyMTcwNzIsImV4cCI6MjA1Njc5MzA3Mn0.your_anon_key_here"; // Lưu ý giữ nguyên key anon chuẩn của anh
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4ZG5scWZ4eGhkc2tmYnl0eXFvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEyMTcwNzIsImV4cCI6MjA1Njc5MzA3Mn0.your_anon_key_here"; // Giữ nguyên khóa anon chuẩn của anh
 
 let currentUser = localStorage.getItem("cc_currentUser") || null;
 let saveTimer = null;
@@ -9,19 +9,19 @@ document.addEventListener("DOMContentLoaded", function () {
   checkLoginState();
 });
 
-// Kiểm tra trạng thái đăng nhập để hiển thị thanh chào mừng hoặc ẩn modal
+// Kiểm tra trạng thái đăng nhập để hiển thị khu vực "Xin chào" hoặc ẩn modal
 function checkLoginState() {
-  const userInfoBar = document.getElementById("userInfoBar");
+  const userInfoArea = document.getElementById("userInfoArea"); // Khớp chính xác với id trong HTML của anh
   const lblUser = document.getElementById("lblUsername");
   const modal = document.getElementById("loginModalOverlay");
 
   if (currentUser) {
-    if (userInfoBar) userInfoBar.style.display = "flex";
+    if (userInfoArea) userInfoArea.style.display = "flex";
     if (lblUser) lblUser.textContent = currentUser;
     if (modal) modal.style.display = "none";
     loadUserDataFromCloud();
   } else {
-    if (userInfoBar) userInfoBar.style.display = "none";
+    if (userInfoArea) userInfoArea.style.display = "none";
   }
 }
 
