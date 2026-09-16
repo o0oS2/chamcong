@@ -225,24 +225,24 @@
 
     .input-row label {
       white-space: nowrap;
-      font-size: 18px;
+      font-size: 15px;
       color: green;
     }
 
     .input-row input[type="number"],
     .input-row input[type="text"] {
-      width: 160px;
+      width: 108px;
       min-width: 40px;
       text-align: right;
-      font-size: 20px;
+      font-size: 18px;
       padding: 2px 4px;
       height: 24px;
       border: 1px solid #ccc;
       border-radius: 3px;
     }
     #luongCoBan, #cc_luongCoBan {
-      height: 32px !important;
-      font-size: 22px !important;
+      height: 30px !important;
+      font-size: 20px !important;
       font-weight: bold;
     }
 
@@ -268,7 +268,7 @@
     }
 
     .btn-xoa-tab {
-      padding: 2px 8px !important;
+      padding: 2px 6px !important;
       height: 30px !important;
       font-size: 12px !important;
       font-weight: bold !important;
@@ -286,7 +286,7 @@
     }
 
     .btn-install-app {
-      padding: 2px 8px !important;
+      padding: 2px 6px !important;
       height: 30px !important;
       font-size: 12px !important;
       font-weight: bold !important;
@@ -303,6 +303,15 @@
     .btn-install-app:hover {
       background: #007bff !important;
       color: #fff !important;
+    }
+
+    /* Hàng LCB của Tab Chấm Công gộp thêm Đổi ca + nhãn ca -> thu gọn để vừa 1 dòng */
+    #paneChamCong .input-row .btn-dao-ca {
+      padding: 4px 8px !important; font-size: 11.5px !important; height: 30px !important; margin: 0 !important;
+    }
+    #paneChamCong .input-row #lblKetQuaCa {
+      font-size: 11.5px !important; padding: 4px 8px !important; height: 30px !important;
+      box-sizing: border-box;
     }
 
     .user-info-area {
@@ -400,14 +409,14 @@
       #bangPhu table th:nth-child(5), #bangPhu table td:nth-child(5),
       #cc_bangPhu table td:nth-child(5), #cc_bangPhu table td:nth-child(5) { width: 28% !important; }
 
-      /* Giữ các nút nhỏ (Xóa, Đổi ca, Đăng xuất, tab) gọn gàng, không kéo full-width */
-      .btn-xoa-tab, .btn-dao-ca, .btn-logout, .tab-btn, .btn-install-app {
+      /* Giữ các nút nhỏ (Xóa, Đổi ca, Đăng xuất, tab, đóng cảnh báo) gọn gàng, không kéo full-width */
+      .btn-xoa-tab, .btn-dao-ca, .btn-logout, .tab-btn, .btn-install-app, .notice-close {
         width: auto !important;
         flex: 0 0 auto !important;
       }
-      .chamcong-tools .btn-dao-ca { padding: 5px 8px !important; font-size: 12px !important; }
-      .chamcong-tools #lblKetQuaCa { font-size: 11.5px !important; padding: 5px 8px !important; }
-      .chamcong-tools .btn-xoa-tab, .chamcong-tools .btn-install-app {
+      .input-row .btn-dao-ca { padding: 5px 8px !important; font-size: 12px !important; }
+      .input-row #lblKetQuaCa { font-size: 11.5px !important; padding: 5px 8px !important; }
+      .input-row .btn-xoa-tab, .input-row .btn-install-app {
         padding: 4px 7px !important; font-size: 11px !important; height: 28px !important;
       }
       .btn-xoa-tab {
@@ -544,10 +553,10 @@
     }
     .cell-hc {
       background-color: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0;
-      white-space: normal; line-height: 1.1; font-size: 11px; word-break: break-word;
-      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-      height: auto; min-height: 26px; align-items: center;
-      -webkit-box-pack: center; justify-content: center;
+      white-space: normal; line-height: 1.15; font-size: 11px; word-break: break-word;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; box-sizing: border-box;
+      height: auto; min-height: 26px; max-height: 30px; overflow: hidden;
     }
     /* Đi làm đủ -> xanh; Muộn/Về sớm/Nghỉ -> đỏ nhạt, để nhìn phát biết ngay có nghỉ hay không */
     .cell-hc.hc-full { background-color: #dcfce7; color: #166534; border-color: #86efac; }
@@ -635,7 +644,8 @@
 
     .cc-login-notice {
       display: none;
-      align-items: center;
+      align-items: flex-start;
+      flex-wrap: nowrap;
       gap: 8px;
       background: #fff7ed;
       border: 1px solid #fed7aa;
@@ -645,11 +655,13 @@
       border-radius: 6px;
       padding: 8px 10px;
       margin-bottom: 8px;
+      box-sizing: border-box;
+      width: 100%;
     }
-    .cc-login-notice .notice-text { flex: 1 1 auto; }
+    .cc-login-notice .notice-text { flex: 1 1 auto; min-width: 0; }
     .cc-login-notice .notice-close {
-      flex: 0 0 auto; background: none; border: none; color: #9a3412; font-size: 15px;
-      font-weight: bold; cursor: pointer; line-height: 1; padding: 2px 4px;
+      flex: 0 0 auto; width: auto; background: none; border: none; color: #9a3412; font-size: 15px;
+      font-weight: bold; cursor: pointer; line-height: 1; padding: 2px 4px; margin-top: 1px;
     }
   </style>
 </head>
@@ -692,12 +704,12 @@
           <!-- DROPDOWN THÁNG, NĂM CẠNH NHAU NHƯ GỐC KÈM NÚT XÓA TAB 1 -->
           <div class="group date-group">
             <label style="margin-left: 5px;"></label>
-            <div id="btnThangLuong" class="btn-dropdown-select" onclick="openDateMenu('month', false)" style="width: 58px;">
+            <div id="btnThangLuong" class="btn-dropdown-select" onclick="openDateMenu('month', false)" style="width: 44px;">
               <span id="txtThangLuong">--</span>&nbsp;▾
             </div>
 
             <label style="margin-left: 2px;">/</label>
-            <div id="btnNamLuong" class="btn-dropdown-select" onclick="openDateMenu('year', false)" style="width: 78px;">
+            <div id="btnNamLuong" class="btn-dropdown-select" onclick="openDateMenu('year', false)" style="width: 60px;">
               <span id="txtNamLuong">----</span>&nbsp;▾
             </div>
 
@@ -936,18 +948,18 @@
           <button type="button" class="notice-close" onclick="document.getElementById('ccLoginNotice').style.display='none';" title="Đóng">✕</button>
         </div>
 
-        <!-- HÀNG LCB, THÁNG, NĂM, XÓA, CÀI ĐẶT CÙNG 1 DÒNG (giống Tab Tính Lương) -->
+        <!-- HÀNG LCB, THÁNG, NĂM, XÓA, CÀI ĐẶT, ĐỔI CA, NHÃN CA CÙNG 1 DÒNG -->
         <div class="input-row">
           <div class="group">
             <label for="cc_luongCoBan"><strong>LCB:</strong></label>
             <input type="text" id="cc_luongCoBan" inputmode="numeric" class="lcb-input" placeholder="lương cơ bản" />
           </div>
           <div class="group date-group">
-            <div id="btnThangCC" class="btn-dropdown-select" onclick="openDateMenu('month', true)" style="width: 58px;">
+            <div id="btnThangCC" class="btn-dropdown-select" onclick="openDateMenu('month', true)" style="width: 44px;">
               <span id="txtThangCC">--</span>&nbsp;▾
             </div>
             <label style="margin-left: 2px;">/</label>
-            <div id="btnNamCC" class="btn-dropdown-select" onclick="openDateMenu('year', true)" style="width: 78px;">
+            <div id="btnNamCC" class="btn-dropdown-select" onclick="openDateMenu('year', true)" style="width: 60px;">
               <span id="txtNamCC">----</span>&nbsp;▾
             </div>
 
@@ -958,10 +970,7 @@
               📲 Cài đặt
             </button>
           </div>
-        </div>
-
-        <div class="chamcong-tools">
-          <div class="tools-header-row" style="display: flex; align-items: center; justify-content: flex-start; gap: 6px; flex-wrap: wrap; row-gap: 6px;">
+          <div class="group">
             <!-- Nút bấm Đổi ca -->
             <button type="button" class="btn-dao-ca" id="btnDaoCa" onclick="toggleDaoCa()" style="white-space: nowrap; margin: 0;">
               <span>⇄</span> <span>Đổi ca</span>
@@ -971,7 +980,9 @@
               Ca chuẩn
             </span>
           </div>
+        </div>
 
+        <div class="chamcong-tools">
           <div class="legend-box">
             <div class="legend-item"><span class="dot-sample" style="background:#fffdf5; border-color:#fce7b2;"></span> Ca ngày</div>
             <div class="legend-item"><span class="dot-sample" style="background:#e2e8f0; border-color:#cbd5e1;"></span> Ca đêm</div>
