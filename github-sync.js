@@ -1,5 +1,5 @@
-// Dán link Worker ở Bước 2 vào đây:
-const API_URL = "https://api-chamcong.o0os2.workers.dev/";
+// Đường dẫn Worker API chính xác (không có dấu / ở cuối)
+const API_URL = "https://api-chamcong.o0os2.workers.dev";
 
 let currentUser = localStorage.getItem("cc_currentUser") || null;
 let saveTimer = null;
@@ -7,14 +7,33 @@ let saveTimer = null;
 document.addEventListener("DOMContentLoaded", function () {
   checkLoginState();
   bindMonthYearEvents();
+  bindGlobalAutoSave(); // Bắt mọi thao tác nhập liệu trên trang (kể cả bảng lễ tết)
 });
 
-// Bắt sự kiện khi người dùng đổi Tháng hoặc Năm -> Tự động load dữ liệu tháng đó
+// Bắt sự kiện khi người dùng đổi Tháng hoặc Năm -> Tự động nạp dữ liệu tháng đó
 function bindMonthYearEvents() {
   const m = document.getElementById("cc_thang");
   const y = document.getElementById("cc_nam");
   if (m) m.addEventListener("change", loadUserDataFromCloud);
   if (y) y.addEventListener("change", loadUserDataFromCloud);
+}
+
+// Bắt tự động mọi thay đổi input/select trên toàn trang để kích hoạt auto-save
+function bindGlobalAutoSave() {
+  document.addEventListener("input", function (e) {
+    if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "SELECT" || e.target.tagName === "TEXTAREA")) {
+      if (e.target.id === "authUsername" || e.target.id === "authPassword") return;
+      window.autoSaveUserData();
+    }
+  });
+
+  document.addEventListener("change", function (e) {
+    if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "SELECT")) {
+      if (e.target.id === "cc_thang" || e.target.id === "cc_nam") return;
+      if (e.target.id === "authUsername" || e.target.id === "authPassword") return;
+      window.autoSaveUserData();
+    }
+  });
 }
 
 function checkLoginState() {
@@ -55,7 +74,7 @@ window.handleRegister = async function() {
       alert(data.error || "Đăng ký thất bại!");
     }
   } catch {
-    alert("Không thể kết nối đến máy chủ!");
+    alert("Không thể kết nối đến máy chủ Cloudflare Worker!");
   }
 };
 
@@ -81,7 +100,7 @@ window.handleLogin = async function() {
       alert(data.error || "Sai tài khoản hoặc mật khẩu!");
     }
   } catch {
-    alert("Không thể kết nối máy chủ!");
+    alert("Không thể kết nối máy chủ Cloudflare Worker!");
   }
 };
 
@@ -94,7 +113,7 @@ window.handleLogout = function() {
   if (typeof switchTab === "function") switchTab('tabLuong');
 };
 
-// 4. TỰ ĐỘNG LƯU DỮ LIỆU THÁNG (Đã bổ sung bảng phụ lương lễ tết)
+// 4. TỰ ĐỘNG LƯU DỮ LIỆU THÁNG (Đã gom sạch cả bảng Lễ Tết)
 window.autoSaveUserData = function() {
   if (!currentUser) return;
   const statusEl = document.getElementById("syncStatus");
@@ -107,7 +126,7 @@ window.autoSaveUserData = function() {
     const month = document.getElementById("cc_thang")?.value || 1;
     const monthKey = `${year}_${month}`;
 
-    // 1. Gom các khoản phụ cấp chính
+    // Phụ cấp chính
     const allowances = {
       cc_pcABC: document.getElementById("cc_pcABC")?.value || "",
       cc_pcChuyenCan: document.getElementById("cc_pcChuyenCan")?.value || "",
@@ -119,27 +138,28 @@ window.autoSaveUserData = function() {
       cc_pcKhac: document.getElementById("cc_pcKhac")?.value || ""
     };
 
-    // 2. Tự động quét và gom TẤT CẢ các ô input/select thuộc khu vực Lễ Tết
-    // (Bao gồm các id có chứa 'LeTet', 'Tet', 'Holiday' hoặc nằm trong bảng lễ tết)
+    // Quét toàn bộ input/select của bảng phụ (lương lễ tết, thưởng...)
     const extraInputs = {};
-    document.querySelectorAll("input, select").forEach(el => {
-      if (el.id && (
-        el.id.includes("Le") || 
-        el.id.includes("Tet") || 
-        el.id.includes("leTet") || 
-        el.id.includes("thuong") ||
-        el.id.startsWith("sub_") ||
-        el.closest("#tabLeTet") ||
-        el.closest(".bang-le-tet")
-      )) {
-        extraInputs[el.id] = el.value;
+    const excludeIds = [
+      "authUsername", "authPassword", "cc_nam", "cc_thang", "cc_luongCoBan",
+      "cc_pcABC", "cc_pcChuyenCan", "cc_pcThamNien", "cc_pcChucVu",
+      "cc_pcDiLai", "cc_pcDienThoai", "cc_pcTreEm", "cc_pcKhac"
+    ];
+
+    document.querySelectorAll("input, select, textarea").forEach(el => {
+      if (el.id && !excludeIds.includes(el.id)) {
+        if (el.type === "checkbox" || el.type === "radio") {
+          extraInputs[el.id] = el.checked;
+        } else {
+          extraInputs[el.id] = el.value;
+        }
       }
     });
 
     const payload = {
       base_salary: document.getElementById("cc_luongCoBan")?.value || "0",
       allowances: allowances,
-      extra_fields: extraInputs, // Lưu thêm bảng phụ lễ tết vào đây
+      extra_fields: extraInputs,
       timesheet: window.chamCongData || {},
       updated_at: new Date().toISOString()
     };
@@ -156,15 +176,15 @@ window.autoSaveUserData = function() {
       if (res.ok && data.ok) {
         if (statusEl) statusEl.textContent = "(Đã lưu tự động)";
       } else {
-        if (statusEl) statusEl.textContent = "(Lỗi lưu)";
+        if (statusEl) statusEl.textContent = "(Lỗi lưu: " + (data.error || "server") + ")";
       }
     } catch {
       if (statusEl) statusEl.textContent = "(Mất kết nối)";
     }
-  }, 2000);
+  }, 1500);
 };
 
-// 5. TẢI DỮ LIỆU ĐÚNG THÁNG (Đã bổ sung phục hồi bảng phụ lễ tết)
+// 5. TẢI DỮ LIỆU ĐÚNG THÁNG
 window.loadUserDataFromCloud = async function() {
   if (!currentUser) return;
   const year = document.getElementById("cc_nam")?.value || new Date().getFullYear();
@@ -184,7 +204,7 @@ window.loadUserDataFromCloud = async function() {
         document.getElementById("cc_luongCoBan").value = record.base_salary || "";
       }
 
-      // 2. Phục hồi Phụ cấp chính
+      // 2. Phục hồi Phụ cấp
       if (record.allowances) {
         Object.keys(record.allowances).forEach(k => {
           const el = document.getElementById(k);
@@ -192,43 +212,46 @@ window.loadUserDataFromCloud = async function() {
         });
       }
 
-      // 3. Phục hồi Bảng phụ lễ tết
+      // 3. Phục hồi Bảng phụ Lễ Tết và các ô mở rộng
       if (record.extra_fields) {
         Object.keys(record.extra_fields).forEach(id => {
           const el = document.getElementById(id);
-          if (el) el.value = record.extra_fields[id];
+          if (el) {
+            if (el.type === "checkbox" || el.type === "radio") {
+              el.checked = Boolean(record.extra_fields[id]);
+            } else {
+              el.value = record.extra_fields[id];
+            }
+          }
         });
       }
 
-      // 4. Phục hồi Chấm công
+      // 4. Phục hồi Lịch chấm công
       if (record.timesheet && window.setChamCongData) {
         window.setChamCongData(record.timesheet);
       }
     } else {
-      // Nếu là tháng mới chưa có dữ liệu -> làm sạch
+      // Tháng mới: làm sạch dữ liệu
       if (window.clearChamCongData) window.clearChamCongData();
       if (document.getElementById("cc_luongCoBan")) {
         document.getElementById("cc_luongCoBan").value = "";
       }
-      // Xóa trắng bảng phụ lễ tết
-      document.querySelectorAll("input, select").forEach(el => {
-        if (el.id && (
-          el.id.includes("Le") || 
-          el.id.includes("Tet") || 
-          el.id.includes("leTet") || 
-          el.id.includes("thuong") ||
-          el.id.startsWith("sub_")
-        )) {
-          el.value = "";
+
+      const excludeIds = ["authUsername", "authPassword", "cc_nam", "cc_thang"];
+      document.querySelectorAll("input, select, textarea").forEach(el => {
+        if (el.id && !excludeIds.includes(el.id)) {
+          if (el.type === "checkbox" || el.type === "radio") el.checked = false;
+          else el.value = "";
         }
       });
     }
 
+    // Cập nhật lại giao diện và tính toán
     if (window.renderLichChamCong) window.renderLichChamCong();
     if (window.syncChamCongToTinhLuong) window.syncChamCongToTinhLuong();
-    // Kích hoạt lại tính toán bảng phụ (nếu có hàm tính riêng)
     if (typeof window.tinhLuongLeTet === "function") window.tinhLuongLeTet();
-    
+    if (typeof window.tinhLuong === "function") window.tinhLuong();
+
     if (statusEl) statusEl.textContent = "(Đã tải xong)";
   } catch {
     if (statusEl) statusEl.textContent = "(Lỗi tải dữ liệu)";
