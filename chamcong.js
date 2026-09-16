@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!lblKetQua) return;
 
     if (window.currentShiftMode === "chuyen_ngay") {
-      lblKetQua.textContent = "Đang làm chuyên ngày";
+      lblKetQua.textContent = "đang làm chuyên ngày";
       lblKetQua.style.color = "#059669";
       lblKetQua.style.background = "#ecfdf5";
       lblKetQua.style.borderColor = "#a7f3d0";
