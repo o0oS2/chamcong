@@ -9,18 +9,21 @@ document.addEventListener("DOMContentLoaded", function () {
   checkLoginState();
 });
 
-// Kiểm tra trạng thái đăng nhập để hiển thị khu vực "Xin chào" hoặc ẩn modal
+// Kiểm tra trạng thái đăng nhập để ẩn/hiện form đăng nhập và khu vực "Xin chào"
 function checkLoginState() {
-  const userInfoArea = document.getElementById("userInfoArea"); // Khớp chính xác với id trong HTML của anh
+  const loginFormArea = document.getElementById("loginFormArea"); 
+  const userInfoArea = document.getElementById("userInfoArea");     
   const lblUser = document.getElementById("lblUsername");
   const modal = document.getElementById("loginModalOverlay");
 
   if (currentUser) {
+    if (loginFormArea) loginFormArea.style.display = "none";
     if (userInfoArea) userInfoArea.style.display = "flex";
     if (lblUser) lblUser.textContent = currentUser;
     if (modal) modal.style.display = "none";
     loadUserDataFromCloud();
   } else {
+    if (loginFormArea) loginFormArea.style.display = "flex";
     if (userInfoArea) userInfoArea.style.display = "none";
   }
 }
@@ -71,7 +74,6 @@ window.handleRegister = async function() {
     localStorage.setItem("cc_currentUser", u);
     alert("Đăng ký thành công!");
     
-    // Ép ẩn modal ngay lập tức
     const modal = document.getElementById("loginModalOverlay");
     if (modal) modal.style.display = "none";
 
@@ -94,7 +96,6 @@ window.handleLogin = async function() {
     localStorage.setItem("cc_currentUser", u);
     alert("Đăng nhập thành công!");
     
-    // Ép ẩn modal ngay lập tức và hiện thông báo chào mừng
     const modal = document.getElementById("loginModalOverlay");
     if (modal) modal.style.display = "none";
 
@@ -108,6 +109,12 @@ window.handleLogin = async function() {
 window.handleLogout = function() {
   currentUser = null;
   localStorage.removeItem("cc_currentUser");
+  
+  const loginFormArea = document.getElementById("loginFormArea");
+  const userInfoArea = document.getElementById("userInfoArea");
+  if (loginFormArea) loginFormArea.style.display = "flex";
+  if (userInfoArea) userInfoArea.style.display = "none";
+
   checkLoginState();
   alert("Đã đăng xuất!");
   switchTab('tabLuong');
