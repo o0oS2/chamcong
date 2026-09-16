@@ -63,8 +63,8 @@
     "cc_phuLuongHanhChinh2": "",
     "cc_soGioTangCa2": "",
     "cc_phuLuongTangCa2": "",
-    "cc_soGioDem2": "",
-    "cc_phuLuongDem2": ""
+    "cc_soGioDem2": "3",
+    "cc_phuLuongDem2": "90"
   },
   "timesheet": {
     "1": {
@@ -398,5 +398,5 @@
       "midOt": "0"
     }
   },
-  "updated_at": "2026-09-16T18:08:48.581Z"
+  "updated_at": "2026-09-16T18:09:00.517Z"
 }
