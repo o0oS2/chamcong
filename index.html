@@ -12,7 +12,6 @@
       padding: 30px;
       margin: 0;
     } 
-    /* Layout 2 cột cho desktop */
     .main-container {
       display: flex;
       gap: 20px;
@@ -110,7 +109,7 @@
       width: 15%;
     }
     #bangPhu table td:nth-child(5), #bangPhu table th:nth-child(5),
-    #cc_bangPhu table td:nth-child(5), #cc_bangPhu table th:nth-child(5) {
+    #cc_bangPhu table td:nth-child(5), #cc_bangPhu table td:nth-child(5) {
       width: 30%;
     }
 
@@ -222,6 +221,7 @@
     }
 
     .input-row input[type="number"],
+    .input-row input[type="text"],
     .input-row select {
       width: 160px;
       min-width: 40px;
@@ -238,7 +238,6 @@
       font-weight: bold;
     }
 
-    /* Toast notification styles */
     .toast {
       position: fixed;
       top: 20px;
@@ -265,7 +264,6 @@
       margin-right: 5px;
     }
 
-    /* Responsive cho màn hình nhỏ */
     @media screen and (max-width: 768px) {
       .main-container {
         display: block;
@@ -308,6 +306,7 @@
       }
 
       .input-row input[type="number"],
+      .input-row input[type="text"],
       .input-row select {
         width: 90px;
         font-size: 14px;
@@ -359,7 +358,6 @@
       }
     }
 
-    /* CSS phần mã QR */
     .contact-section {
       display: flex;
       gap: 20px;
@@ -459,7 +457,6 @@
       border-top: 1px solid #ccc;
     }
 
-    /* ===== CỤM TAB & LỊCH CHẤM CÔNG ===== */
     .tab-bar {
       display: flex;
       gap: 10px;
@@ -480,7 +477,6 @@
     .tab-pane { display: none; }
     .tab-pane.active { display: block; }
 
-    /* Layout 2 cột Tab Chấm Công máy tính */
     .cc-desktop-layout {
       display: flex;
       gap: 20px;
@@ -569,7 +565,6 @@
     .cell-ot { background-color: #fff7ed; color: #9a3412; border: 1px solid #fed7aa; }
     .cell-mid-ot { background-color: #f5f3ff; color: #5b21b6; border: 1px solid #ddd6fe; }
 
-    /* Modal Picker */
     .picker-overlay {
       display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0, 0, 0, 0.45); z-index: 9999; justify-content: center; align-items: center; padding: 10px;
@@ -592,7 +587,6 @@
     }
     .picker-btn:hover, .picker-btn:active { background: #007bff; color: #fff; border-color: #007bff; }
 
-    /* Khi cầm dọc điện thoại */
     @media screen and (max-width: 768px) and (orientation: portrait) {
       .main-container {
         display: block !important;
@@ -622,7 +616,6 @@
       }
     }
 
-    /* Khi xoay ngang điện thoại */
     @media screen and (max-width: 900px) and (orientation: landscape) {
       .main-container {
         display: block !important;
@@ -699,12 +692,11 @@
   <!-- ================= TAB 1: TÍNH LƯƠNG (GỐC) ================= -->
   <div id="paneLuong" class="tab-pane active">
     <div class="main-container">
-      <!-- Cột 1: Input row, bảng chính, bảng phụ -->
       <div class="left-column">
         <div class="input-row">
           <div class="group">
             <label for="luongCoBan"><strong>LCB:</strong></label>
-            <input type="text" id="luongCoBan" placeholder="nhập lương cơ bản" style="height: 20px;" />
+            <input type="text" id="luongCoBan" inputmode="numeric" placeholder="nhập lương cơ bản" style="height: 20px;" />
           </div>
 
           <div class="group date-group">
@@ -726,18 +718,18 @@
               </tr>
             </thead>
             <tbody id="luongTable">
-              <tr><td>Ngày công 100%</td><td><input type="number" id="ngayCong" placeholder="ngày" /></td><td id="tienNgayCong">0</td></tr>
-              <tr><td>Tăng ca 150%</td><td><input type="number" id="tc150" placeholder="giờ" /></td><td id="tienTC150">0</td></tr>
-              <tr><td>Tăng ca 200%</td><td><input type="number" id="tc200" placeholder="giờ" /></td><td id="tienTC200">0</td></tr>
-              <tr><td>Trợ cấp đêm 30%</td><td><input type="number" id="tcDem30" placeholder="giờ" /></td><td id="tienDem30">0</td></tr>
-              <tr style="color:red;"><td>Ngày công 200%</td><td><input type="number" id="ngayCong200" placeholder="ngày" /></td><td id="tienCong200">0</td></tr>
-              <tr style="color:red;"><td>Tăng ca 300%</td><td><input type="number" id="tc300" placeholder="giờ" /></td><td id="tienTC300">0</td></tr>
-              <tr style="color:red;"><td>Tăng ca 340%</td><td><input type="number" id="tc340" placeholder="giờ" /></td><td id="tienTC340">0</td></tr>
-              <tr style="color:red;"><td>Trợ cấp đêm 70%</td><td><input type="number" id="tcDem70" placeholder="giờ" /></td><td id="tienDem70">0</td></tr>
-              <tr style="color:red;"><td>Thông ca 380%</td><td><input type="number" id="thongca380" placeholder="giờ" /></td><td id="tienthongca380">0</td></tr>
-              <tr><td>Phép năm</td><td><input type="number" id="phepNam" placeholder="ngày" /></td><td id="tienPhepNam">0</td></tr>
-              <tr><td>Ngày lễ</td><td><input type="number" id="le" placeholder="ngày" /></td><td id="tienLe">0</td></tr>
-              <tr><td colspan="2">Phụ cấp kỹ năng ABC</td><td><input type="text" id="pcABC" /></td></tr>
+              <tr><td>Ngày công 100%</td><td><input type="number" inputmode="decimal" id="ngayCong" placeholder="ngày" /></td><td id="tienNgayCong">0</td></tr>
+              <tr><td>Tăng ca 150%</td><td><input type="number" inputmode="decimal" id="tc150" placeholder="giờ" /></td><td id="tienTC150">0</td></tr>
+              <tr><td>Tăng ca 200%</td><td><input type="number" inputmode="decimal" id="tc200" placeholder="giờ" /></td><td id="tienTC200">0</td></tr>
+              <tr><td>Trợ cấp đêm 30%</td><td><input type="number" inputmode="decimal" id="tcDem30" placeholder="giờ" /></td><td id="tienDem30">0</td></tr>
+              <tr style="color:red;"><td>Ngày công 200%</td><td><input type="number" inputmode="decimal" id="ngayCong200" placeholder="ngày" /></td><td id="tienCong200">0</td></tr>
+              <tr style="color:red;"><td>Tăng ca 300%</td><td><input type="number" inputmode="decimal" id="tc300" placeholder="giờ" /></td><td id="tienTC300">0</td></tr>
+              <tr style="color:red;"><td>Tăng ca 340%</td><td><input type="number" inputmode="decimal" id="tc340" placeholder="giờ" /></td><td id="tienTC340">0</td></tr>
+              <tr style="color:red;"><td>Trợ cấp đêm 70%</td><td><input type="number" inputmode="decimal" id="tcDem70" placeholder="giờ" /></td><td id="tienDem70">0</td></tr>
+              <tr style="color:red;"><td>Thông ca 380%</td><td><input type="number" inputmode="decimal" id="thongca380" placeholder="giờ" /></td><td id="tienthongca380">0</td></tr>
+              <tr><td>Phép năm</td><td><input type="number" inputmode="decimal" id="phepNam" placeholder="ngày" /></td><td id="tienPhepNam">0</td></tr>
+              <tr><td>Ngày lễ</td><td><input type="number" inputmode="decimal" id="le" placeholder="ngày" /></td><td id="tienLe">0</td></tr>
+              <tr><td colspan="2">Phụ cấp kỹ năng ABC</td><td><input type="text" inputmode="numeric" id="pcABC" /></td></tr>
               <tr><td colspan="2">Phụ cấp Chuyên cần</td><td>
                 <select id="pcChuyenCan">
                   <option text="0">0</option>
@@ -751,8 +743,8 @@
                   <option text="600.000">600.000</option>
                 </select>
               </td></tr>
-              <tr><td colspan="2">Phụ cấp lương, chức vụ</td><td><input type="text" id="pcChucVu" /></td></tr>
-              <tr><td colspan="2">Hỗ trợ đi lại</td><td><input type="text" id="pcDiLai" /></td></tr>
+              <tr><td colspan="2">Phụ cấp lương, chức vụ</td><td><input type="text" inputmode="numeric" id="pcChucVu" /></td></tr>
+              <tr><td colspan="2">Hỗ trợ đi lại</td><td><input type="text" inputmode="numeric" id="pcDiLai" /></td></tr>
               <tr><td colspan="2">Hỗ trợ điện thoại</td><td>
                 <select id="pcDienThoai">
                   <option text="0">0</option>
@@ -772,7 +764,7 @@
                   <option text="200.000">200.000</option>
                 </select>
               </td></tr>
-              <tr><td colspan="2">Phụ cấp khác (ngoại ngữ, kỹ thuật...)</td><td><input type="text" id="pcKhac" /></td></tr>
+              <tr><td colspan="2">Phụ cấp khác (ngoại ngữ, kỹ thuật...)</td><td><input type="text" inputmode="numeric" id="pcKhac" /></td></tr>
               <tr><td colspan="2">Tổng lương ngày lễ, tết</td><td id="tienNgayLeTet">0</td></tr>
               <tr style="background-color: yellow;"><td colspan="2">💰 Tổng thu nhập</td><td id="tongLuong">0</td></tr>
               <tr style="color:red;"><td colspan="2">Khấu trừ BHXH 10.5%</td><td id="tienTruBHXH">0</td></tr>
@@ -796,41 +788,41 @@
             </thead>
             <tbody>
               <tr>
-                <td rowspan="3"><input type="number" /></td>
+                <td rowspan="3"><input type="number" inputmode="numeric" /></td>
                 <td>Giờ hành chính</td>
-                <td><input type="number" id="soGioHanhChinh1" placeholder="giờ" /></td>
-                <td><input type="number" id="phuLuongHanhChinh" /></td>
+                <td><input type="number" inputmode="decimal" id="soGioHanhChinh1" placeholder="giờ" /></td>
+                <td><input type="number" inputmode="decimal" id="phuLuongHanhChinh" /></td>
                 <td id="tienHanhChinh">0</td>
               </tr>
               <tr>
                 <td>Tăng ca</td>
-                <td><input type="number" id="soGioTangCa1" placeholder="giờ" /></td>
-                <td><input type="number" id="phuLuongTangCa" /></td>
+                <td><input type="number" inputmode="decimal" id="soGioTangCa1" placeholder="giờ" /></td>
+                <td><input type="number" inputmode="decimal" id="phuLuongTangCa" /></td>
                 <td id="tienTangCa">0</td>
               </tr>
               <tr>
                 <td>Trợ cấp đêm</td>
-                <td><input type="number" id="soGioDem1" placeholder="giờ" /></td>
-                <td><input type="number" id="phuLuongDem" /></td>
+                <td><input type="number" inputmode="decimal" id="soGioDem1" placeholder="giờ" /></td>
+                <td><input type="number" inputmode="decimal" id="phuLuongDem" /></td>
                 <td id="tienTroCapDem">0</td>
               </tr>
               <tr>
-                <td rowspan="3"><input type="number" /></td>
+                <td rowspan="3"><input type="number" inputmode="numeric" /></td>
                 <td>Giờ hành chính</td>
-                <td><input type="number" id="soGioHanhChinh2" placeholder="giờ" /></td>
-                <td><input type="number" id="phuLuongHanhChinh2" /></td>
+                <td><input type="number" inputmode="decimal" id="soGioHanhChinh2" placeholder="giờ" /></td>
+                <td><input type="number" inputmode="decimal" id="phuLuongHanhChinh2" /></td>
                 <td id="tienHanhChinh2">0</td>
               </tr>
               <tr>
                 <td>Tăng ca</td>
-                <td><input type="number" id="soGioTangCa2" placeholder="giờ" /></td>
-                <td><input type="number" id="phuLuongTangCa2" /></td>
+                <td><input type="number" inputmode="decimal" id="soGioTangCa2" placeholder="giờ" /></td>
+                <td><input type="number" inputmode="decimal" id="phuLuongTangCa2" /></td>
                 <td id="tienTangCa2">0</td>
               </tr>
               <tr>
                 <td>Trợ cấp đêm</td>
-                <td><input type="number" id="soGioDem2" placeholder="giờ" /></td>
-                <td><input type="number" id="phuLuongDem2" /></td>
+                <td><input type="number" inputmode="decimal" id="soGioDem2" placeholder="giờ" /></td>
+                <td><input type="number" inputmode="decimal" id="phuLuongDem2" /></td>
                 <td id="tienTroCapDem2">0</td>
               </tr>
             </tbody>
@@ -838,7 +830,6 @@
         </div>
       </div>
 
-      <!-- Cột 2: Tải file, liên hệ, thông tin -->
       <div class="right-column">
         <div style="text-align: center; margin: 3px 0; padding: 4px 8px; border: 1px solid #ccc; border-radius: 6px;">
           <h4 style="margin: 3px 0 8px;">📥 <a href="Files/Tinh_luong.xlsx" download> Tải file Excel tính lương - chấm công</a> 📥</h4>
@@ -932,7 +923,6 @@
 
   <!-- ================= TAB 2: CHẤM CÔNG ================= -->
   <div id="paneChamCong" class="tab-pane">
-    <!-- KHUNG ĐĂNG NHẬP / TÀI KHOẢN DUY NHẤT -->
     <div id="authContainer" style="background: #fff; padding: 10px 15px; border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
       <div id="loginFormArea" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
         <span style="font-weight: bold; color: #007bff; font-size: 14px;">👤 Tài khoản chấm công:</span>
@@ -949,12 +939,11 @@
     </div>
 
     <div class="cc-desktop-layout">
-      <!-- Cột trái: Chấm công -->
       <div class="cc-col-left">
         <div class="input-row">
           <div class="group">
             <label for="cc_luongCoBan"><strong>LCB:</strong></label>
-            <input type="text" id="cc_luongCoBan" class="lcb-input" placeholder="lương cơ bản" />
+            <input type="text" id="cc_luongCoBan" inputmode="numeric" class="lcb-input" placeholder="lương cơ bản" />
           </div>
           <div class="group date-group">
             <select id="cc_thang" name="cc_thang" style="width: 55px; height: 32px; text-align: center;"></select>
@@ -991,7 +980,6 @@
         <div class="calendar-grid" id="chamCongGrid" style="margin-top: 3px;"></div>
       </div>
 
-      <!-- Cột phải: Bảng tính lương chuẩn y hệt + Bảng phụ lễ tết -->
       <div class="cc-col-right">
         <h3 style="margin: 0 0 8px 0; color: #007bff; font-size: 16px; text-align: center;">Bảng Lương Từ Chấm Công</h3>
         <div id="cc_luongContainer">
@@ -1004,18 +992,18 @@
               </tr>
             </thead>
             <tbody id="cc_luongTable">
-              <tr><td>Ngày công 100%</td><td><input type="number" id="cc_ngayCong" placeholder="ngày" /></td><td id="cc_tienNgayCong">0</td></tr>
-              <tr><td>Tăng ca 150%</td><td><input type="number" id="cc_tc150" placeholder="giờ" /></td><td id="cc_tienTC150">0</td></tr>
-              <tr><td>Tăng ca 200%</td><td><input type="number" id="cc_tc200" placeholder="giờ" /></td><td id="cc_tienTC200">0</td></tr>
-              <tr><td>Trợ cấp đêm 30%</td><td><input type="number" id="cc_tcDem30" placeholder="giờ" /></td><td id="cc_tienDem30">0</td></tr>
-              <tr style="color:red;"><td>Ngày công 200%</td><td><input type="number" id="cc_ngayCong200" placeholder="ngày" /></td><td id="cc_tienCong200">0</td></tr>
-              <tr style="color:red;"><td>Tăng ca 300%</td><td><input type="number" id="cc_tc300" placeholder="giờ" /></td><td id="cc_tienTC300">0</td></tr>
-              <tr style="color:red;"><td>Tăng ca 340%</td><td><input type="number" id="cc_tc340" placeholder="giờ" /></td><td id="cc_tienTC340">0</td></tr>
-              <tr style="color:red;"><td>Trợ cấp đêm 70%</td><td><input type="number" id="cc_tcDem70" placeholder="giờ" /></td><td id="cc_tienTCDem70">0</td></tr>
-              <tr style="color:red;"><td>Thông ca 380%</td><td><input type="number" id="cc_thongca380" placeholder="giờ" /></td><td id="cc_tienthongca380">0</td></tr>
-              <tr><td>Phép năm</td><td><input type="number" id="cc_phepNam" placeholder="ngày" /></td><td id="cc_tienPhepNam">0</td></tr>
-              <tr><td>Ngày lễ</td><td><input type="number" id="cc_le" placeholder="ngày" /></td><td id="cc_tienLe">0</td></tr>
-              <tr><td colspan="2">Phụ cấp kỹ năng ABC</td><td><input type="text" id="cc_pcABC" /></td></tr>
+              <tr><td>Ngày công 100%</td><td><input type="number" inputmode="decimal" id="cc_ngayCong" placeholder="ngày" /></td><td id="cc_tienNgayCong">0</td></tr>
+              <tr><td>Tăng ca 150%</td><td><input type="number" inputmode="decimal" id="cc_tc150" placeholder="giờ" /></td><td id="cc_tienTC150">0</td></tr>
+              <tr><td>Tăng ca 200%</td><td><input type="number" inputmode="decimal" id="cc_tc200" placeholder="giờ" /></td><td id="cc_tienTC200">0</td></tr>
+              <tr><td>Trợ cấp đêm 30%</td><td><input type="number" inputmode="decimal" id="cc_tcDem30" placeholder="giờ" /></td><td id="cc_tienDem30">0</td></tr>
+              <tr style="color:red;"><td>Ngày công 200%</td><td><input type="number" inputmode="decimal" id="cc_ngayCong200" placeholder="ngày" /></td><td id="cc_tienCong200">0</td></tr>
+              <tr style="color:red;"><td>Tăng ca 300%</td><td><input type="number" inputmode="decimal" id="cc_tc300" placeholder="giờ" /></td><td id="cc_tienTC300">0</td></tr>
+              <tr style="color:red;"><td>Tăng ca 340%</td><td><input type="number" inputmode="decimal" id="cc_tc340" placeholder="giờ" /></td><td id="cc_tienTC340">0</td></tr>
+              <tr style="color:red;"><td>Trợ cấp đêm 70%</td><td><input type="number" inputmode="decimal" id="cc_tcDem70" placeholder="giờ" /></td><td id="cc_tienTCDem70">0</td></tr>
+              <tr style="color:red;"><td>Thông ca 380%</td><td><input type="number" inputmode="decimal" id="cc_thongca380" placeholder="giờ" /></td><td id="cc_tienthongca380">0</td></tr>
+              <tr><td>Phép năm</td><td><input type="number" inputmode="decimal" id="cc_phepNam" placeholder="ngày" /></td><td id="cc_tienPhepNam">0</td></tr>
+              <tr><td>Ngày lễ</td><td><input type="number" inputmode="decimal" id="cc_le" placeholder="ngày" /></td><td id="cc_tienLe">0</td></tr>
+              <tr><td colspan="2">Phụ cấp kỹ năng ABC</td><td><input type="text" inputmode="numeric" id="cc_pcABC" /></td></tr>
               <tr><td colspan="2">Phụ cấp Chuyên cần</td><td>
                 <select id="cc_pcChuyenCan">
                   <option text="0">0</option>
@@ -1029,8 +1017,8 @@
                   <option text="600.000">600.000</option>
                 </select>
               </td></tr>
-              <tr><td colspan="2">Phụ cấp lương, chức vụ</td><td><input type="text" id="cc_pcChucVu" /></td></tr>
-              <tr><td colspan="2">Hỗ trợ đi lại</td><td><input type="text" id="cc_pcDiLai" /></td></tr>
+              <tr><td colspan="2">Phụ cấp lương, chức vụ</td><td><input type="text" inputmode="numeric" id="cc_pcChucVu" /></td></tr>
+              <tr><td colspan="2">Hỗ trợ đi lại</td><td><input type="text" inputmode="numeric" id="cc_pcDiLai" /></td></tr>
               <tr><td colspan="2">Hỗ trợ điện thoại</td><td>
                 <select id="cc_pcDienThoai">
                   <option text="0">0</option>
@@ -1050,7 +1038,7 @@
                   <option text="200.000">200.000</option>
                 </select>
               </td></tr>
-              <tr><td colspan="2">Phụ cấp khác (ngoại ngữ, kỹ thuật...)</td><td><input type="text" id="cc_pcKhac" /></td></tr>
+              <tr><td colspan="2">Phụ cấp khác (ngoại ngữ, kỹ thuật...)</td><td><input type="text" inputmode="numeric" id="cc_pcKhac" /></td></tr>
               <tr><td colspan="2">Tổng lương ngày lễ, tết</td><td id="cc_tienNgayLeTet">0</td></tr>
               <tr style="background-color: yellow;"><td colspan="2">💰 Tổng thu nhập</td><td id="cc_tongLuong">0</td></tr>
               <tr style="color:red;"><td colspan="2">Khấu trừ BHXH 10.5%</td><td id="cc_tienTruBHXH">0</td></tr>
@@ -1060,7 +1048,6 @@
           </table>
         </div>
 
-        <!-- Bảng phụ tính lương lễ tết ở cột phải Tab Chấm công -->
         <div id="cc_bangPhu" class="bang-phu-table">
           <h3 style="text-align: center; color: red; margin-top: 5px; margin-bottom: 3px; font-size: 14px;">🎊 Lương ngày lễ, tết 🎊</h3>
           <table>
@@ -1075,41 +1062,41 @@
             </thead>
             <tbody>
               <tr>
-                <td rowspan="3"><input type="number" /></td>
+                <td rowspan="3"><input type="number" inputmode="numeric" /></td>
                 <td>Giờ hành chính</td>
-                <td><input type="number" id="cc_soGioHanhChinh1" placeholder="giờ" /></td>
-                <td><input type="number" id="cc_phuLuongHanhChinh" /></td>
+                <td><input type="number" inputmode="decimal" id="cc_soGioHanhChinh1" placeholder="giờ" /></td>
+                <td><input type="number" inputmode="decimal" id="cc_phuLuongHanhChinh" /></td>
                 <td id="cc_tienHanhChinh">0</td>
               </tr>
               <tr>
                 <td>Tăng ca</td>
-                <td><input type="number" id="cc_soGioTangCa1" placeholder="giờ" /></td>
-                <td><input type="number" id="cc_phuLuongTangCa" /></td>
+                <td><input type="number" inputmode="decimal" id="cc_soGioTangCa1" placeholder="giờ" /></td>
+                <td><input type="number" inputmode="decimal" id="cc_phuLuongTangCa" /></td>
                 <td id="cc_tienTangCa">0</td>
               </tr>
               <tr>
                 <td>Trợ cấp đêm</td>
-                <td><input type="number" id="cc_soGioDem1" placeholder="giờ" /></td>
-                <td><input type="number" id="cc_phuLuongDem" /></td>
+                <td><input type="number" inputmode="decimal" id="cc_soGioDem1" placeholder="giờ" /></td>
+                <td><input type="number" inputmode="decimal" id="cc_phuLuongDem" /></td>
                 <td id="cc_tienTroCapDem">0</td>
               </tr>
               <tr>
-                <td rowspan="3"><input type="number" /></td>
+                <td rowspan="3"><input type="number" inputmode="numeric" /></td>
                 <td>Giờ hành chính</td>
-                <td><input type="number" id="cc_soGioHanhChinh2" placeholder="giờ" /></td>
-                <td><input type="number" id="cc_phuLuongHanhChinh2" /></td>
+                <td><input type="number" inputmode="decimal" id="cc_soGioHanhChinh2" placeholder="giờ" /></td>
+                <td><input type="number" inputmode="decimal" id="cc_phuLuongHanhChinh2" /></td>
                 <td id="cc_tienHanhChinh2">0</td>
               </tr>
               <tr>
                 <td>Tăng ca</td>
-                <td><input type="number" id="cc_soGioTangCa2" placeholder="giờ" /></td>
-                <td><input type="number" id="cc_phuLuongTangCa2" /></td>
+                <td><input type="number" inputmode="decimal" id="cc_soGioTangCa2" placeholder="giờ" /></td>
+                <td><input type="number" inputmode="decimal" id="cc_phuLuongTangCa2" /></td>
                 <td id="cc_tienTangCa2">0</td>
               </tr>
               <tr>
                 <td>Trợ cấp đêm</td>
-                <td><input type="number" id="cc_soGioDem2" placeholder="giờ" /></td>
-                <td><input type="number" id="cc_phuLuongDem2" /></td>
+                <td><input type="number" inputmode="decimal" id="cc_soGioDem2" placeholder="giờ" /></td>
+                <td><input type="number" inputmode="decimal" id="cc_phuLuongDem2" /></td>
                 <td id="cc_tienTroCapDem2">0</td>
               </tr>
             </tbody>
@@ -1121,7 +1108,6 @@
 
 </div>
 
-<!-- MODAL CHỌN GIÁ TRỊ NHANH TRÊN LỊCH -->
 <div class="picker-overlay" id="pickerOverlay" onclick="closePicker(event)">
   <div class="picker-modal">
     <div class="picker-header">
