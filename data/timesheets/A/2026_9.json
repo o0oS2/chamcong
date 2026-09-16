@@ -1,5 +1,5 @@
 {
-  "base_salary": "5430000",
+  "base_salary": "5.430.000",
   "allowances": {
     "cc_pcABC": "",
     "cc_pcChuyenCan": "200.000",
@@ -398,5 +398,5 @@
       "midOt": "0"
     }
   },
-  "updated_at": "2026-09-16T16:39:57.317Z"
+  "updated_at": "2026-09-16T16:40:02.737Z"
 }
