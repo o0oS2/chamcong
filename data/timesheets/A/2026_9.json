@@ -53,8 +53,8 @@
     "cc_thongca380": "",
     "cc_phepNam": "0",
     "cc_le": "1",
-    "cc_soGioHanhChinh1": "",
-    "cc_phuLuongHanhChinh": "",
+    "cc_soGioHanhChinh1": "1",
+    "cc_phuLuongHanhChinh": "1",
     "cc_soGioTangCa1": "",
     "cc_phuLuongTangCa": "",
     "cc_soGioDem1": "",
@@ -398,5 +398,5 @@
       "midOt": "0"
     }
   },
-  "updated_at": "2026-09-16T18:08:23.228Z"
+  "updated_at": "2026-09-16T18:08:26.689Z"
 }
