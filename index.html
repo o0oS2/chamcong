@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Tính Lương</title>
   <link rel="icon" href="https://raw.githubusercontent.com/o0oS2/Tinh-luong/main/Image/Icon.png" type="image/png" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/o0oS2/Tinh-luong/main/Image/Icon.png" />
+  <meta name="theme-color" content="#007bff" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Tính Lương" />
   <style>
     body {
       font-family: "Times New Roman", Times, serif;
@@ -395,6 +401,11 @@
       .btn-xoa-tab, .btn-dao-ca, .btn-logout, .tab-btn, .btn-install-app {
         width: auto !important;
         flex: 0 0 auto !important;
+      }
+      .chamcong-tools .btn-dao-ca { padding: 5px 8px !important; font-size: 12px !important; }
+      .chamcong-tools #lblKetQuaCa { font-size: 11.5px !important; padding: 5px 8px !important; }
+      .chamcong-tools .btn-xoa-tab, .chamcong-tools .btn-install-app {
+        padding: 4px 7px !important; font-size: 11px !important; height: 28px !important;
       }
       .btn-xoa-tab {
         justify-content: center !important;
@@ -910,25 +921,27 @@
         </div>
 
         <div class="chamcong-tools">
-          <div class="tools-header-row" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: nowrap;">
-            <div style="display: inline-flex; align-items: center; gap: 8px; flex: 1;">
+          <div class="tools-header-row" style="display: flex; align-items: center; justify-content: space-between; gap: 6px; flex-wrap: wrap; row-gap: 6px;">
+            <div style="display: inline-flex; align-items: center; gap: 6px; flex: 1 1 auto; min-width: 0;">
               <!-- Nút bấm Đổi ca -->
               <button type="button" class="btn-dao-ca" id="btnDaoCa" onclick="toggleDaoCa()" style="white-space: nowrap; margin: 0;">
                 <span>⇄</span> <span>Đổi ca</span>
               </button>
               <!-- Kết quả ca hiển thị ngay bên cạnh -->
-              <span id="lblKetQuaCa" style="display: inline-flex; align-items: center; font-size: 13px; font-weight: bold; padding: 6px 12px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff; white-space: nowrap;">
+              <span id="lblKetQuaCa" style="display: inline-flex; align-items: center; font-size: 13px; font-weight: bold; padding: 6px 10px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff; white-space: nowrap;">
                 Ca chuẩn
               </span>
             </div>
 
-            <!-- Nút Xóa dữ liệu của riêng Tab 2 -->
-            <button type="button" class="btn-xoa-tab" onclick="clearDataTabChamCong()" style="height: 34px !important; padding: 4px 12px !important; font-size: 13px !important; white-space: nowrap; margin: 0;" title="Chỉ xóa lịch chấm công và bảng lương tạo từ chấm công">
-              🗑 Xóa
-            </button>
-            <button type="button" class="btn-install-app" onclick="handleInstallApp()" style="height: 34px !important; padding: 4px 12px !important; font-size: 13px !important; white-space: nowrap; margin: 0;" title="Cài ứng dụng / mở bằng trình duyệt Chrome hoặc Safari">
-              📲 Cài đặt
-            </button>
+            <div style="display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto;">
+              <!-- Nút Xóa dữ liệu của riêng Tab 2 -->
+              <button type="button" class="btn-xoa-tab" onclick="clearDataTabChamCong()" style="height: 30px !important; padding: 4px 10px !important; font-size: 12px !important; white-space: nowrap; margin: 0;" title="Chỉ xóa lịch chấm công và bảng lương tạo từ chấm công">
+                🗑 Xóa
+              </button>
+              <button type="button" class="btn-install-app" onclick="handleInstallApp()" style="height: 30px !important; padding: 4px 8px !important; font-size: 12px !important; white-space: nowrap; margin: 0;" title="Cài ứng dụng / mở bằng trình duyệt Chrome hoặc Safari">
+                📲 Cài
+              </button>
+            </div>
           </div>
 
           <div class="legend-box">
@@ -1119,6 +1132,12 @@
   }
 
   // ==== NÚT CÀI ĐẶT ỨNG DỤNG / MỞ BẰNG CHROME - SAFARI ====
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("sw.js").catch(() => {});
+    });
+  }
+
   let deferredInstallPrompt = null;
   window.addEventListener("beforeinstallprompt", function (e) {
     e.preventDefault();
@@ -1135,33 +1154,41 @@
     const isAndroid = /android/i.test(ua);
     const isIOS = /iphone|ipad|ipod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 
+    // Đang mở trong app Zalo/Messenger/Instagram: các app này chặn việc cài đặt,
+    // nên việc đầu tiên là phải mở bằng trình duyệt thật (Chrome/Safari) đã.
+    if (isInAppBrowser()) {
+      if (isAndroid) {
+        showToast("Đang mở bằng Chrome...");
+        const url = window.location.href.replace(/^https?:\/\//, "");
+        window.location.href = `intent://${url}#Intent;scheme=https;package=com.android.chrome;end`;
+      } else if (isIOS) {
+        showToast("Đang mở bằng Safari...");
+        window.location.href = "x-safari-" + window.location.href;
+      } else {
+        alert("Vui lòng mở link này bằng Chrome hoặc Safari để cài đặt ứng dụng.");
+      }
+      return;
+    }
+
     if (isAndroid) {
       if (deferredInstallPrompt) {
+        // Trình duyệt đã sẵn sàng cài thật -> hiện hộp thoại cài đặt của Chrome
         deferredInstallPrompt.prompt();
         try { await deferredInstallPrompt.userChoice; } catch (e) {}
         deferredInstallPrompt = null;
-        return;
+      } else {
+        alert("Chưa thể tự bật hộp thoại cài đặt (có thể ứng dụng đã được cài, hoặc cần tải lại trang).\n\nBạn có thể cài thủ công: bấm menu ⋮ ở góc trên bên phải Chrome → chọn 'Cài đặt ứng dụng' hoặc 'Thêm vào Màn hình chính'.");
       }
-      // Không có prompt cài đặt sẵn (VD: đang mở trong Zalo/Messenger) -> mở bằng Chrome
-      const url = window.location.href.replace(/^https?:\/\//, "");
-      const intentUrl = `intent://${url}#Intent;scheme=https;package=com.android.chrome;end`;
-      showToast("Đang mở bằng Chrome...");
-      window.location.href = intentUrl;
       return;
     }
 
     if (isIOS) {
-      if (isInAppBrowser()) {
-        // Cố gắng buộc mở bằng Safari
-        showToast("Đang mở bằng Safari...");
-        window.location.href = "x-safari-" + window.location.href;
-      } else {
-        alert("Để cài ứng dụng trên iPhone/iPad:\n1. Bấm nút Chia sẻ (Share) ở Safari\n2. Chọn 'Thêm vào MH chính' (Add to Home Screen)");
-      }
+      // iOS không cho phép JS tự bật hộp thoại cài đặt, phải làm thủ công qua Share
+      alert("Để cài ứng dụng trên iPhone/iPad:\n1. Bấm nút Chia sẻ (Share) ở thanh dưới Safari\n2. Chọn 'Thêm vào MH chính' (Add to Home Screen)");
       return;
     }
 
-    alert("Vui lòng mở trang này bằng trình duyệt Chrome (Android) hoặc Safari (iPhone/iPad) để cài đặt ứng dụng.");
+    alert("Vui lòng mở trang này bằng Chrome (Android) hoặc Safari (iPhone/iPad) để cài đặt ứng dụng.");
   };
 
   function switchTab(tabId) {

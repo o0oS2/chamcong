@@ -568,7 +568,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       if (dayOfWeek === 0 || holiday) {
-        if (ca === "ngay" && hcType !== "nghi") {
+        if (ca !== "dem" && hcType !== "nghi") {
           let cong200_cn = 1;
           if (hcType === "muon" || hcType === "vesom") {
             cong200_cn = Math.max(0, (8 - hcVal) / 8);
