@@ -42,8 +42,8 @@
     "phuLuongTangCa2": "",
     "soGioDem2": "",
     "phuLuongDem2": "",
-    "cc_ngayCong": "23.88",
-    "cc_tc150": "11.5",
+    "cc_ngayCong": "18.88",
+    "cc_tc150": "9",
     "cc_tc200": "0",
     "cc_tcDem30": "0",
     "cc_ngayCong200": "0",
@@ -52,7 +52,7 @@
     "cc_tcDem70": "0",
     "cc_thongca380": "",
     "cc_phepNam": "0",
-    "cc_le": "0",
+    "cc_le": "1",
     "cc_soGioHanhChinh1": "",
     "cc_phuLuongHanhChinh": "",
     "cc_soGioTangCa1": "",
@@ -410,5 +410,5 @@
     }
   },
   "shift_mode": "chuyen_ngay",
-  "updated_at": "2026-09-16T19:13:47.744Z"
+  "updated_at": "2026-09-16T19:37:37.407Z"
 }
