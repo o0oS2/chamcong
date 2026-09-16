@@ -6,7 +6,7 @@
     "cc_pcThamNien": "600.000",
     "cc_pcChucVu": "100.000",
     "cc_pcDiLai": "500.000",
-    "cc_pcDienThoai": "",
+    "cc_pcDienThoai": "1.500.000",
     "cc_pcTreEm": "",
     "cc_pcKhac": ""
   },
@@ -398,5 +398,5 @@
       "midOt": "0"
     }
   },
-  "updated_at": "2026-09-16T18:21:59.991Z"
+  "updated_at": "2026-09-16T18:22:05.501Z"
 }
