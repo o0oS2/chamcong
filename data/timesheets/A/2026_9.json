@@ -4,7 +4,7 @@
     "cc_pcABC": "200.000",
     "cc_pcChuyenCan": "200.000",
     "cc_pcThamNien": "600.000",
-    "cc_pcChucVu": "",
+    "cc_pcChucVu": "100.000",
     "cc_pcDiLai": "500.000",
     "cc_pcDienThoai": "",
     "cc_pcTreEm": "",
@@ -398,5 +398,5 @@
       "midOt": "0"
     }
   },
-  "updated_at": "2026-09-16T18:10:22.790Z"
+  "updated_at": "2026-09-16T18:21:58.006Z"
 }
