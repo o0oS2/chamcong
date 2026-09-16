@@ -1,145 +1,113 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // === Khởi tạo select tháng, năm theo logic của bạn ===
   const thangSelect = document.getElementById("thang");
   const namSelect = document.getElementById("nam");
 
-  // Lấy ngày hiện tại
   const today = new Date();
   const currentMonth = today.getMonth() + 1;
   const currentYear = today.getFullYear();
   const currentDate = today.getDate();
 
-  // Xác định tháng mặc định
-  let defaultMonth;
-  if (currentDate < 11) {
-    // Nếu là tháng 1 thì tháng trước là 12
-    defaultMonth = currentMonth === 1 ? 12 : currentMonth - 1;
-  } else {
-    defaultMonth = currentMonth;
-  }
-
-  // Xác định năm mặc định
-  // Nếu ngày < 11/1 thì năm mặc định là năm hiện tại - 1
-  // Ngược lại là năm hiện tại
-  let defaultYear;
-  if (currentMonth === 1 && currentDate < 11) {
-    defaultYear = currentYear - 1;
-  } else {
-    defaultYear = currentYear;
-  }
+  let defaultMonth = (currentDate < 11) ? (currentMonth === 1 ? 12 : currentMonth - 1) : currentMonth;
+  let defaultYear = (currentMonth === 1 && currentDate < 11) ? currentYear - 1 : currentYear;
 
   // Gán tháng (1-12)
-  for (let i = 1; i <= 12; i++) {
-    const option = document.createElement("option");
-    option.value = i;
-    option.text = i.toString().padStart(2, '0');
-    if (i === defaultMonth) option.selected = true;
-    thangSelect.appendChild(option);
+  if (thangSelect) {
+    thangSelect.innerHTML = "";
+    for (let i = 1; i <= 12; i++) {
+      const option = document.createElement("option");
+      option.value = i;
+      option.text = i.toString().padStart(2, '0');
+      if (i === defaultMonth) option.selected = true;
+      thangSelect.appendChild(option);
+    }
   }
 
-  // Gán năm (năm hiện tại -1, năm hiện tại, năm hiện tại +1)
-  for (let y = currentYear - 1; y <= currentYear + 1; y++) {
-    const option = document.createElement("option");
-    option.value = y;
-    option.text = y;
-    if (y === defaultYear) option.selected = true;
-    namSelect.appendChild(option);
+  // Gán năm: từ 2020 đến năm sau năm hiện tại (currentYear + 1)
+  if (namSelect) {
+    namSelect.innerHTML = "";
+    for (let y = 2020; y <= currentYear + 1; y++) {
+      const option = document.createElement("option");
+      option.value = y;
+      option.text = y;
+      if (y === defaultYear) option.selected = true;
+      namSelect.appendChild(option);
+    }
   }
 
-  // === Phần định dạng số cho tất cả input tiền ===
-  
-  // Hàm định dạng số thành chuỗi có dấu chấm phân cách
+  updateDisplayMonthYearLabels();
+
+  // === Định dạng số cho tất cả input tiền ===
   function formatNumber(num) {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
 
-  // Hàm loại bỏ dấu chấm để lấy số thực
   function parseNumber(str) {
-    return parseInt(str.replace(/\./g, "")) || 0;
+    return parseInt((str || "").toString().replace(/\./g, "")) || 0;
   }
 
-  // Danh sách tất cả input cần định dạng số
+  window.parseSalaryNumber = parseNumber;
+  window.formatSalaryNumber = formatNumber;
+
   const moneyInputIds = [
     "luongCoBan", "pcABC", "pcChuyenCan", "pcThamNien",
     "pcChucVu", "pcDiLai", "pcDienThoai", "pcTreEm", "pcKhac"
   ];
 
-  // Áp dụng định dạng số cho tất cả input tiền
   moneyInputIds.forEach(inputId => {
     const input = document.getElementById(inputId);
     if (input) {
-      // Xử lý khi người dùng nhập
       input.addEventListener("input", function(e) {
-        let value = e.target.value.replace(/\./g, ""); // Loại bỏ dấu chấm
-        value = value.replace(/[^0-9]/g, ""); // Chỉ giữ lại số
-        
-        if (value) {
-          e.target.value = formatNumber(value);
-        }
-        // Tính lại lương ngay khi nhập
+        let value = e.target.value.replace(/\./g, "").replace(/[^0-9]/g, "");
+        if (value) e.target.value = formatNumber(value);
         tinhLuong();
+        if (typeof window.autoSaveUserData === "function") window.autoSaveUserData();
       });
 
-      // Xử lý khi focus ra khỏi input
       input.addEventListener("blur", function(e) {
         let value = parseNumber(e.target.value);
-        if (value > 0) {
-          e.target.value = formatNumber(value);
-        }
-        // Tính lại lương khi blur
+        if (value > 0) e.target.value = formatNumber(value);
         tinhLuong();
+        if (typeof window.autoSaveUserData === "function") window.autoSaveUserData();
       });
 
-      // Xử lý khi focus vào input (có thể bỏ định dạng để dễ chỉnh sửa)
       input.addEventListener("focus", function(e) {
         let value = parseNumber(e.target.value);
-        if (value > 0) {
-          e.target.value = value.toString();
-        }
+        if (value > 0) e.target.value = value.toString();
       });
     }
   });
 
-  // === Phần còn lại của code tính lương ===
-
-  // Giá trị mặc định cho một số phụ cấp
+  // Giá trị mặc định phụ cấp
   const defaultValues = {
     pcDiLai: 500000,
     pcChuyenCan: 200000,
     pcThamNien: 600000
   };
 
-  // Khởi tạo giá trị mặc định phụ cấp (với định dạng)
   Object.keys(defaultValues).forEach(id => {
     const input = document.getElementById(id);
-    if (input) {
+    if (input && !input.value) {
       input.value = formatNumber(defaultValues[id]);
     }
   });
 
-  // Hàm tính ngayCongChuan dựa vào tháng và năm
   function tinhNgayCongChuan() {
     const thang = +document.getElementById("thang")?.value || 1;
     const nam = +document.getElementById("nam")?.value || new Date().getFullYear();
 
     const soNgayTrongThang = new Date(nam, thang, 0).getDate();
-
     let soNgayChuNhat = 0;
     for (let d = 1; d <= soNgayTrongThang; d++) {
-      const ngayTrongTuan = new Date(nam, thang - 1, d).getDay();
-      if (ngayTrongTuan === 0) soNgayChuNhat++;
+      if (new Date(nam, thang - 1, d).getDay() === 0) soNgayChuNhat++;
     }
 
     let ngayCongChuan = soNgayTrongThang - soNgayChuNhat;
     if (ngayCongChuan === 27) ngayCongChuan = 26;
-
     return ngayCongChuan;
   }
 
-  // Tạo mảng tất cả input và select để xử lý focus Enter và cập nhật
-  const inputs = Array.from(document.querySelectorAll("input, select"));
+  const inputs = Array.from(document.querySelectorAll("#paneLuong input, #paneLuong select"));
   inputs.forEach((input, index) => {
-    // Chuyển focus khi nhấn Enter
     input.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
@@ -148,24 +116,29 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
     
-    // Chỉ thêm event listener input/change cho các input không phải tiền
-    // (vì các input tiền đã có xử lý riêng ở trên)
     if (!moneyInputIds.includes(input.id)) {
-      input.addEventListener("input", tinhLuong);
-      input.addEventListener("change", tinhLuong);
+      input.addEventListener("input", () => {
+        tinhLuong();
+        if (typeof window.autoSaveUserData === "function") window.autoSaveUserData();
+      });
+      input.addEventListener("change", () => {
+        tinhLuong();
+        if (typeof window.autoSaveUserData === "function") window.autoSaveUserData();
+      });
     }
   });
 
-  // Khi thay đổi thang hoặc nam thì tính lương lại
   ["thang", "nam"].forEach(id => {
     const el = document.getElementById(id);
     if (el) {
-      el.addEventListener("change", tinhLuong);
+      el.addEventListener("change", () => {
+        updateDisplayMonthYearLabels();
+        tinhLuong();
+      });
     }
   });
 
-  function tinhLuong() {
-    // Sử dụng parseNumber để lấy giá trị số thực từ input đã được định dạng
+  window.tinhLuong = function() {
     const luongCoBan = parseNumber(document.getElementById("luongCoBan")?.value || "0");
     const ngayCongChuan = tinhNgayCongChuan();
 
@@ -180,7 +153,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function updateTien(idSo, idTien, calc) {
       const val = +document.getElementById(idSo)?.value || 0;
       const tien = Math.round(calc(val));
-      if(document.getElementById(idTien)) {
+      if (document.getElementById(idTien)) {
         document.getElementById(idTien).textContent = tien.toLocaleString("vi-VN");
       }
       return tien;
@@ -200,41 +173,39 @@ document.addEventListener("DOMContentLoaded", function () {
     tong += updateTien("le", "tienLe", so => luongNgayCong * so);
 
     const tienNgayLeTet = calcBangPhu(luongNgayCong, luongTangCa, troCapDem);
-    if(document.getElementById("tienNgayLeTet")) {
+    if (document.getElementById("tienNgayLeTet")) {
       document.getElementById("tienNgayLeTet").textContent = tienNgayLeTet.toLocaleString("vi-VN");
     }
     tong += tienNgayLeTet;
 
-    // Tính tổng phụ cấp sử dụng parseNumber
     const phuCaps = [
       "pcABC", "pcChuyenCan", "pcThamNien",
       "pcChucVu", "pcDiLai", "pcDienThoai",
       "pcTreEm", "pcKhac"
     ];
     phuCaps.forEach(id => {
-      const val = parseNumber(document.getElementById(id)?.value || "0");
-      tong += val;
+      tong += parseNumber(document.getElementById(id)?.value || "0");
     });
 
-    if(document.getElementById("tongLuong")) {
+    if (document.getElementById("tongLuong")) {
       document.getElementById("tongLuong").textContent = Math.round(tong).toLocaleString("vi-VN");
     }
 
     const luongDongBH = luongCoBan + phuCapThamNien + phuCapChucVu;
     const tienTruBHXH = Math.round(luongDongBH * 0.105);
     const tienTruCD = Math.round(luongDongBH * 0.005);
-    if(document.getElementById("tienTruBHXH")) {
+    if (document.getElementById("tienTruBHXH")) {
       document.getElementById("tienTruBHXH").textContent = tienTruBHXH.toLocaleString("vi-VN");
     }
-    if(document.getElementById("tienTruCD")) {
+    if (document.getElementById("tienTruCD")) {
       document.getElementById("tienTruCD").textContent = tienTruCD.toLocaleString("vi-VN");
     }
 
     const thucLinh = Math.round(tong) - tienTruBHXH - tienTruCD;
-    if(document.getElementById("thucLinh")) {
+    if (document.getElementById("thucLinh")) {
       document.getElementById("thucLinh").textContent = thucLinh.toLocaleString("vi-VN");
     }
-  }
+  };
 
   function calcBangPhu(luongNgayCong, luongTangCa, troCapDem) {
     function phuLuong(soGioId, heSoId, rowTienId, loaiLuong) {
@@ -247,7 +218,7 @@ document.addEventListener("DOMContentLoaded", function () {
         donGia = luongTangCa / 100;
       }
       const tien = Math.round(gio * heSo * donGia);
-      if(document.getElementById(rowTienId)) {
+      if (document.getElementById(rowTienId)) {
         document.getElementById(rowTienId).textContent = tien.toLocaleString("vi-VN");
       }
       return tien;
@@ -263,6 +234,12 @@ document.addEventListener("DOMContentLoaded", function () {
     return tongPhu;
   }
 
-  // Tính lương ngay khi load trang
+  function updateDisplayMonthYearLabels() {
+    const t = document.getElementById("thang")?.value || (new Date().getMonth() + 1);
+    const n = document.getElementById("nam")?.value || new Date().getFullYear();
+    const lblLuong = document.getElementById("displayMonthYearLuong");
+    if (lblLuong) lblLuong.innerText = `Tháng ${t}/${n}`;
+  }
+
   tinhLuong();
 });
