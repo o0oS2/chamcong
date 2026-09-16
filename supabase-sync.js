@@ -1,5 +1,5 @@
 // --- CẤU HÌNH KẾT NỐI SUPABASE ---
-const SUPABASE_URL = "[https://txdnlqfxxhdskfbytyqo.supabase.co](https://txdnlqfxxhdskfbytyqo.supabase.co)"; // Dán URL của anh vào đây
+const SUPABASE_URL = "https://txdnlqfxxhdskfbytyqo.supabase.co";
 const SUPABASE_KEY = "sb_publishable_9Ur3wbPXyBJR2M_IzhbyvQ_RCl9Lda-"; // Dán API Key (anon) của anh vào đây
 
 let currentUser = localStorage.getItem("cc_currentUser") || null;
