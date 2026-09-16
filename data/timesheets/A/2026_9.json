@@ -30,7 +30,7 @@
     "pcDienThoai": "1.500.000",
     "pcTreEm": "50.000",
     "pcKhac": "1.500.000",
-    "soGioHanhChinh1": "",
+    "soGioHanhChinh1": "1",
     "phuLuongHanhChinh": "",
     "soGioTangCa1": "",
     "phuLuongTangCa": "",
@@ -398,5 +398,5 @@
       "midOt": "0"
     }
   },
-  "updated_at": "2026-09-16T15:31:29.770Z"
+  "updated_at": "2026-09-16T15:31:32.654Z"
 }
