@@ -22,18 +22,18 @@
     "cc_thongca380": "",
     "cc_phepNam": "0",
     "cc_le": "1",
-    "cc_soGioHanhChinh1": "",
-    "cc_phuLuongHanhChinh": "",
-    "cc_soGioTangCa1": "",
-    "cc_phuLuongTangCa": "",
-    "cc_soGioDem1": "",
-    "cc_phuLuongDem": "",
-    "cc_soGioHanhChinh2": "",
-    "cc_phuLuongHanhChinh2": "",
-    "cc_soGioTangCa2": "",
-    "cc_phuLuongTangCa2": "",
-    "cc_soGioDem2": "",
-    "cc_phuLuongDem2": ""
+    "cc_soGioHanhChinh1": "1",
+    "cc_phuLuongHanhChinh": "38",
+    "cc_soGioTangCa1": "1",
+    "cc_phuLuongTangCa": "380",
+    "cc_soGioDem1": "1",
+    "cc_phuLuongDem": "380",
+    "cc_soGioHanhChinh2": "1",
+    "cc_phuLuongHanhChinh2": "380",
+    "cc_soGioTangCa2": "1",
+    "cc_phuLuongTangCa2": "38",
+    "cc_soGioDem2": "1",
+    "cc_phuLuongDem2": "380"
   },
   "timesheet": {
     "1": {
@@ -368,5 +368,5 @@
     }
   },
   "shift_mode": "chuan",
-  "updated_at": "2026-09-17T00:20:09.958Z"
+  "updated_at": "2026-09-17T00:20:37.454Z"
 }
