@@ -12,8 +12,8 @@
   },
   "extra_fields": {
     "cc_ngayCong": "25",
-    "cc_tc150": "23",
-    "cc_tc200": "35",
+    "cc_tc150": "24",
+    "cc_tc200": "36",
     "cc_tcDem30": "72",
     "cc_ngayCong200": "3",
     "cc_tc300": "3",
@@ -253,7 +253,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "3",
       "midOt": "1"
     },
     "21": {
@@ -368,5 +368,5 @@
     }
   },
   "shift_mode": "chuan",
-  "updated_at": "2026-09-17T00:16:23.283Z"
+  "updated_at": "2026-09-17T00:19:46.673Z"
 }
