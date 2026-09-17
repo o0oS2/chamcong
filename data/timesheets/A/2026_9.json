@@ -12,12 +12,12 @@
   },
   "extra_fields": {
     "cc_ngayCong": "24.5",
-    "cc_tc150": "12",
-    "cc_tc200": "11",
+    "cc_tc150": "17",
+    "cc_tc200": "16",
     "cc_tcDem30": "68",
     "cc_ngayCong200": "2.5",
     "cc_tc300": "3",
-    "cc_tc340": "2",
+    "cc_tc340": "4",
     "cc_tcDem70": "10",
     "cc_thongca380": "1",
     "cc_phepNam": "0",
@@ -110,7 +110,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "3",
       "midOt": "0"
     },
     "8": {
@@ -121,7 +121,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "3",
       "midOt": "0"
     },
     "9": {
@@ -132,7 +132,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "3",
       "midOt": "0"
     },
     "10": {
@@ -143,7 +143,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "3",
       "midOt": "0"
     },
     "11": {
@@ -154,7 +154,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "3",
       "midOt": "0"
     },
     "12": {
@@ -165,7 +165,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "1",
+      "ot": "3",
       "midOt": "0"
     },
     "13": {
@@ -368,5 +368,5 @@
     }
   },
   "shift_mode": "chuan",
-  "updated_at": "2026-09-17T00:15:37.975Z"
+  "updated_at": "2026-09-17T00:15:46.694Z"
 }
