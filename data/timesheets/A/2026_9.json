@@ -19,7 +19,7 @@
     "cc_tc300": "3",
     "cc_tc340": "8",
     "cc_tcDem70": "12",
-    "cc_thongca380": "1",
+    "cc_thongca380": "",
     "cc_phepNam": "0",
     "cc_le": "1",
     "cc_soGioHanhChinh1": "",
@@ -368,5 +368,5 @@
     }
   },
   "shift_mode": "chuan",
-  "updated_at": "2026-09-17T00:19:46.673Z"
+  "updated_at": "2026-09-17T00:20:09.958Z"
 }
