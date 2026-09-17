@@ -12,7 +12,7 @@
   },
   "extra_fields": {
     "cc_ngayCong": "24.13",
-    "cc_tc150": "12",
+    "cc_tc150": "11",
     "cc_tc200": "14",
     "cc_tcDem30": "73",
     "cc_ngayCong200": "1.5",
@@ -99,7 +99,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "4",
+      "ot": "3",
       "midOt": "0"
     },
     "7": {
@@ -368,5 +368,5 @@
     }
   },
   "shift_mode": "dao",
-  "updated_at": "2026-09-17T00:53:58.358Z"
+  "updated_at": "2026-09-17T00:54:19.852Z"
 }
