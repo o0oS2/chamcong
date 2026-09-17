@@ -1,5 +1,5 @@
 {
-  "base_salary": "",
+  "base_salary": "5.430.000",
   "allowances": {
     "cc_pcABC": "",
     "cc_pcChuyenCan": "200.000",
@@ -12,7 +12,7 @@
   },
   "extra_fields": {
     "cc_ngayCong": "24",
-    "cc_tc150": "0",
+    "cc_tc150": "9",
     "cc_tc200": "10",
     "cc_tcDem30": "64",
     "cc_ngayCong200": "1",
@@ -66,7 +66,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "3",
       "midOt": "0"
     },
     "4": {
@@ -77,7 +77,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "3",
       "midOt": "0"
     },
     "5": {
@@ -88,7 +88,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "3",
       "midOt": "0"
     },
     "6": {
@@ -368,5 +368,5 @@
     }
   },
   "shift_mode": "chuan",
-  "updated_at": "2026-09-17T00:26:10.813Z"
+  "updated_at": "2026-09-17T00:26:19.607Z"
 }
