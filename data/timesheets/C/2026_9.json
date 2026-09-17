@@ -12,7 +12,7 @@
   },
   "extra_fields": {
     "cc_ngayCong": "24",
-    "cc_tc150": "0",
+    "cc_tc150": "9",
     "cc_tc200": "11",
     "cc_tcDem30": "70",
     "cc_ngayCong200": "1",
@@ -220,7 +220,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "3",
       "midOt": "0"
     },
     "18": {
@@ -231,7 +231,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "3",
       "midOt": "0"
     },
     "19": {
@@ -242,7 +242,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "3",
       "midOt": "0"
     },
     "20": {
@@ -368,5 +368,5 @@
     }
   },
   "shift_mode": "dao",
-  "updated_at": "2026-09-17T00:53:25.572Z"
+  "updated_at": "2026-09-17T00:53:32.429Z"
 }
