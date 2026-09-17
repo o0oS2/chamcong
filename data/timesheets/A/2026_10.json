@@ -11,17 +11,17 @@
     "cc_pcKhac": ""
   },
   "extra_fields": {
-    "cc_ngayCong": "",
-    "cc_tc150": "",
-    "cc_tc200": "",
-    "cc_tcDem30": "",
-    "cc_ngayCong200": "",
-    "cc_tc300": "",
-    "cc_tc340": "",
-    "cc_tcDem70": "",
+    "cc_ngayCong": "26",
+    "cc_tc150": "0",
+    "cc_tc200": "10",
+    "cc_tcDem30": "64",
+    "cc_ngayCong200": "1",
+    "cc_tc300": "0",
+    "cc_tc340": "2",
+    "cc_tcDem70": "8",
     "cc_thongca380": "",
-    "cc_phepNam": "",
-    "cc_le": "",
+    "cc_phepNam": "0",
+    "cc_le": "0",
     "cc_soGioHanhChinh1": "",
     "cc_phuLuongHanhChinh": "",
     "cc_soGioTangCa1": "",
@@ -88,7 +88,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "6": {
@@ -99,7 +99,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "7": {
@@ -110,7 +110,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "8": {
@@ -121,7 +121,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "9": {
@@ -132,7 +132,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "10": {
@@ -143,7 +143,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "11": {
@@ -165,7 +165,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "13": {
@@ -176,7 +176,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "14": {
@@ -187,7 +187,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "15": {
@@ -198,7 +198,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "16": {
@@ -209,7 +209,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "17": {
@@ -220,7 +220,7 @@
         "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "18": {
@@ -378,6 +378,6 @@
       "midOt": "0"
     }
   },
-  "shift_mode": "chuyen_ngay",
-  "updated_at": "2026-09-17T00:14:56.688Z"
+  "shift_mode": "chuan",
+  "updated_at": "2026-09-17T00:14:59.434Z"
 }
