@@ -11,38 +11,7 @@
     "cc_pcKhac": ""
   },
   "extra_fields": {
-    "ngayCong": "",
-    "tc150": "",
-    "tc200": "",
-    "tcDem30": "",
-    "ngayCong200": "",
-    "tc300": "",
-    "tc340": "",
-    "tcDem70": "",
-    "thongca380": "",
-    "phepNam": "",
-    "le": "",
-    "pcABC": "",
-    "pcChuyenCan": "200.000",
-    "pcThamNien": "600.000",
-    "pcChucVu": "",
-    "pcDiLai": "500.000",
-    "pcDienThoai": "",
-    "pcTreEm": "",
-    "pcKhac": "",
-    "soGioHanhChinh1": "",
-    "phuLuongHanhChinh": "",
-    "soGioTangCa1": "",
-    "phuLuongTangCa": "",
-    "soGioDem1": "",
-    "phuLuongDem": "",
-    "soGioHanhChinh2": "",
-    "phuLuongHanhChinh2": "",
-    "soGioTangCa2": "",
-    "phuLuongTangCa2": "",
-    "soGioDem2": "",
-    "phuLuongDem2": "",
-    "cc_ngayCong": "23.88",
+    "cc_ngayCong": "26.88",
     "cc_tc150": "11.5",
     "cc_tc200": "0",
     "cc_tcDem30": "0",
@@ -69,10 +38,10 @@
   "timesheet": {
     "1": {
       "hc": {
-        "label": "Nghỉ",
-        "short": "Nghỉ",
-        "type": "nghi",
-        "value": 8,
+        "label": "Đi làm đủ",
+        "short": "Đi làm đủ",
+        "type": "du",
+        "value": 0,
         "allowSunday": true
       },
       "ot": "0",
@@ -80,10 +49,10 @@
     },
     "2": {
       "hc": {
-        "label": "Nghỉ",
-        "short": "Nghỉ",
-        "type": "nghi",
-        "value": 8,
+        "label": "Đi làm đủ",
+        "short": "Đi làm đủ",
+        "type": "du",
+        "value": 0,
         "allowSunday": true
       },
       "ot": "0",
@@ -91,10 +60,10 @@
     },
     "3": {
       "hc": {
-        "label": "Nghỉ",
-        "short": "Nghỉ",
-        "type": "nghi",
-        "value": 8,
+        "label": "Đi làm đủ",
+        "short": "Đi làm đủ",
+        "type": "du",
+        "value": 0,
         "allowSunday": true
       },
       "ot": "0",
@@ -410,5 +379,5 @@
     }
   },
   "shift_mode": "chuyen_ngay",
-  "updated_at": "2026-09-16T19:13:43.604Z"
+  "updated_at": "2026-09-17T00:14:51.049Z"
 }
