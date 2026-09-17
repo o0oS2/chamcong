@@ -11,14 +11,14 @@
     "cc_pcKhac": ""
   },
   "extra_fields": {
-    "cc_ngayCong": "23.63",
+    "cc_ngayCong": "24.13",
     "cc_tc150": "10",
-    "cc_tc200": "12",
-    "cc_tcDem30": "69",
-    "cc_ngayCong200": "1",
+    "cc_tc200": "13",
+    "cc_tcDem30": "73",
+    "cc_ngayCong200": "1.5",
     "cc_tc300": "0",
     "cc_tc340": "2",
-    "cc_tcDem70": "8",
+    "cc_tcDem70": "10",
     "cc_thongca380": "",
     "cc_phepNam": "0",
     "cc_le": "1",
@@ -93,13 +93,13 @@
     },
     "6": {
       "hc": {
-        "label": "Nghỉ",
-        "short": "Nghỉ",
-        "type": "nghi",
-        "value": 8,
+        "label": "Đi làm đủ",
+        "short": "Đi làm đủ",
+        "type": "du",
+        "value": 0,
         "allowSunday": true
       },
-      "ot": "0",
+      "ot": "1",
       "midOt": "0"
     },
     "7": {
@@ -368,5 +368,5 @@
     }
   },
   "shift_mode": "dao",
-  "updated_at": "2026-09-17T00:53:42.294Z"
+  "updated_at": "2026-09-17T00:53:53.112Z"
 }
