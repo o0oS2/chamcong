@@ -1,4 +1,4 @@
-const API_URL = "https://api-chamcong.o0os2.workers.dev";
+const API_URL = "https://tinhluong.o0os2.workers.dev";
 
 let currentUser = localStorage.getItem("cc_currentUser") || null;
 let saveTimer = null;
