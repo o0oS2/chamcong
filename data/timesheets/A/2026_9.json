@@ -11,7 +11,7 @@
     "cc_pcKhac": ""
   },
   "extra_fields": {
-    "cc_ngayCong": "24.88",
+    "cc_ngayCong": "23.88",
     "cc_tc150": "24",
     "cc_tc200": "36",
     "cc_tcDem30": "72",
@@ -82,11 +82,11 @@
     },
     "5": {
       "hc": {
-        "label": "Đi làm đủ",
-        "short": "Đi làm đủ",
-        "type": "du",
-        "value": 0,
-        "allowSunday": true
+        "label": "Nghỉ việc riêng",
+        "short": "Nghỉ VR",
+        "type": "nghi_vr",
+        "value": 8,
+        "allowSunday": false
       },
       "ot": "3",
       "midOt": "0"
@@ -373,5 +373,5 @@
     "active": false,
     "dem_days": []
   },
-  "updated_at": "2026-09-19T15:31:07.363Z"
+  "updated_at": "2026-09-19T15:31:14.324Z"
 }
