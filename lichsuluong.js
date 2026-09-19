@@ -231,7 +231,7 @@ async function loadSalaryHistoryForYear(year) {
     const phepNamMonth = calculatePhepNamFromRecord(monthsData[m], m, year);
     totalPhepNamYear += phepNamMonth;
 
-    const mText = `Tháng ${m.toString().padStart(2, '0')}`;
+    const mText = `T${m.toString().padStart(2, '0')}`;
     rowsHtml += `
       <tr class="sh-month-item" onclick="selectHistoryMonth(${m}, ${year})" title="Bấm để xem chi tiết chấm công Tháng ${m}/${year}">
         <td class="m-name">📅 ${mText}</td>
@@ -245,13 +245,62 @@ async function loadSalaryHistoryForYear(year) {
     return;
   }
 
+  if (!document.getElementById("shTableStyle")) {
+    const styleTag = document.createElement("style");
+    styleTag.id = "shTableStyle";
+    styleTag.textContent = `
+      #shMonthsList table.sh-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+        font-size: 13px;
+      }
+      #shMonthsList table.sh-table th,
+      #shMonthsList table.sh-table td {
+        display: table-cell !important;
+        padding: 8px 6px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        border-bottom: 1px solid #e2e8f0;
+        vertical-align: middle;
+      }
+      #shMonthsList table.sh-table th:nth-child(1),
+      #shMonthsList table.sh-table td:nth-child(1) { width: 38%; text-align: left; }
+      #shMonthsList table.sh-table th:nth-child(2),
+      #shMonthsList table.sh-table td:nth-child(2) { width: 31%; text-align: right; }
+      #shMonthsList table.sh-table th:nth-child(3),
+      #shMonthsList table.sh-table td:nth-child(3) { width: 31%; text-align: right; }
+      #shMonthsList table.sh-table thead th {
+        background: #2563eb;
+        color: #fff;
+        font-weight: 600;
+      }
+      #shMonthsList table.sh-table tbody tr.sh-month-item {
+        cursor: pointer;
+      }
+      #shMonthsList table.sh-table tbody tr.sh-month-item:active,
+      #shMonthsList table.sh-table tbody tr.sh-month-item:hover {
+        background: #f1f5f9;
+      }
+      #shMonthsList table.sh-table tfoot tr.sh-total-box td {
+        background: #fef9c3;
+        color: #92400e;
+        font-weight: 700;
+        border-top: 2px solid #fde047;
+        border-bottom: none;
+      }
+    `;
+    document.head.appendChild(styleTag);
+  }
+
   listEl.innerHTML = `
-    <table class="sh-table" style="width:100%; border-collapse:collapse;">
+    <table class="sh-table">
       <thead>
         <tr>
-          <th style="text-align:left; padding:6px;">Tháng</th>
-          <th style="text-align:right; padding:6px;">Phép Năm</th>
-          <th style="text-align:right; padding:6px;">Thu nhập</th>
+          <th>Tháng</th>
+          <th>Phép Năm</th>
+          <th>Thu nhập</th>
         </tr>
       </thead>
       <tbody>
@@ -259,9 +308,9 @@ async function loadSalaryHistoryForYear(year) {
       </tbody>
       <tfoot>
         <tr class="sh-total-box">
-          <td style="padding:6px;">💵 Tổng năm ${year}</td>
-          <td style="text-align:right; padding:6px;">${formatFn(totalPhepNamYear)} đ</td>
-          <td style="text-align:right; padding:6px;">${formatFn(totalYearSalary)} đ</td>
+          <td>💵 Tổng năm ${year}</td>
+          <td>${formatFn(totalPhepNamYear)} đ</td>
+          <td>${formatFn(totalYearSalary)} đ</td>
         </tr>
       </tfoot>
     </table>`;
