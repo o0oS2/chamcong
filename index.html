@@ -1208,13 +1208,6 @@
             </div>
           </div>
         </div>
-
-		 <div style="text-align: center; margin: 3px 0; padding: 4px 8px; border: 1px solid #ccc; border-radius: 6px;">
-          <h4 style="margin: 3px 0 8px;">📥 <a href="Files/Tinh_luong.xlsx" download> Tải file Excel tính lương - chấm công</a> 📥</h4>
-          <p style="margin: 0 0 8px; color: #d00; font-size: 14px;">
-            ⚠ Mở bằng trình duyệt: <strong>Safari</strong>, <strong>Chrome</strong>...Không mở bằng <strong>Zalo</strong> hoặc <strong>Messenger</strong> vì bị lỗi không tải được.
-          </p>
-        </div> 
 		  
         <div style="margin: 5px 0; padding: 6px 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; line-height: 1.4;">
           <div style="margin-top: 2px;">
@@ -1290,7 +1283,7 @@
             <div class="legend-item"><span class="dot-sample" style="background:#fee2e2; border-color:#fca5a5;"></span> Đi làm muộn / Về sớm / Nghỉ việc riêng, phép năm</div>
             <div class="legend-item"><span class="dot-sample" style="background:#e0f2fe; border-color:#7dd3fc;"></span> Tăng ca ngày (TC trưa + sau 17h), tăng ca đêm (sau 4h)</div>
             <div class="legend-item"><span class="dot-sample" style="background:#f5f3ff; border-color:#ddd6fe;"></span> Tăng ca giữa giờ đêm (0h-1h)</div>
-            <div style="color: #e53935;">Lương lễ tết → sửa vào bảng tính lương, chấm công lễ ở bên dưới. Chuyển ca bất thường tải file Excel ở dưới cùng để chấm nhé!</div>
+            <div style="color: #e53935;">Lương lễ tết → sửa vào bảng tính lương, chấm công lễ ở bên dưới. Đổi ca ngày - đêm, chuyên ngày, đổi ca bất thường bấm nút ⇄ Đổi ca</div>
           </div>
         </div>
 
@@ -1434,15 +1427,14 @@
             </tbody>
           </table>
         </div>
-
-		 <div style="text-align: center; margin: 3px 0; padding: 4px 8px; border: 1px solid #ccc; border-radius: 6px;">
-          <h4 style="margin: 3px 0 8px;">📥 <a href="Files/Tinh_luong.xlsx" download> Tải file Excel tính lương - chấm công</a> 📥</h4>
-          <p style="margin: 0 0 8px; color: #d00; font-size: 14px;">
-            ⚠ Mở bằng trình duyệt: <strong>Safari</strong>, <strong>Chrome</strong>...Không mở bằng <strong>Zalo</strong> hoặc <strong>Messenger</strong> vì bị lỗi không tải được.
-          </p>
-        </div> 
 		  
       </div>
+    </div>
+
+    <!-- FOOTER TAB CHẤM CÔNG: tổng tài khoản & số người đang dùng -->
+    <div class="footer" id="ccFooter">
+      👥 Tài khoản đã đăng ký: <b id="ccTotalUsers">...</b>
+      <span style="margin-left: 8px;">🟢 Đang dùng chấm công: <b id="ccOnlineUsers">...</b></span>
     </div>
   </div>
 
@@ -1726,6 +1718,7 @@
       document.getElementById('paneLuong').classList.add('active');
       document.getElementById('btnTabLuong').classList.add('active');
       if (authEl) authEl.style.display = 'none';
+      if (typeof window.stopCcStats === 'function') window.stopCcStats();
       if (typeof tinhLuong === 'function') tinhLuong();
     } else {
       document.getElementById('paneChamCong').classList.add('active');
@@ -1734,6 +1727,7 @@
       if (typeof window.updateDaoCaButtonUI === 'function') window.updateDaoCaButtonUI();
       if (typeof syncChamCongToTinhLuong === 'function') syncChamCongToTinhLuong();
       window.updateCcLoginNotice();
+      if (typeof window.startCcStats === 'function') window.startCcStats();
     }	
   }
 	// ==== XỬ LÝ CHIA SẺ ỨNG DỤNG ====
