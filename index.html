@@ -1817,7 +1817,32 @@ async function updateVisitorCount() {
     el.textContent = "1.250+";
   }
 }
+// 1. Khởi tạo tháng và năm hiện tại nếu chưa có
+window.selectedMonth = window.selectedMonth || (new Date().getMonth() + 1);
+window.selectedYear = window.selectedYear || new Date().getFullYear();
 
+// 2. Định nghĩa hàm cập nhật text hiển thị lên giao diện
+window.updateDateDisplays = function() {
+  const thang = window.selectedMonth.toString().padStart(2, '0');
+  const nam = window.selectedYear.toString();
+
+  // Cập nhật cho cả 2 tab (Tính lương & Chấm công)
+  const elThangLuong = document.getElementById("txtThangLuong");
+  const elNamLuong = document.getElementById("txtNamLuong");
+  const elThangCC = document.getElementById("txtThangCC");
+  const elNamCC = document.getElementById("txtNamCC");
+
+  if (elThangLuong) elThangLuong.textContent = thang;
+  if (elNamLuong) elNamLuong.textContent = nam;
+  if (elThangCC) elThangCC.textContent = thang;
+  if (elNamCC) elNamCC.textContent = nam;
+};
+
+// 3. Cho chạy ngay khi tải trang
+document.addEventListener("DOMContentLoaded", function() {
+  window.updateDateDisplays();
+});
+	
 // Chạy hàm đếm
 updateVisitorCount();
 </script>
