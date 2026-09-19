@@ -1,4 +1,4 @@
-const API_URL = "https://api-chamcong.o0os2.workers.dev";
+const API_URL = "https://tinhluong.o0os2.workers.dev";
 
 let currentUser = localStorage.getItem("cc_currentUser") || null;
 let saveTimer = null;
@@ -51,6 +51,10 @@ window.handleRegister = async function() {
   const p = document.getElementById("authPassword")?.value.trim();
   if (!u || !p) return alert("Vui lòng nhập tài khoản và mật khẩu!");
 
+  // Ghi nhớ tab đang mở trước khi đăng ký, để giữ nguyên sau khi xử lý xong
+  const tabDangMo = document.getElementById("paneChamCong")?.classList.contains("active")
+    ? "tabChamCong" : "tabLuong";
+
   const btn = document.querySelector("button[onclick*='handleRegister']") || (window.event ? window.event.target : null);
   const originalText = btn ? btn.innerText : "Đăng ký";
   if (btn) {
@@ -70,6 +74,8 @@ window.handleRegister = async function() {
       localStorage.setItem("cc_currentUser", u);
       alert("Đăng ký thành công!");
       checkLoginState();
+      // Ép quay lại đúng tab đang mở trước đó, không để tự nhảy về Tính Lương
+      if (typeof switchTab === "function") switchTab(tabDangMo);
     } else {
       alert(data.error || "Đăng ký thất bại!");
     }
@@ -89,6 +95,10 @@ window.handleLogin = async function() {
   const p = document.getElementById("authPassword")?.value.trim();
   if (!u || !p) return alert("Vui lòng nhập tài khoản và mật khẩu!");
 
+  // Ghi nhớ tab đang mở trước khi đăng nhập, để giữ nguyên sau khi đăng nhập xong
+  const tabDangMo = document.getElementById("paneChamCong")?.classList.contains("active")
+    ? "tabChamCong" : "tabLuong";
+
   const btn = document.querySelector("button[onclick*='handleLogin']") || (window.event ? window.event.target : null);
   const originalText = btn ? btn.innerText : "Đăng nhập";
   if (btn) {
@@ -107,6 +117,8 @@ window.handleLogin = async function() {
       currentUser = u;
       localStorage.setItem("cc_currentUser", u);
       checkLoginState();
+      // Ép quay lại đúng tab đang mở trước đó, không để tự nhảy về Tính Lương
+      if (typeof switchTab === "function") switchTab(tabDangMo);
     } else {
       alert(data.error || "Sai tài khoản hoặc mật khẩu!");
     }
@@ -125,18 +137,21 @@ window.handleLogout = function() {
   currentUser = null;
   localStorage.removeItem("cc_currentUser");
 
+  // Chỉ xóa mật khẩu trong ô nhập liệu, giữ lại tên đăng nhập
+  const pwdInput = document.getElementById("authPassword");
+  if (pwdInput) pwdInput.value = "";
+
   // Xóa sạch dữ liệu Tab Chấm Công khi đăng xuất, tránh lộ/lẫn dữ liệu sang tài khoản khác
   clearChamCongTabData();
 
   checkLoginState();
 
-  // Hiện lại cảnh báo "Đăng nhập để lưu thông tin" (kể cả khi trước đó người dùng đã bấm ✕ để đóng)
+  // Hiện lại cảnh báo "Đăng nhập để lưu thông tin"
   const notice = document.getElementById("ccLoginNotice");
   if (notice) notice.style.display = "flex";
   if (typeof window.updateCcLoginNotice === "function") window.updateCcLoginNotice();
 
   alert("Đã đăng xuất!");
-  if (typeof switchTab === "function") switchTab('tabLuong');
 };
 
 // 4. ĐỔI MẬT KHẨU
@@ -189,6 +204,9 @@ window.handleChangePassword = async function() {
 function clearChamCongTabData() {
   if (window.clearChamCongData) window.clearChamCongData();
   window.currentShiftMode = "chuan";
+  window.daoCaStep = 0;
+  window.batThuongMonths = {};
+  window.batThuongDemDays = {};
 
   const ccIds = [
     "cc_luongCoBan", "cc_ngayCong", "cc_tc150", "cc_tc200", "cc_tcDem30",
@@ -254,12 +272,23 @@ window.autoSaveUserData = function() {
       }
     });
 
+    // Chế độ ca bất thường lưu riêng theo từng tháng ở phía chamcong.js (key "nam-thang"),
+    // nên khi lưu lên server chỉ lấy đúng phần của tháng đang xem để nhét vào record của tháng đó.
+    const batThuongKey = `${year}-${month}`;
+    const dangBatThuong = !!(window.batThuongMonths && window.batThuongMonths[batThuongKey]);
+    const ngayCaDemBatThuong = (window.batThuongDemDays && window.batThuongDemDays[batThuongKey]) || [];
+
     const payload = {
       base_salary: document.getElementById("cc_luongCoBan")?.value || "",
       allowances: allowances,
       extra_fields: extraInputs,
       timesheet: window.chamCongData || {},
       shift_mode: window.currentShiftMode || "chuan",
+      dao_ca_step: typeof window.daoCaStep === "number" ? window.daoCaStep : 0,
+      bat_thuong: {
+        active: dangBatThuong,
+        dem_days: ngayCaDemBatThuong
+      },
       updated_at: new Date().toISOString()
     };
 
@@ -286,7 +315,6 @@ window.autoSaveUserData = function() {
 // Đổ dữ liệu 1 record (lương, phụ cấp, các ô khác, chấm công) vào form
 function applyRecordToForm(record, formatFn) {
   const formattedSalary = formatFn(record.base_salary || "");
-  if (document.getElementById("luongCoBan")) document.getElementById("luongCoBan").value = formattedSalary;
   if (document.getElementById("cc_luongCoBan")) document.getElementById("cc_luongCoBan").value = formattedSalary;
 
   if (record.allowances) {
@@ -322,6 +350,25 @@ function applyRecordToForm(record, formatFn) {
   if (record.shift_mode) {
     window.currentShiftMode = record.shift_mode;
   }
+  if (typeof record.dao_ca_step === "number") {
+    window.daoCaStep = record.dao_ca_step;
+  }
+
+  // Khôi phục chế độ ca bất thường đúng cho tháng vừa tải (key "nam-thang" của chamcong.js)
+  const namDangXem = window.selectedYear || new Date().getFullYear();
+  const thangDangXem = window.selectedMonth || 1;
+  const batThuongKey = `${namDangXem}-${thangDangXem}`;
+  window.batThuongMonths = window.batThuongMonths || {};
+  window.batThuongDemDays = window.batThuongDemDays || {};
+
+  if (record.bat_thuong && record.bat_thuong.active) {
+    window.batThuongMonths[batThuongKey] = true;
+    window.batThuongDemDays[batThuongKey] = record.bat_thuong.dem_days || [];
+  } else {
+    delete window.batThuongMonths[batThuongKey];
+    delete window.batThuongDemDays[batThuongKey];
+  }
+
   if (typeof window.updateDaoCaButtonUI === "function") window.updateDaoCaButtonUI();
 }
 
@@ -338,7 +385,6 @@ async function carryOverFromPrevMonth(year, month, formatFn) {
     if (!prevRecord) return;
 
     const formattedSalary = formatFn(prevRecord.base_salary || "");
-    if (document.getElementById("luongCoBan")) document.getElementById("luongCoBan").value = formattedSalary;
     if (document.getElementById("cc_luongCoBan")) document.getElementById("cc_luongCoBan").value = formattedSalary;
 
     if (prevRecord.allowances) {
@@ -357,8 +403,11 @@ async function carryOverFromPrevMonth(year, month, formatFn) {
 
     if (prevRecord.shift_mode) {
       window.currentShiftMode = prevRecord.shift_mode;
-      if (typeof window.updateDaoCaButtonUI === "function") window.updateDaoCaButtonUI();
     }
+    if (typeof prevRecord.dao_ca_step === "number") {
+      window.daoCaStep = prevRecord.dao_ca_step;
+    }
+    if (typeof window.updateDaoCaButtonUI === "function") window.updateDaoCaButtonUI();
   } catch {
     // Không có/không lấy được dữ liệu tháng trước thì bỏ qua, giữ nguyên form trống
   }
@@ -386,6 +435,13 @@ window.loadUserDataFromCloud = async function() {
       // Tháng mới chưa có dữ liệu: xóa trắng lịch chấm công & các ô, sau đó giữ lại
       // lương + phụ cấp (trừ chuyên cần) từ tháng liền trước
       if (window.clearChamCongData) window.clearChamCongData();
+
+      // Đảm bảo tháng mới không dính chế độ ca bất thường còn sót lại trong bộ nhớ
+      const batThuongKeyThangMoi = `${year}-${month}`;
+      window.batThuongMonths = window.batThuongMonths || {};
+      window.batThuongDemDays = window.batThuongDemDays || {};
+      delete window.batThuongMonths[batThuongKeyThangMoi];
+      delete window.batThuongDemDays[batThuongKeyThangMoi];
 
       const excludeIds = ["authUsername", "authPassword"];
       document.querySelectorAll("input, select, textarea").forEach(el => {
