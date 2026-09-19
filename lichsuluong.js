@@ -85,31 +85,12 @@ function calculateTotalSalaryFromRecord(record, month, year) {
   return thucLinh > 0 ? thucLinh : 0;
 }
 
-// Hàm tính riêng tiền PHÉP NĂM từ 1 payload (dùng chung logic ngày công chuẩn)
-function calculatePhepNamFromRecord(record, month, year) {
+// Lấy SỐ NGÀY phép năm đã dùng trong tháng từ 1 payload (không phải tiền)
+function getSoNgayPhepNamFromRecord(record) {
   if (!record) return 0;
-
-  const getVal = (v) => parseInt((v || "0").toString().replace(/\./g, "")) || 0;
-  const getFloat = (v) => parseFloat(v || "0") || 0;
-
-  const lcb = getVal(record.base_salary);
-  if (lcb === 0) return 0;
-
   const ef = record.extra_fields || {};
-
-  const m = month || 1;
-  const y = year || new Date().getFullYear();
-  const soNgayTrongThang = new Date(y, m, 0).getDate();
-  let soNgayChuNhat = 0;
-  for (let d = 1; d <= soNgayTrongThang; d++) {
-    if (new Date(y, m - 1, d).getDay() === 0) soNgayChuNhat++;
-  }
-  let ncChuandef = soNgayTrongThang - soNgayChuNhat;
-  if (ncChuandef === 27) ncChuandef = 26;
-
-  const luongNgayCong = ncChuandef > 0 ? lcb / ncChuandef : 0;
-
-  return Math.round(luongNgayCong * getFloat(ef["cc_phepNam"]));
+  const getFloat = (v) => parseFloat(v || "0") || 0;
+  return getFloat(ef["cc_phepNam"]);
 }
 
 // Lấy dữ liệu 12 tháng của 1 năm (có cache để không gọi API lặp lại)
@@ -219,101 +200,66 @@ async function loadSalaryHistoryForYear(year) {
   const formatFn = window.formatSalaryNumber || function(v) { return (v || 0).toLocaleString("vi-VN"); };
   const { monthsData, total: totalYearSalary } = await fetchYearSalaryData(year);
 
-  let hasAnyMonth = false;
   let totalPhepNamYear = 0;
-  let rowsHtml = "";
+  const monthRows = [];
 
   for (let m = 1; m <= 12; m++) {
     const totalMonth = calculateTotalSalaryFromRecord(monthsData[m], m, year);
     if (totalMonth <= 0) continue;
 
-    hasAnyMonth = true;
-    const phepNamMonth = calculatePhepNamFromRecord(monthsData[m], m, year);
-    totalPhepNamYear += phepNamMonth;
+    const phepDays = getSoNgayPhepNamFromRecord(monthsData[m]);
+    totalPhepNamYear += phepDays;
 
-    const mText = `T${m.toString().padStart(2, '0')}`;
-    rowsHtml += `
-      <tr class="sh-month-item" onclick="selectHistoryMonth(${m}, ${year})" title="Bấm để xem chi tiết chấm công Tháng ${m}/${year}">
-        <td class="m-name">📅 ${mText}</td>
-        <td class="m-phep">${formatFn(phepNamMonth)} đ</td>
-        <td class="m-val">${formatFn(totalMonth)} đ</td>
-      </tr>`;
+    monthRows.push({ m, phepDays, totalMonth });
   }
 
-  if (!hasAnyMonth) {
+  if (monthRows.length === 0) {
     listEl.innerHTML = `<div style="text-align:center; padding: 24px; color:#94a3b8; font-size:13px;">📭 Chưa có dữ liệu lương cho năm ${year}</div>`;
     return;
   }
 
-  if (!document.getElementById("shTableStyle")) {
-    const styleTag = document.createElement("style");
-    styleTag.id = "shTableStyle";
-    styleTag.textContent = `
-      #shMonthsList table.sh-table {
-        width: 100%;
-        border-collapse: collapse;
-        table-layout: fixed;
-        font-size: 13px;
-      }
-      #shMonthsList table.sh-table th,
-      #shMonthsList table.sh-table td {
-        display: table-cell !important;
-        padding: 8px 6px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        border-bottom: 1px solid #e2e8f0;
-        vertical-align: middle;
-      }
-      #shMonthsList table.sh-table th:nth-child(1),
-      #shMonthsList table.sh-table td:nth-child(1) { width: 38%; text-align: left; }
-      #shMonthsList table.sh-table th:nth-child(2),
-      #shMonthsList table.sh-table td:nth-child(2) { width: 31%; text-align: right; }
-      #shMonthsList table.sh-table th:nth-child(3),
-      #shMonthsList table.sh-table td:nth-child(3) { width: 31%; text-align: right; }
-      #shMonthsList table.sh-table thead th {
-        background: #2563eb;
-        color: #fff;
-        font-weight: 600;
-      }
-      #shMonthsList table.sh-table tbody tr.sh-month-item {
-        cursor: pointer;
-      }
-      #shMonthsList table.sh-table tbody tr.sh-month-item:active,
-      #shMonthsList table.sh-table tbody tr.sh-month-item:hover {
-        background: #f1f5f9;
-      }
-      #shMonthsList table.sh-table tfoot tr.sh-total-box td {
-        background: #fef9c3;
-        color: #92400e;
-        font-weight: 700;
-        border-top: 2px solid #fde047;
-        border-bottom: none;
-      }
-    `;
-    document.head.appendChild(styleTag);
-  }
+  // Toàn bộ layout dùng inline style + CSS Grid trên div — không phụ thuộc
+  // bất kỳ class/CSS nào có sẵn trên site, để tránh bị các quy tắc CSS khác
+  // (vd: .sh-month-item, .sh-table cũ) ghi đè làm lệch cột.
+  const GRID_COLS = "2fr 1.3fr 1.6fr";
+  const wrap = document.createElement("div");
+  wrap.style.cssText = "width:100%; font-size:13px; border:1px solid #e2e8f0; border-radius:8px; overflow:hidden;";
 
-  listEl.innerHTML = `
-    <table class="sh-table">
-      <thead>
-        <tr>
-          <th>Tháng</th>
-          <th>Phép Năm</th>
-          <th>Thu nhập</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${rowsHtml}
-      </tbody>
-      <tfoot>
-        <tr class="sh-total-box">
-          <td>💵 Tổng năm ${year}</td>
-          <td>${formatFn(totalPhepNamYear)} đ</td>
-          <td>${formatFn(totalYearSalary)} đ</td>
-        </tr>
-      </tfoot>
-    </table>`;
+  const headerRow = document.createElement("div");
+  headerRow.style.cssText = `display:grid; grid-template-columns:${GRID_COLS}; background:#2563eb; color:#fff; font-weight:600;`;
+  headerRow.innerHTML = `
+    <div style="padding:8px 6px; text-align:left;">Tháng</div>
+    <div style="padding:8px 6px; text-align:right;">Phép Năm</div>
+    <div style="padding:8px 6px; text-align:right;">Thu nhập</div>
+  `;
+  wrap.appendChild(headerRow);
+
+  monthRows.forEach(({ m, phepDays, totalMonth }) => {
+    const row = document.createElement("div");
+    row.style.cssText = `display:grid; grid-template-columns:${GRID_COLS}; border-top:1px solid #e2e8f0; cursor:pointer;`;
+    row.onmouseover = () => { row.style.background = "#f1f5f9"; };
+    row.onmouseout = () => { row.style.background = ""; };
+    row.onclick = () => selectHistoryMonth(m, year);
+    row.title = `Bấm để xem chi tiết chấm công Tháng ${m}/${year}`;
+    row.innerHTML = `
+      <div style="padding:8px 6px; text-align:left; white-space:nowrap;">📅 Tháng ${m}</div>
+      <div style="padding:8px 6px; text-align:right; white-space:nowrap;">${phepDays > 0 ? phepDays : 0}</div>
+      <div style="padding:8px 6px; text-align:right; white-space:nowrap; color:#059669; font-weight:600;">${formatFn(totalMonth)} đ</div>
+    `;
+    wrap.appendChild(row);
+  });
+
+  const footRow = document.createElement("div");
+  footRow.style.cssText = `display:grid; grid-template-columns:${GRID_COLS}; background:#fef9c3; color:#92400e; font-weight:700; border-top:2px solid #fde047;`;
+  footRow.innerHTML = `
+    <div style="padding:8px 6px; text-align:left;">💵 Tổng năm ${year}</div>
+    <div style="padding:8px 6px; text-align:right;">${totalPhepNamYear}</div>
+    <div style="padding:8px 6px; text-align:right;">${formatFn(totalYearSalary)} đ</div>
+  `;
+  wrap.appendChild(footRow);
+
+  listEl.innerHTML = "";
+  listEl.appendChild(wrap);
 }
 
 // Bấm vào tháng: đóng popup và tải lại tháng/năm đó
