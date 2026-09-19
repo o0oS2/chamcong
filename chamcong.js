@@ -3,18 +3,43 @@ document.addEventListener("DOMContentLoaded", function () {
   // Chế độ ca: 'chuan' (2 tuần đổi), 'dao' (đã đảo ca), 'chuyen_ngay' (chuyên ca ngày)
   window.currentShiftMode = window.currentShiftMode || "chuan";
 
-  const DSHanhChinhChung = [
+  // Vòng lặp nút "Đổi ca": chuẩn -> đảo ca -> chuyên ngày -> bất thường -> (quay lại chuẩn)
+  const SHIFT_CYCLE = ["chuan", "dao", "chuyen_ngay", "bat_thuong"];
+  window.daoCaStep = window.daoCaStep || 0;
+
+  // Chế độ "đổi ca bất thường": chọn riêng từng ngày trong tháng là ca đêm,
+  // ngày không chọn mặc định là ca ngày (Chủ nhật không chọn vẫn nghỉ như thường lệ).
+  // Lưu theo từng tháng (key "nam-thang") nên hết tháng/áp dụng lại thì không ảnh hưởng tháng khác,
+  // và khi tắt/chuyển sang 1 trong 3 chế độ chuẩn thì tự động quay lại lịch ca cũ.
+  window.batThuongDemDays = window.batThuongDemDays || {}; // { "2026-10": [5,6,7,...] }
+  window.batThuongMonths = window.batThuongMonths || {};   // { "2026-10": true }
+
+  function isBatThuongActive(nam, thang) {
+    return !!(window.batThuongMonths && window.batThuongMonths[`${nam}-${thang}`]);
+  }
+
+ function getDSHanhChinhChung(ca) {
+  const isDem = ca === "dem";
+  return [
     { label: "Đi làm đủ", short: "Đi làm đủ", type: "du", value: 0, allowSunday: true },
-    { label: "Nghỉ việc riêng", short: "Nghỉ VR", type: "nghi_vr", value: 8, allowSunday: false }, // Đã tắt trên Chủ nhật
+    { label: "Nghỉ việc riêng", short: "Nghỉ VR", type: "nghi_vr", value: 8, allowSunday: false },
     { label: "Nghỉ lễ", short: "Nghỉ lễ", type: "nghi_le", value: 8, allowSunday: true },
     { label: "Nghỉ 70%", short: "Nghỉ 70%", type: "nghi_70", value: 2.4, allowSunday: false },
-    { label: "Nghỉ sáng", short: "Nghỉ sáng", type: "nghi_sang", value: 4, allowSunday: true },
-    { label: "Nghỉ chiều", short: "Nghỉ chiều", type: "nghi_chieu", value: 4, allowSunday: true },
+    isDem
+      ? { label: "Nghỉ 20h-0h", short: "Nghỉ 20h-0h", type: "nghi_sang", value: 4, allowSunday: true }
+      : { label: "Nghỉ sáng", short: "Nghỉ sáng", type: "nghi_sang", value: 4, allowSunday: true },
+    isDem
+      ? { label: "Nghỉ 0h-4h", short: "Nghỉ 0h-4h", type: "nghi_chieu", value: 4, allowSunday: true }
+      : { label: "Nghỉ chiều", short: "Nghỉ chiều", type: "nghi_chieu", value: 4, allowSunday: true },
     { label: "Phép năm", short: "PN", type: "pn", value: 8, allowSunday: false },
-    { label: "1/2 phép năm sáng", short: "½PN sáng", type: "pn_nua_sang", value: 4, allowSunday: false },
-    { label: "1/2 phép năm chiều", short: "½PN chiều", type: "pn_nua_chieu", value: 4, allowSunday: false }
+    isDem
+      ? { label: "1/2 phép năm 20h-0h", short: "1/2 PN 20h-0h", type: "pn_nua_sang", value: 4, allowSunday: false }
+      : { label: "1/2 phép năm sáng", short: "½PN sáng", type: "pn_nua_sang", value: 4, allowSunday: false },
+    isDem
+      ? { label: "1/2 phép năm 0h-4h", short: "1/2 PN 0h-4h", type: "pn_nua_chieu", value: 4, allowSunday: false }
+      : { label: "1/2 phép năm chiều", short: "½PN chiều", type: "pn_nua_chieu", value: 4, allowSunday: false }
   ];
-
+}
   const DSMuon = [1, 1.5, 2, 2.5, 3, 3.5].map(v => ({
     label: `Muộn ${v} giờ`, short: `Muộn ${v}`, type: "muon", value: v, allowSunday: true
   }));
@@ -64,6 +89,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const curDate = new Date(y, m - 1, d);
     const dayOfWeek = curDate.getDay();
 
+    if (isBatThuongActive(y, m)) {
+      const demList = window.batThuongDemDays[`${y}-${m}`] || [];
+      if (demList.includes(d)) return "dem";
+      return (dayOfWeek === 0) ? "nghi" : "ngay";
+    }
+
     if (window.currentShiftMode === "chuyen_ngay") {
       return (dayOfWeek === 0) ? "nghi" : "ngay";
     }
@@ -89,7 +120,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const lblKetQua = document.getElementById("lblKetQuaCa");
     if (!lblKetQua) return;
 
-    if (window.currentShiftMode === "chuyen_ngay") {
+    const thangHT = getActiveMonth();
+    const namHT = getActiveYear();
+    const dangBatThuong = isBatThuongActive(namHT, thangHT);
+
+    if (!dangBatThuong && window.currentShiftMode === "chuyen_ngay") {
       lblKetQua.textContent = "đang làm chuyên ngày";
       lblKetQua.style.color = "#059669";
       lblKetQua.style.background = "#ecfdf5";
@@ -99,24 +134,31 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const today = new Date();
     const caHomNay = xacDinhCa(today.getFullYear(), today.getMonth() + 1, today.getDate());
+    const prefix = dangBatThuong ? "[Bất thường] " : "";
 
     if (caHomNay === "dem") {
-      lblKetQua.textContent = "đang làm ca đêm";
-      lblKetQua.style.color = "#1e293b";
-      lblKetQua.style.background = "#e2e8f0";
-      lblKetQua.style.borderColor = "#cbd5e1";
+      lblKetQua.textContent = prefix + "đang làm ca đêm";
+      lblKetQua.style.color = dangBatThuong ? "#9333ea" : "#1e293b";
+      lblKetQua.style.background = dangBatThuong ? "#f3e8ff" : "#e2e8f0";
+      lblKetQua.style.borderColor = dangBatThuong ? "#d8b4fe" : "#cbd5e1";
     } else {
-      lblKetQua.textContent = "đang làm ca ngày";
-      lblKetQua.style.color = "#b45309";
-      lblKetQua.style.background = "#fffdf5";
-      lblKetQua.style.borderColor = "#fce7b2";
+      lblKetQua.textContent = prefix + "đang làm ca ngày";
+      lblKetQua.style.color = dangBatThuong ? "#9333ea" : "#b45309";
+      lblKetQua.style.background = dangBatThuong ? "#f3e8ff" : "#fffdf5";
+      lblKetQua.style.borderColor = dangBatThuong ? "#d8b4fe" : "#fce7b2";
     }
   };
 
-  function hasUserModifiedData() {
+  // Trả về danh sách các ngày mà ô chấm công vẫn đang ở giá trị MẶC ĐỊNH
+  // (chưa từng được người dùng bấm sửa tay) — dùng để biết ô nào an toàn để
+  // tính lại theo ca mới, ô nào phải giữ nguyên vì người dùng đã chỉnh tay.
+  // Phải gọi hàm này TRƯỚC khi đổi currentShiftMode/batThuong, vì xacDinhCa()
+  // bên trong dùng trạng thái ca đang có tại thời điểm gọi.
+  function layDanhSachNgayConMacDinh() {
     const thang = getActiveMonth();
     const nam = getActiveYear();
     const totalDays = new Date(nam, thang, 0).getDate();
+    const ds = [];
 
     for (let d = 1; d <= totalDays; d++) {
       const data = chamCongData[d];
@@ -130,11 +172,23 @@ document.addEventListener("DOMContentLoaded", function () {
       const defaultHcObj = getDefaultHc(dayOfWeek, holiday);
       const defaultOt = (ca === "dem" && dayOfWeek !== 0 && !holiday) ? "1" : "0";
 
-      if (data.hc && data.hc.type !== defaultHcObj.type) return true;
-      if (data.ot && data.ot !== defaultOt) return true;
-      if (data.midOt && data.midOt !== "0") return true;
+      const conMacDinh =
+        data.hc?.type === defaultHcObj.type &&
+        (data.ot || "0") === defaultOt &&
+        (data.midOt || "0") === "0";
+
+      if (conMacDinh) ds.push(d);
     }
-    return false;
+    return ds;
+  }
+
+  // Sau khi đổi chế độ ca: chỉ xóa (để tính lại) những ngày còn mặc định,
+  // các ngày người dùng đã chỉnh tay (nghỉ, phép, muộn, tăng ca...) được giữ nguyên.
+  function apDungLaiSauKhiDoiCa(dsNgayConMacDinh) {
+    dsNgayConMacDinh.forEach(d => delete chamCongData[d]);
+    renderLichChamCong();
+    syncChamCongToTinhLuong();
+    if (typeof window.autoSaveUserData === "function") window.autoSaveUserData();
   }
 
   window.clearAttendanceAndHolidayForNewMonth = function() {
@@ -158,24 +212,98 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   window.toggleDaoCa = function() {
-    if (hasUserModifiedData()) {
-      const xacNhan = confirm("CẢNH BÁO:\nThay đổi chế độ ca sẽ thiết lập lại toàn bộ dữ liệu chấm công đã sửa trong tháng này.\n\nBấm [OK] để tiếp tục.\nBấm [Hủy] để giữ nguyên.");
-      if (!xacNhan) return;
+    // Chụp lại danh sách ngày còn mặc định TRƯỚC khi đổi trạng thái ca
+    const dsNgayConMacDinh = layDanhSachNgayConMacDinh();
+
+    window.daoCaStep = (window.daoCaStep + 1) % SHIFT_CYCLE.length;
+    const nextMode = SHIFT_CYCLE[window.daoCaStep];
+
+    if (nextMode === "bat_thuong") {
+      // Chưa đổi trạng thái ca ngay — mở bảng cho chọn ngày ca đêm,
+      // trạng thái chỉ thật sự áp dụng khi bấm "Áp dụng" trong bảng đó.
+      openBatThuongPicker();
+      return;
     }
 
-    if (window.currentShiftMode === "chuan") {
-      window.currentShiftMode = "dao";
-    } else if (window.currentShiftMode === "dao") {
-      window.currentShiftMode = "chuyen_ngay";
-    } else {
-      window.currentShiftMode = "chuan";
-    }
+    // Quay lại 1 trong 3 chế độ chuẩn -> tắt chế độ bất thường của tháng đang xem (nếu có)
+    const thangHT = getActiveMonth();
+    const namHT = getActiveYear();
+    if (window.batThuongMonths) delete window.batThuongMonths[`${namHT}-${thangHT}`];
+
+    window.currentShiftMode = nextMode;
 
     updateDaoCaButtonUI();
-    Object.keys(chamCongData).forEach(k => delete chamCongData[k]);
-    renderLichChamCong();
-    syncChamCongToTinhLuong();
-    if (typeof window.autoSaveUserData === "function") window.autoSaveUserData();
+    apDungLaiSauKhiDoiCa(dsNgayConMacDinh);
+  };
+
+  // Bảng chọn "Đổi ca bất thường": tap vào từng ngày để đánh dấu là ca đêm,
+  // ngày không tap giữ nguyên là ca ngày (Chủ nhật không tap vẫn nghỉ như bình thường).
+  window.openBatThuongPicker = function() {
+    const overlay = document.getElementById("pickerOverlay");
+    const title = document.getElementById("pickerTitle");
+    const body = document.getElementById("pickerBody");
+    if (!overlay || !body) return;
+
+    const thang = getActiveMonth();
+    const nam = getActiveYear();
+    const totalDays = new Date(nam, thang, 0).getDate();
+    const monthKey = `${nam}-${thang}`;
+    const demSet = new Set(window.batThuongDemDays[monthKey] || []);
+
+    title.textContent = `Đổi ca bất thường T${thang}/${nam} — bấm chọn ngày làm CA ĐÊM`;
+    body.className = "picker-body";
+    body.style.gridTemplateColumns = "repeat(7, 1fr)";
+    body.style.gap = "5px";
+    body.innerHTML = "";
+
+    const toDemStyle = (btn, isDem) => {
+      btn.style.background = isDem ? "#1e293b" : "";
+      btn.style.color = isDem ? "#fff" : "";
+      btn.style.borderColor = isDem ? "#1e293b" : "";
+    };
+
+    for (let d = 1; d <= totalDays; d++) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "picker-btn";
+      btn.textContent = d;
+      btn.style.padding = "8px 0";
+      toDemStyle(btn, demSet.has(d));
+      btn.onclick = () => {
+        if (demSet.has(d)) demSet.delete(d); else demSet.add(d);
+        toDemStyle(btn, demSet.has(d));
+      };
+      body.appendChild(btn);
+    }
+
+    const actionRow = document.createElement("div");
+    actionRow.style.cssText = "grid-column: 1 / -1; display:flex; gap:8px; margin-top:6px;";
+    actionRow.innerHTML = `
+      <button type="button" class="picker-btn" id="btnApplyBatThuong" style="flex:1; background:#007bff; color:#fff; border-color:#007bff;">✓ Áp dụng</button>
+      <button type="button" class="picker-btn" id="btnHuyBatThuong" style="flex:1; background:#fee2e2; color:#b91c1c; border-color:#fca5a5;">Bỏ bất thường tháng này</button>
+    `;
+    body.appendChild(actionRow);
+
+    document.getElementById("btnApplyBatThuong").onclick = function() {
+      const dsNgayConMacDinh = layDanhSachNgayConMacDinh(); // chụp trước khi đổi
+      window.batThuongDemDays[monthKey] = Array.from(demSet);
+      window.batThuongMonths[monthKey] = true;
+      forceClosePicker();
+      updateDaoCaButtonUI();
+      apDungLaiSauKhiDoiCa(dsNgayConMacDinh);
+    };
+
+    document.getElementById("btnHuyBatThuong").onclick = function() {
+      const dsNgayConMacDinh = layDanhSachNgayConMacDinh(); // chụp trước khi đổi
+      delete window.batThuongDemDays[monthKey];
+      delete window.batThuongMonths[monthKey];
+      window.daoCaStep = 0; // để lần bấm "Đổi ca" tiếp theo bắt đầu lại từ Ca chuẩn
+      forceClosePicker();
+      updateDaoCaButtonUI();
+      apDungLaiSauKhiDoiCa(dsNgayConMacDinh);
+    };
+
+    overlay.style.display = "flex";
   };
 
   // Thuật toán âm lịch
@@ -293,6 +421,7 @@ document.addEventListener("DOMContentLoaded", function () {
       body.className = "picker-body";
       body.style.gridTemplateColumns = "repeat(2, 1fr)";
 
+      const ca = xacDinhCa(nam, thang, day);
       const list = [];
 
       // Với Chủ nhật hoặc Ngày lễ: bổ sung nút chọn "Nghỉ" (ghi ngắn gọn là "Nghỉ")
@@ -300,7 +429,7 @@ document.addEventListener("DOMContentLoaded", function () {
         list.push({ label: "Nghỉ", short: "Nghỉ", type: "nghi_vr", value: 8, allowSunday: true });
       }
 
-      DSHanhChinhChung.forEach(item => {
+      getDSHanhChinhChung(ca).forEach(item => {
         if (!isSundayOrHoliday || item.allowSunday) list.push(item);
       });
       DSMuon.forEach(item => list.push(item));
@@ -362,8 +491,10 @@ document.addEventListener("DOMContentLoaded", function () {
     if (type === "hc") {
       chamCongData[day].hc = val;
       if (ca === "dem") {
-        if (val.type === "du" || val.type === "muon" || val.type === "nghi_70") {
-          chamCongData[day].ot = "1";
+        if (val.type === "du" || val.type === "muon" || val.type === "nghi_sang" || val.type === "pn_nua_sang") {
+          if (!chamCongData[day].ot || chamCongData[day].ot === "0") {
+            chamCongData[day].ot = "1";
+          }
         } else {
           chamCongData[day].ot = "0";
         }
@@ -507,10 +638,17 @@ document.addEventListener("DOMContentLoaded", function () {
       const lunar = convertSolar2Lunar(d, thang, nam, TZ);
       const holiday = isHoliday(d, thang, nam, lunar);
 
-      // Ngày kế tiếp (để kiểm tra ca đêm có vắt sang ngày lễ)
+     // Ngày kế tiếp (kiểm tra cả lịch Nhà nước lẫn việc người dùng tự chọn Nghỉ lễ)
       const nextDate = new Date(nam, thang - 1, d + 1);
+      const nextDayNum = d + 1;
       const nextLunar = convertSolar2Lunar(nextDate.getDate(), nextDate.getMonth() + 1, nextDate.getFullYear(), TZ);
-      const nextIsHoliday = isHoliday(nextDate.getDate(), nextDate.getMonth() + 1, nextDate.getFullYear(), nextLunar);
+      const nextIsCalendarHoliday = isHoliday(nextDate.getDate(), nextDate.getMonth() + 1, nextDate.getFullYear(), nextLunar);
+      
+      // Lấy trạng thái chấm công đã lưu của ngày hôm sau (nếu cùng tháng)
+      const nextDayData = chamCongData[nextDayNum];
+      const nextIsPickedHoliday = nextDayData && nextDayData.hc && nextDayData.hc.type === "nghi_le";
+
+      const nextIsHoliday = nextIsCalendarHoliday || Boolean(nextIsPickedHoliday);
 
       const defaultHc = getDefaultHc(dayOfWeek, holiday);
       const defaultOt = (ca === "dem" && dayOfWeek !== 0 && !holiday) ? "1" : "0";
@@ -542,20 +680,20 @@ document.addEventListener("DOMContentLoaded", function () {
         tongTC150 += otVal;
       }
 
-      // Ca đêm các ngày từ Thứ 2 đến Thứ 5
+    // Ca đêm các ngày từ Thứ 2 đến Thứ 6
       if (ca === "dem" && dayOfWeek >= 1 && dayOfWeek <= 5) {
         if (hcType === "du") {
           tongNgayCong100 += nextIsHoliday ? 0.5 : 1;
         } else if (hcType === "nghi_70") {
-          tongNgayCong100 += 0.7; // Tính 70% ngày công (-0.3 ngày công)
-        } else if (hcType === "muon" || hcType === "vesom") {
-          tongNgayCong100 += Math.max(0, (8 - hcVal) / 8);
+          tongNgayCong100 += 0.7;
+        } else if (hcType === "muon") {
+          // Chỉ "muon" mới trừ vào khung 4 tiếng đầu
+          tongNgayCong100 += nextIsHoliday ? Math.max(0, (4 - hcVal) / 8) : Math.max(0, (8 - hcVal) / 8);
         } else if (hcType === "nghi_sang" || hcType === "pn_nua_sang") {
-          // Đêm trước ngày lễ: nghỉ khung 20h-24h, khung 0h-4h vẫn là
-          // ngày lễ nên không cộng công ở đây (đã nhập tay bảng dưới).
           tongNgayCong100 += nextIsHoliday ? 0 : 0.5;
-        } else if (hcType === "nghi_chieu" || hcType === "pn_nua_chieu") {
-          tongNgayCong100 += 0.5;
+        } else if (hcType === "nghi_chieu" || hcType === "pn_nua_chieu" || hcType === "vesom") {
+          // Về sớm đêm trước lễ vẫn làm đủ 20h-0h nên hưởng trọn 0.5 công; ngày thường mới bị trừ
+          tongNgayCong100 += nextIsHoliday ? 0.5 : Math.max(0, (8 - hcVal) / 8);
         }
 
         if (otVal > 2) {
@@ -586,11 +724,9 @@ document.addEventListener("DOMContentLoaded", function () {
             dem30 = 6 + 2 - hcVal;
           } else if (hcType === "vesom" && hcVal > 1) {
             dem30 = 6 - hcVal;
-          } else if (hcType === "nghi_sang" || hcType === "nghi_chieu") {
-            dem30 = 3;
-          } else if (hcType === "pn_nua_sang") {
+          } else if (hcType === "pn_nua_sang" || hcType === "nghi_sang") {
             dem30 = 4;
-          } else if (hcType === "pn_nua_chieu") {
+          } else if (hcType === "pn_nua_chieu" || hcType === "nghi_chieu") {
             dem30 = 2;
           } else if (hcType === "nghi_vr" || hcType === "nghi_le" || hcType === "pn" || hcType === "nghi_70") {
             dem30 = 0;
