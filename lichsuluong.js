@@ -1,421 +1,250 @@
-// Thiết lập ngày tháng toàn cục theo quy tắc ngày 10
-const curDateObj = new Date();
-const cMonth = curDateObj.getMonth() + 1;
-const cYear = curDateObj.getFullYear();
-const cDate = curDateObj.getDate();
+// ==================== LỊCH SỬ LƯƠNG ====================
+let shSelectedYear = new Date().getFullYear();
+let shYearDataCache = {}; // year -> { monthsData, total }
 
-if (cDate <= 10) {
-  window.selectedMonth = (cMonth === 1) ? 12 : cMonth - 1;
-  window.selectedYear = (cMonth === 1) ? cYear - 1 : cYear;
-} else {
-  window.selectedMonth = cMonth;
-  window.selectedYear = cYear;
+// Hàm tính lương THỰC LĨNH từ 1 payload lưu trên máy chủ
+function calculateTotalSalaryFromRecord(record, month, year) {
+  if (!record) return 0;
+
+  const getVal = (v) => parseInt((v || "0").toString().replace(/\./g, "")) || 0;
+  const getFloat = (v) => parseFloat(v || "0") || 0;
+
+  const lcb = getVal(record.base_salary);
+  if (lcb === 0) return 0;
+
+  const ef = record.extra_fields || {};
+  const allowances = record.allowances || {};
+
+  // 1. Tính ngày công chuẩn của tháng (theo đúng chamcong.js)
+  const m = month || 1;
+  const y = year || new Date().getFullYear();
+  const soNgayTrongThang = new Date(y, m, 0).getDate();
+  let soNgayChuNhat = 0;
+  for (let d = 1; d <= soNgayTrongThang; d++) {
+    if (new Date(y, m - 1, d).getDay() === 0) soNgayChuNhat++;
+  }
+  let ncChuandef = soNgayTrongThang - soNgayChuNhat;
+  if (ncChuandef === 27) ncChuandef = 26;
+
+  // 2. Lấy các khoản phụ cấp tính vào tăng ca và bảo hiểm
+  const pcThamNien = getVal(allowances["cc_pcThamNien"]);
+  const pcChucVu = getVal(allowances["cc_pcChucVu"]);
+  const hoTroDiLai = getVal(allowances["cc_pcDiLai"]);
+
+  const luongNgayCong = ncChuandef > 0 ? lcb / ncChuandef : 0;
+  const luongTC = ncChuandef > 0 ? (lcb + pcThamNien + pcChucVu + hoTroDiLai) / ncChuandef / 8 : 0;
+  const troCapDemVal = luongTC;
+
+  // 3. Tính tổng thu nhập
+  let tongThuNhap = 0;
+  tongThuNhap += luongNgayCong * getFloat(ef["cc_ngayCong"]);
+  tongThuNhap += luongTC * 1.5 * getFloat(ef["cc_tc150"]);
+  tongThuNhap += luongTC * 2 * getFloat(ef["cc_tc200"]);
+  tongThuNhap += troCapDemVal * 0.3 * getFloat(ef["cc_tcDem30"]);
+  tongThuNhap += luongNgayCong * 2 * getFloat(ef["cc_ngayCong200"]);
+  tongThuNhap += luongTC * 3 * getFloat(ef["cc_tc300"]);
+  tongThuNhap += luongTC * 3.4 * getFloat(ef["cc_tc340"]);
+  tongThuNhap += troCapDemVal * 0.7 * getFloat(ef["cc_tcDem70"]);
+  tongThuNhap += luongTC * 3.8 * getFloat(ef["cc_thongca380"]);
+  tongThuNhap += luongNgayCong * getFloat(ef["cc_phepNam"]);
+  tongThuNhap += luongNgayCong * getFloat(ef["cc_le"]);
+
+  // Bảng phụ Lễ Tết Chấm Công
+  function phuLuongCc(soGioKey, heSoKey, loaiLuong) {
+    const gio = getFloat(ef[soGioKey]);
+    const heSo = getFloat(ef[heSoKey]);
+    let donGia = 0;
+    if (loaiLuong === "hanhChinh" || loaiLuong === "dem") {
+      donGia = luongNgayCong / 800;
+    } else if (loaiLuong === "tangCa") {
+      donGia = luongTC / 100;
+    }
+    return Math.round(gio * heSo * donGia);
+  }
+
+  let tienTet = 0;
+  tienTet += phuLuongCc("cc_soGioHanhChinh1", "cc_phuLuongHanhChinh", "hanhChinh");
+  tienTet += phuLuongCc("cc_soGioTangCa1", "cc_phuLuongTangCa", "tangCa");
+  tienTet += phuLuongCc("cc_soGioDem1", "cc_phuLuongDem", "dem");
+  tienTet += phuLuongCc("cc_soGioHanhChinh2", "cc_phuLuongHanhChinh2", "hanhChinh");
+  tienTet += phuLuongCc("cc_soGioTangCa2", "cc_phuLuongTangCa2", "tangCa");
+  tienTet += phuLuongCc("cc_soGioDem2", "cc_phuLuongDem2", "dem");
+  tongThuNhap += tienTet;
+
+  // Cộng tất cả phụ cấp
+  ["cc_pcABC", "cc_pcChuyenCan", "cc_pcThamNien", "cc_pcChucVu", "cc_pcDiLai", "cc_pcDienThoai", "cc_pcTreEm", "cc_pcKhac"].forEach(pid => {
+    tongThuNhap += getVal(allowances[pid]);
+  });
+
+  // 4. Khấu trừ BHXH (10.5%) và Công đoàn (0.5%) chuẩn theo chamcong.js
+  const luongBH = lcb + pcThamNien + pcChucVu;
+  const bhxh = Math.round(luongBH * 0.105);
+  const congDoan = Math.round(luongBH * 0.005);
+
+  const thucLinh = Math.round(tongThuNhap) - bhxh - congDoan;
+  return thucLinh > 0 ? thucLinh : 0;
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-  updateDateDisplays();
+// Lấy dữ liệu 12 tháng của 1 năm (có cache để không gọi API lặp lại)
+async function fetchYearSalaryData(year) {
+  if (shYearDataCache[year]) return shYearDataCache[year];
 
-  function formatNumber(num) {
-    if (!num && num !== 0) return "";
-    let str = num.toString().replace(/\./g, "").replace(/[^0-9]/g, "");
-    return str.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-  }
+  const user = (typeof currentUser !== "undefined" && currentUser) ? currentUser : localStorage.getItem("cc_currentUser");
+  const apiUrl = (typeof API_URL !== "undefined") ? API_URL : "https://tinhluong.o0os2.workers.dev";
 
-  function parseNumber(str) {
-    return parseInt((str || "").toString().replace(/\./g, "")) || 0;
-  }
+  const monthsData = {};
 
-  window.parseSalaryNumber = parseNumber;
-  window.formatSalaryNumber = formatNumber;
-
-  // Danh sách các ô tiền có dấu chấm phân cách
-  const moneyInputIds = [
-    "luongCoBan", "cc_luongCoBan",
-    "pcABC", "cc_pcABC",
-    "pcChucVu", "cc_pcChucVu",
-    "pcDiLai", "cc_pcDiLai",
-    "pcKhac", "cc_pcKhac"
-  ];
-
-  moneyInputIds.forEach(inputId => {
-    const input = document.getElementById(inputId);
-    if (input) {
-      input.addEventListener("input", function(e) {
-        let val = e.target.value.replace(/\./g, "").replace(/[^0-9]/g, "");
-        e.target.value = formatNumber(val);
-        tinhLuong();
-        if (typeof window.triggerCcComputeEngine === "function") window.triggerCcComputeEngine();
-        if (typeof window.autoSaveUserData === "function") window.autoSaveUserData();
-      });
-
-      input.addEventListener("blur", function(e) {
-        let val = parseNumber(e.target.value);
-        if (val > 0) e.target.value = formatNumber(val);
-        tinhLuong();
-        if (typeof window.triggerCcComputeEngine === "function") window.triggerCcComputeEngine();
-        if (typeof window.autoSaveUserData === "function") window.autoSaveUserData();
-      });
-
-      input.addEventListener("focus", function(e) {
-        let val = parseNumber(e.target.value);
-        if (val > 0) e.target.value = val.toString();
-      });
+  if (user) {
+    const fetchPromises = [];
+    for (let m = 1; m <= 12; m++) {
+      const monthKey = `${year}_${m}`;
+      fetchPromises.push(
+        fetch(`${apiUrl}?action=load&user=${encodeURIComponent(user)}&monthKey=${monthKey}`)
+          .then(res => res.json())
+          .then(data => { monthsData[m] = data; })
+          .catch(() => { monthsData[m] = null; })
+      );
     }
+    await Promise.all(fetchPromises);
+  }
+
+  let total = 0;
+  for (let m = 1; m <= 12; m++) {
+    total += calculateTotalSalaryFromRecord(monthsData[m], m, year);
+  }
+
+  const result = { monthsData, total };
+  shYearDataCache[year] = result;
+  return result;
+}
+
+// Mở modal lịch sử lương
+window.openSalaryHistoryModal = async function() {
+  const overlay = document.getElementById("salaryHistoryOverlay");
+  if (!overlay) return;
+
+  shSelectedYear = new Date().getFullYear();
+  overlay.style.display = "flex";
+
+  const bar = document.getElementById("shYearsBar");
+  if (bar) bar.innerHTML = `<div style="padding:8px; color:#64748b; font-size:12px;">⏳ Đang kiểm tra dữ liệu...</div>`;
+
+  await renderSalaryHistoryYears();
+  loadSalaryHistoryForYear(shSelectedYear);
+};
+
+// Đóng modal
+window.closeSalaryHistoryModal = function(e) {
+  if (e && e.target && e.target.id !== "salaryHistoryOverlay") return;
+  const overlay = document.getElementById("salaryHistoryOverlay");
+  if (overlay) overlay.style.display = "none";
+
+  shYearDataCache = {};
+};
+
+// Vẽ thanh danh sách các năm từ 2020 đến năm hiện tại
+async function renderSalaryHistoryYears() {
+  const bar = document.getElementById("shYearsBar");
+  if (!bar) return;
+
+  const currentYear = new Date().getFullYear();
+  const years = [];
+  for (let y = 2020; y <= currentYear; y++) years.push(y);
+
+  await Promise.all(
+    years.filter(y => y !== currentYear).map(y => fetchYearSalaryData(y))
+  );
+
+  const visibleYears = years.filter(y => y === currentYear || (shYearDataCache[y] && shYearDataCache[y].total > 0));
+
+  if (!visibleYears.includes(shSelectedYear)) {
+    shSelectedYear = currentYear;
+  }
+
+  bar.innerHTML = "";
+  visibleYears.forEach(y => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = `sh-year-btn ${y === shSelectedYear ? "active" : ""}`;
+    btn.textContent = `Năm ${y}`;
+    btn.onclick = () => {
+      shSelectedYear = y;
+      renderSalaryHistoryYears();
+      loadSalaryHistoryForYear(y);
+    };
+    bar.appendChild(btn);
   });
 
-  // Tự điền giá trị mặc định cho các phụ cấp
-  window.applyDefaultAllowances = function() {
-    ["pcDiLai", "cc_pcDiLai"].forEach(id => {
-      const el = document.getElementById(id);
-      if (el && (!el.value || el.value === "0")) {
-        el.value = formatNumber(500000);
-      }
-    });
+  setTimeout(() => {
+    const activeBtn = bar.querySelector(".sh-year-btn.active");
+    if (activeBtn) activeBtn.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+  }, 50);
+}
 
-    ["pcChuyenCan", "cc_pcChuyenCan"].forEach(id => {
-      const el = document.getElementById(id);
-      if (el && !el.value) {
-        el.value = "200.000";
-      }
-    });
+// Tải lương của 12 tháng trong năm — chỉ hiện tháng có thực lĩnh > 0
+async function loadSalaryHistoryForYear(year) {
+  const listEl = document.getElementById("shMonthsList");
+  if (!listEl) return;
 
-    ["pcThamNien", "cc_pcThamNien"].forEach(id => {
-      const el = document.getElementById(id);
-      if (el && !el.value) {
-        el.value = "600.000";
-      }
-    });
-  };
+  listEl.innerHTML = `<div style="text-align:center; padding: 20px; color:#64748b; font-size:13px;">⏳ Đang tải dữ liệu năm ${year}...</div>`;
 
-  window.applyDefaultAllowances();
+  const formatFn = window.formatSalaryNumber || function(v) { return (v || 0).toLocaleString("vi-VN"); };
+  const { monthsData, total: totalYearSalary } = await fetchYearSalaryData(year);
 
-  function tinhNgayCongChuan() {
-    const thang = window.selectedMonth || 1;
-    const nam = window.selectedYear || new Date().getFullYear();
+  listEl.innerHTML = "";
+  let hasAnyMonth = false;
 
-    const soNgayTrongThang = new Date(nam, thang, 0).getDate();
-    let soNgayChuNhat = 0;
-    for (let d = 1; d <= soNgayTrongThang; d++) {
-      if (new Date(nam, thang - 1, d).getDay() === 0) soNgayChuNhat++;
-    }
+  for (let m = 1; m <= 12; m++) {
+    const totalMonth = calculateTotalSalaryFromRecord(monthsData[m], m, year);
+    if (totalMonth <= 0) continue;
 
-    let ngayCongChuan = soNgayTrongThang - soNgayChuNhat;
-    if (ngayCongChuan === 27) ngayCongChuan = 26;
-    return ngayCongChuan;
+    hasAnyMonth = true;
+
+    const row = document.createElement("div");
+    row.className = "sh-month-item";
+    row.title = `Bấm để xem chi tiết chấm công Tháng ${m}/${year}`;
+    row.onclick = () => selectHistoryMonth(m, year);
+
+    const mText = `Tháng ${m.toString().padStart(2, '0')}/${year}`;
+    row.innerHTML = `
+      <span class="m-name">📅 ${mText}</span>
+      <span class="m-val">${formatFn(totalMonth)} đ</span>
+    `;
+    listEl.appendChild(row);
   }
 
-  const inputs = Array.from(document.querySelectorAll("#paneLuong input, #paneLuong select"));
-  inputs.forEach((input, index) => {
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        const next = inputs[index + 1];
-        if (next) next.focus();
-      }
-    });
-    
-    if (!moneyInputIds.includes(input.id)) {
-      input.addEventListener("input", () => {
-        tinhLuong();
-        if (typeof window.autoSaveUserData === "function") window.autoSaveUserData();
-      });
-      input.addEventListener("change", () => {
-        tinhLuong();
-        if (typeof window.autoSaveUserData === "function") window.autoSaveUserData();
-      });
-    }
-  });
-
-  window.tinhLuong = function() {
-    const luongCoBan = parseNumber(document.getElementById("luongCoBan")?.value || "0");
-    const ngayCongChuan = tinhNgayCongChuan();
-
-    const phuCapThamNien = parseNumber(document.getElementById("pcThamNien")?.value || "0");
-    const phuCapChucVu = parseNumber(document.getElementById("pcChucVu")?.value || "0");
-    const hoTroDiLai = parseNumber(document.getElementById("pcDiLai")?.value || "0");
-
-    const luongNgayCong = ngayCongChuan > 0 ? luongCoBan / ngayCongChuan : 0;
-    const luongTangCa = ngayCongChuan > 0 ? (luongCoBan + phuCapThamNien + phuCapChucVu + hoTroDiLai) / ngayCongChuan / 8 : 0;
-    const troCapDem = luongTangCa;
-
-    function updateTien(idSo, idTien, calc) {
-      const val = +document.getElementById(idSo)?.value || 0;
-      const tien = Math.round(calc(val));
-      if (document.getElementById(idTien)) {
-        document.getElementById(idTien).textContent = tien.toLocaleString("vi-VN");
-      }
-      return tien;
-    }
-
-    let tong = 0;
-    tong += updateTien("ngayCong", "tienNgayCong", so => luongNgayCong * so);
-    tong += updateTien("tc150", "tienTC150", so => luongTangCa * 1.5 * so);
-    tong += updateTien("tc200", "tienTC200", so => luongTangCa * 2 * so);
-    tong += updateTien("tcDem30", "tienDem30", so => troCapDem * 0.3 * so);
-    tong += updateTien("ngayCong200", "tienCong200", so => luongNgayCong * 2 * so);
-    tong += updateTien("tc300", "tienTC300", so => luongTangCa * 3 * so);
-    tong += updateTien("tc340", "tienTC340", so => luongTangCa * 3.4 * so);
-    tong += updateTien("tcDem70", "tienDem70", so => troCapDem * 0.7 * so);
-    tong += updateTien("thongca380", "tienthongca380", so => luongTangCa * 3.8 * so);
-    tong += updateTien("phepNam", "tienPhepNam", so => luongNgayCong * so);
-    tong += updateTien("le", "tienLe", so => luongNgayCong * so);
-
-    const tienNgayLeTet = calcBangPhu(luongNgayCong, luongTangCa, troCapDem);
-    if (document.getElementById("tienNgayLeTet")) {
-      document.getElementById("tienNgayLeTet").textContent = tienNgayLeTet.toLocaleString("vi-VN");
-    }
-    tong += tienNgayLeTet;
-
-    const phuCaps = [
-      "pcABC", "pcChuyenCan", "pcThamNien",
-      "pcChucVu", "pcDiLai", "pcDienThoai",
-      "pcTreEm", "pcKhac"
-    ];
-    phuCaps.forEach(id => {
-      tong += parseNumber(document.getElementById(id)?.value || "0");
-    });
-
-    if (document.getElementById("tongLuong")) {
-      document.getElementById("tongLuong").textContent = Math.round(tong).toLocaleString("vi-VN");
-    }
-
-    const luongDongBH = luongCoBan + phuCapThamNien + phuCapChucVu;
-    const tienTruBHXH = Math.round(luongDongBH * 0.105);
-    const tienTruCD = Math.round(luongDongBH * 0.005);
-    if (document.getElementById("tienTruBHXH")) {
-      document.getElementById("tienTruBHXH").textContent = tienTruBHXH.toLocaleString("vi-VN");
-    }
-    if (document.getElementById("tienTruCD")) {
-      document.getElementById("tienTruCD").textContent = tienTruCD.toLocaleString("vi-VN");
-    }
-
-    const thucLinh = Math.round(tong) - tienTruBHXH - tienTruCD;
-    if (document.getElementById("thucLinh")) {
-      document.getElementById("thucLinh").textContent = thucLinh.toLocaleString("vi-VN");
-    }
-  };
-
-  function calcBangPhu(luongNgayCong, luongTangCa, troCapDem) {
-    function phuLuong(soGioId, heSoId, rowTienId, loaiLuong) {
-      const gio = +document.getElementById(soGioId)?.value || 0;
-      const heSo = +document.getElementById(heSoId)?.value || 0;
-      let donGia = 0;
-      if (loaiLuong === "hanhChinh" || loaiLuong === "dem") {
-        donGia = luongNgayCong / 800;
-      } else if (loaiLuong === "tangCa") {
-        donGia = luongTangCa / 100;
-      }
-      const tien = Math.round(gio * heSo * donGia);
-      if (document.getElementById(rowTienId)) {
-        document.getElementById(rowTienId).textContent = tien.toLocaleString("vi-VN");
-      }
-      return tien;
-    }
-
-    let tongPhu = 0;
-    tongPhu += phuLuong("soGioHanhChinh1", "phuLuongHanhChinh", "tienHanhChinh", "hanhChinh");
-    tongPhu += phuLuong("soGioTangCa1", "phuLuongTangCa", "tienTangCa", "tangCa");
-    tongPhu += phuLuong("soGioDem1", "phuLuongDem", "tienTroCapDem", "dem");
-    tongPhu += phuLuong("soGioHanhChinh2", "phuLuongHanhChinh2", "tienHanhChinh2", "hanhChinh");
-    tongPhu += phuLuong("soGioTangCa2", "phuLuongTangCa2", "tienTangCa2", "tangCa");
-    tongPhu += phuLuong("soGioDem2", "phuLuongDem2", "tienTroCapDem2", "dem");
-    return tongPhu;
+  if (!hasAnyMonth) {
+    listEl.innerHTML = `<div style="text-align:center; padding: 24px; color:#94a3b8; font-size:13px;">📭 Chưa có dữ liệu lương cho năm ${year}</div>`;
+    return;
   }
 
-  // Xóa trắng riêng Tab Tính Lương
-  window.clearDataTabLuong = function() {
-    if (!confirm("Bạn có chắc chắn muốn xóa dữ liệu bảng Tính Lương tháng này?")) return;
+  const totalBox = document.createElement("div");
+  totalBox.className = "sh-total-box";
+  totalBox.innerHTML = `
+    <span>💵 Tổng thực lĩnh năm ${year}:</span>
+    <span>${formatFn(totalYearSalary)} đ</span>
+  `;
+  listEl.appendChild(totalBox);
+}
 
-    const ids = [
-      "luongCoBan", "ngayCong", "tc150", "tc200", "tcDem30", 
-      "ngayCong200", "tc300", "tc340", "tcDem70", "thongca380", "phepNam", "le",
-      "pcABC", "pcChucVu", "pcDiLai", "pcKhac",
-      "soGioHanhChinh1", "phuLuongHanhChinh", "soGioTangCa1", "phuLuongTangCa", "soGioDem1", "phuLuongDem",
-      "soGioHanhChinh2", "phuLuongHanhChinh2", "soGioTangCa2", "phuLuongTangCa2", "soGioDem2", "phuLuongDem2"
-    ];
+// Bấm vào tháng: đóng popup và tải lại tháng/năm đó
+window.selectHistoryMonth = function(month, year) {
+  const overlay = document.getElementById("salaryHistoryOverlay");
+  if (overlay) overlay.style.display = "none";
 
-    ids.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.value = "";
-    });
+  shYearDataCache = {};
 
-    window.applyDefaultAllowances();
-    tinhLuong();
-    if (typeof window.autoSaveUserData === "function") window.autoSaveUserData();
-    alert("Đã xóa sạch dữ liệu bảng Tính Lương!");
-  };
-  // ================= TỰ ĐỘNG GỢI Ý 5 MỨC ABC THEO LCB =================
-  function roundToThousand(val) {
-    return Math.round(val / 1000) * 1000;
+  window.selectedMonth = month;
+  window.selectedYear = year;
+
+  if (typeof window.updateDateDisplays === "function") {
+    window.updateDateDisplays();
   }
 
-  function handleAutoSuggestABC(salaryVal, targetAbcId, targetDatalistId) {
-    const lcbNum = parseNumber(salaryVal);
-    const abcInput = document.getElementById(targetAbcId);
-    const datalist = document.getElementById(targetDatalistId);
-    if (!datalist || !abcInput) return;
-
-    datalist.innerHTML = "";
-
-    // Tìm dữ liệu lương từ SALARY_CONFIG
-    const salaryList = (window.SALARY_CONFIG && window.SALARY_CONFIG.data) ? window.SALARY_CONFIG.data : [];
-    const matched = salaryList.find(item => item.lcb === lcbNum);
-
-    if (matched && matched.congC > 0) {
-      const c = matched.congC;
-      const levels = [
-        { name: "A (150%)", val: roundToThousand(c * 1.5) },
-        { name: "B (130%)", val: roundToThousand(c * 1.3) },
-        { name: "C (100%)", val: c },
-        { name: "D (70%)",  val: roundToThousand(c * 0.7) },
-        { name: "E (50%)",  val: roundToThousand(c * 0.5) }
-      ];
-
-      // Đổ 5 mức gợi ý vào datalist
-      levels.forEach(lvl => {
-        const opt = document.createElement("option");
-        opt.value = formatNumber(lvl.val);
-        opt.label = `Mức ${lvl.name}`;
-        datalist.appendChild(opt);
-      });
-
-      // 1. Tự động điền sẵn mức C
-      abcInput.value = formatNumber(c);
-
-      // Lưu giá trị mặc định vào dataset để khi blur nếu bỏ trống sẽ khôi phục lại
-      abcInput.dataset.defaultC = formatNumber(c);
-
-      // 2. Gắn sự kiện: khi bấm/focus vào thì xóa trắng dữ liệu để datalist tự bung ra
-      if (!abcInput.dataset.hasAbcFocusListener) {
-        abcInput.dataset.hasAbcFocusListener = "true";
-
-        abcInput.addEventListener("focus", function() {
-          this.value = ""; // Xóa dữ liệu để hiển thị toàn bộ 5 mức trong datalist
-        });
-
-        abcInput.addEventListener("blur", function() {
-          // Nếu bấm ra ngoài mà không chọn gì thì khôi phục lại mức C mặc định
-          if (!this.value.trim() && this.dataset.defaultC) {
-            this.value = this.dataset.defaultC;
-          }
-          if (typeof window.tinhLuong === "function") window.tinhLuong();
-          if (typeof window.triggerCcComputeEngine === "function") window.triggerCcComputeEngine();
-          if (typeof window.autoSaveUserData === "function") window.autoSaveUserData();
-        });
-      }
-
-      // Cập nhật lại số tiền
-      if (typeof window.tinhLuong === "function") window.tinhLuong();
-      if (typeof window.triggerCcComputeEngine === "function") window.triggerCcComputeEngine();
-      if (typeof window.autoSaveUserData === "function") window.autoSaveUserData();
-    }
+  const user = (typeof currentUser !== "undefined" && currentUser) ? currentUser : localStorage.getItem("cc_currentUser");
+  if (typeof window.loadUserDataFromCloud === "function" && user) {
+    window.loadUserDataFromCloud();
+  } else if (typeof window.clearAttendanceAndHolidayForNewMonth === "function") {
+    window.clearAttendanceAndHolidayForNewMonth();
   }
-
-  // Lắng nghe ô LCB ở Tab Tính Lương
-  const lcbInput = document.getElementById("luongCoBan");
-  if (lcbInput) {
-    lcbInput.addEventListener("change", function() {
-      handleAutoSuggestABC(this.value, "pcABC", "list_pcABC");
-    });
-    lcbInput.addEventListener("blur", function() {
-      handleAutoSuggestABC(this.value, "pcABC", "list_pcABC");
-    });
-  }
-
-  // Lắng nghe ô LCB ở Tab Chấm Công
-  const ccLcbInput = document.getElementById("cc_luongCoBan");
-  if (ccLcbInput) {
-    ccLcbInput.addEventListener("change", function() {
-      handleAutoSuggestABC(this.value, "cc_pcABC", "list_cc_pcABC");
-    });
-    ccLcbInput.addEventListener("blur", function() {
-      handleAutoSuggestABC(this.value, "cc_pcABC", "list_cc_pcABC");
-    });
-  }
-// ================= GỢI Ý LCB BẰNG DATALIST (1-3 KÝ TỰ, SỐ KHÔNG CHẤM) =================
-  function setupLcbDatalist(inputId, datalistId, targetAbcId, targetDatalistAbcId) {
-    const input = document.getElementById(inputId);
-    const datalist = document.getElementById(datalistId);
-    if (!input || !datalist) return;
-
-    // 1. Khi bấm vào ô: lưu số cũ, xóa trắng ô và dọn sạch datalist để chưa bung gợi ý
-    input.addEventListener("focus", function () {
-      const cur = this.value.replace(/\./g, "").trim();
-      if (cur) this.dataset.oldLcb = this.value;
-      this.value = "";
-      datalist.innerHTML = "";
-    });
-
-    // 2. Khi gõ phím:
-    input.addEventListener("input", function () {
-      const rawVal = this.value.replace(/\./g, "").replace(/[^0-9]/g, "");
-      datalist.innerHTML = "";
-
-      // Kiểm tra nếu người dùng bấm chọn trực tiếp 1 mức trong datalist (đủ 7-8 chữ số)
-      const salaryList = (window.SALARY_CONFIG && window.SALARY_CONFIG.data) ? window.SALARY_CONFIG.data : [];
-      const exactMatch = salaryList.find(item => item.lcb.toString() === rawVal);
-
-      if (exactMatch) {
-        this.value = formatNumber(exactMatch.lcb); // Tự thêm dấu chấm khi đã chọn
-        handleAutoSuggestABC(this.value, targetAbcId, targetDatalistAbcId);
-        if (typeof window.tinhLuong === "function") window.tinhLuong();
-        if (typeof window.triggerCcComputeEngine === "function") window.triggerCcComputeEngine();
-        if (typeof window.autoSaveUserData === "function") window.autoSaveUserData();
-        return;
-      }
-
-      // CHỈ GỢI Ý KHI GÕ TỪ 1 ĐẾN 3 KÝ TỰ
-      if (rawVal.length >= 1 && rawVal.length <= 3) {
-        this.value = rawVal; // Giữ số thô để khớp hoàn toàn với option trong datalist
-
-        const matchedList = salaryList.filter(item => item.lcb.toString().startsWith(rawVal));
-        matchedList.forEach(item => {
-          const opt = document.createElement("option");
-          opt.value = item.lcb.toString(); // Gợi ý thuần số KHÔNG CÓ DẤU CHẤM
-          datalist.appendChild(opt);
-        });
-      } else if (rawVal.length > 3) {
-        // Từ ký tự thứ 4 trở đi: tự động format dấu chấm và đóng menu gợi ý
-        this.value = formatNumber(rawVal);
-        datalist.innerHTML = "";
-      }
-    });
-
-    // 3. Khi bấm ra ngoài ô (blur): format dấu chấm hoặc phục hồi số cũ nếu trống
-    input.addEventListener("blur", function () {
-      datalist.innerHTML = "";
-      const rawVal = this.value.replace(/\./g, "").replace(/[^0-9]/g, "");
-
-      if (!rawVal && this.dataset.oldLcb) {
-        this.value = this.dataset.oldLcb;
-      } else if (rawVal) {
-        this.value = formatNumber(rawVal);
-      }
-
-      handleAutoSuggestABC(this.value, targetAbcId, targetDatalistAbcId);
-      if (typeof window.tinhLuong === "function") window.tinhLuong();
-      if (typeof window.triggerCcComputeEngine === "function") window.triggerCcComputeEngine();
-      if (typeof window.autoSaveUserData === "function") window.autoSaveUserData();
-    });
-  }
-
-  // Kích hoạt cho cả 2 tab
-  setupLcbDatalist("luongCoBan", "list_lcb", "pcABC", "list_pcABC");
-  setupLcbDatalist("cc_luongCoBan", "list_cc_lcb", "cc_pcABC", "list_cc_pcABC");
-  tinhLuong();
-});
-
-window.updateDateDisplays = function() {
-  const m = (window.selectedMonth || 1).toString().padStart(2, '0');
-  const y = (window.selectedYear || new Date().getFullYear()).toString();
-
-  const t1 = document.getElementById("txtThangLuong");
-  const n1 = document.getElementById("txtNamLuong");
-  const t2 = document.getElementById("txtThangCC");
-  const n2 = document.getElementById("txtNamCC");
-
-  if (t1) t1.innerText = m;
-  if (n1) n1.innerText = y;
-  if (t2) t2.innerText = m;
-  if (n2) n2.innerText = y;
 };
