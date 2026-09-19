@@ -3,14 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tính Lương</title>
-  <link rel="icon" href="https://raw.githubusercontent.com/o0oS2/Tinh-luong/main/Image/Icon.png" type="image/png" />
-  <link rel="manifest" href="manifest.json" />
-  <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/o0oS2/Tinh-luong/main/Image/Icon.png" />
+  <title>Chấm công - Tính lương</title>
+  <link rel="manifest" href="manifest.json">
+  <!-- Favicon 192x192 -->
+  <link rel="icon" type="image/png" sizes="192x192" href="Image/icon-192x192.png" />
+
+  <!-- Favicon 512x512 -->
+  <link rel="icon" type="image/png" sizes="512x512" href="Image/icon-512x512.png" />
+
+  <!-- Icon cho iOS (màn hình chính iPhone/iPad) -->
+  <link rel="apple-touch-icon" sizes="192x192" href="Image/icon-192x192.png" />
   <meta name="theme-color" content="#007bff" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="Tính Lương" />
+  <meta name="apple-mobile-web-app-title" content="Chấm công" />
   <style>
     body {
       font-family: "Times New Roman", Times, serif;
@@ -262,7 +268,7 @@
       justify-content: center;
       cursor: pointer;
       font-size: 14px;
-      padding: 0 4px;
+      padding: 0 2px;
       box-sizing: border-box;
       user-select: none;
     }
@@ -424,12 +430,13 @@
       #cc_bangPhu table td:nth-child(5), #cc_bangPhu table td:nth-child(5) { width: 28% !important; }
 
       /* Giữ các nút nhỏ (Xóa, Đổi ca, Đăng xuất, tab, đóng cảnh báo) gọn gàng, không kéo full-width */
-      .btn-xoa-tab, .btn-dao-ca, .btn-logout, .tab-btn, .btn-install-app, .notice-close, .btn-toggle-pwd, .btn-change-pwd {
+      .btn-xoa-tab, .btn-dao-ca, .btn-history-salary, .btn-logout, .tab-btn, .btn-install-app, .notice-close, .btn-toggle-pwd, .btn-change-pwd {
         width: auto !important;
         flex: 0 0 auto !important;
       }
       .input-row .btn-dao-ca { padding: 5px 8px !important; font-size: 12px !important; }
       .input-row #lblKetQuaCa { font-size: 11.5px !important; padding: 5px 8px !important; }
+      .input-row .btn-history-salary { padding: 4px 7px !important; font-size: 11px !important; height: 26px !important; }
       .input-row .btn-xoa-tab, .input-row .btn-install-app {
         padding: 4px 7px !important; font-size: 11px !important; height: 28px !important;
       }
@@ -575,7 +582,7 @@
     /* Đi làm đủ -> xanh; Muộn/Về sớm/Nghỉ -> đỏ nhạt, để nhìn phát biết ngay có nghỉ hay không */
     .cell-hc.hc-full { background-color: #dcfce7; color: #166534; border-color: #86efac; }
     .cell-hc.hc-off { background-color: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
-    .cell-ot { background-color: #fff7ed; color: #9a3412; border: 1px solid #fed7aa; }
+    .cell-ot { background-color: #e0f2fe; color: #075985; border: 1px solid #7dd3fc; }
     .cell-mid-ot { background-color: #f5f3ff; color: #5b21b6; border: 1px solid #ddd6fe; }
 
     .picker-overlay {
@@ -625,13 +632,13 @@
       }
       .input-row label { font-size: 13px !important; margin: 0 !important; }
       #luongCoBan, #cc_luongCoBan {
-        width: 90px !important; min-width: 90px !important; font-size: 13px !important; height: 24px !important;
+        width: 88px !important; min-width: 85px !important; font-size: 13px !important; height: 24px !important;
       }
       .input-row .btn-dropdown-select {
         font-size: 11px !important; padding: 0 2px !important; height: 24px !important;
       }
-      #btnThangLuong, #btnThangCC { width: 40px !important; }
-      #btnNamLuong, #btnNamCC { width: 54px !important; }
+      #btnThangLuong, #btnThangCC { width: 30px !important; }
+      #btnNamLuong, #btnNamCC { width: 44px !important; }
       .input-row .btn-xoa-tab, .input-row .btn-install-app {
         font-size: 10.5px !important; padding: 3px 6px !important; height: 24px !important; margin-left: 2px !important;
       }
@@ -697,6 +704,244 @@
       flex: 0 0 auto; width: auto; background: none; border: none; color: #9a3412; font-size: 15px;
       font-weight: bold; cursor: pointer; line-height: 1; padding: 2px 4px; margin-top: 1px;
     }
+     /* Nút Lịch sử lương (thu gọn bằng kích thước nút Đổi ca) */
+.btn-history-salary {
+  background: #0284c7 !important;
+  color: #fff !important;
+  border: 1px solid #38bdf8 !important;
+  border-radius: 6px !important;
+  padding: 4px 8px !important;
+  font-size: 11.5px !important;
+  font-weight: bold !important;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  height: 30px !important;
+  margin: 0 !important;
+  box-sizing: border-box;
+}
+.btn-history-salary:hover {
+  background: #0369a1 !important;
+}
+
+    /* Modal Lịch sử lương chuẩn hóa */
+    .salary-history-modal {
+      background: #fff;
+      border-radius: 8px;
+      max-width: 440px;
+      width: 95%;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      max-height: 85vh;
+      animation: popIn 0.15s ease-out;
+    }
+
+    /* Thanh chọn năm: cho phép bọc dòng (wrap) hoặc cuộn mượt gọn gàng */
+    .sh-years-bar {
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 10px 12px;
+      background: #f8fafc;
+      border-bottom: 1px solid #cbd5e1;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin; /* Thu nhỏ thanh cuộn trên Firefox */
+    }
+
+    /* Ẩn thanh cuộn xấu xí trên Chrome/Safari/Edge nhưng vẫn vuốt trượt ngang được */
+    .sh-years-bar::-webkit-scrollbar {
+      height: 4px;
+    }
+    .sh-years-bar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+
+    /* Khống chế nút năm: chặn bị ép full 100% trên điện thoại */
+    .sh-year-btn {
+      width: auto !important;           /* Chặn thuộc tính width 100% của mobile */
+      flex: 0 0 auto !important;         /* Không bị co giãn ép bẹp */
+      padding: 6px 12px !important;
+      font-size: 13px !important;
+      font-weight: bold !important;
+      border: 1px solid #cbd5e1 !important;
+      border-radius: 6px !important;
+      background: #fff !important;
+      color: #334155 !important;
+      cursor: pointer !important;
+      white-space: nowrap !important;
+      height: 32px !important;
+      line-height: 18px !important;
+      margin: 0 !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      box-sizing: border-box !important;
+    }
+
+    .sh-year-btn:hover {
+      background: #e2e8f0 !important;
+    }
+
+    .sh-year-btn.active {
+      background: #007bff !important;
+      color: #fff !important;
+      border-color: #007bff !important;
+    }
+
+    /* Danh sách tháng */
+    .sh-months-list {
+      padding: 10px 12px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 60vh;
+    }
+
+    .sh-month-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 5px;
+      border: 1px solid #e2e8f0;
+      background: #f8fafc;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background 0.15s;
+    }
+
+    .sh-month-item:hover {
+      background: #e0f2fe;
+      border-color: #7dd3fc;
+    }
+
+    .sh-month-item .m-name {
+      font-weight: bold;
+      color: #1e293b;
+    }
+
+    .sh-month-item .m-val {
+      font-weight: bold;
+      color: #059669;
+    }
+
+    .sh-month-item .m-val.empty {
+      color: #94a3b8;
+      font-weight: normal;
+    }
+
+    .sh-total-box {
+      margin-top: 6px;
+      padding: 10px 14px;
+      background: #fef08a;
+      border: 1px solid #facc15;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      color: #854d0e;
+      font-size: 14px;
+    }
+	  /* Nút chia sẻ gọn gàng trên thanh tab */
+    .btn-share-app {
+      padding: 0 10px !important;
+      height: 38px !important;
+      font-size: 13px !important;
+      font-weight: bold !important;
+      background: #f0fdf4 !important;
+      color: #16a34a !important;
+      border: 1.5px solid #86efac !important;
+      border-radius: 5px !important;
+      cursor: pointer !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 3px !important;
+      white-space: nowrap !important;
+      width: auto !important;
+    }
+    .btn-share-app:hover {
+      background: #16a34a !important;
+      color: #fff !important;
+    }
+
+    @media screen and (max-width: 768px) {
+      .tab-bar { gap: 4px !important; }
+      .tab-btn { padding: 6px 10px !important; font-size: 13px !important; }
+      .btn-share-app { height: 34px !important; font-size: 12px !important; padding: 0 7px !important; }
+    }
+
+    /* Khung nội dung modal chia sẻ */
+    .share-modal-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      text-align: center;
+    }
+    .share-link-box {
+      display: flex;
+      width: 100%;
+      box-sizing: border-box;
+      gap: 6px;
+    }
+    .share-input {
+      flex: 1;
+      height: 32px;
+      border: 1px solid #cbd5e1;
+      border-radius: 5px;
+      padding: 0 8px;
+      font-size: 13px;
+      color: #334155;
+      background: #f8fafc;
+    }
+    .share-copy-btn {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 0 12px;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+      white-space: nowrap;
+      height: 32px;
+    }
+    .share-quick-btns {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+    }
+    .btn-quick-share {
+      flex: 1;
+      padding: 7px 0;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      font-size: 12.5px;
+      font-weight: bold;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin: 0 !important;
+    }
+    .qr-container {
+      background: #fff;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #e2e8f0;
+      display: inline-block;
+    }
   </style>
 </head>
 <body>
@@ -707,9 +952,10 @@
     <div class="tab-bar">
       <button type="button" class="tab-btn active" id="btnTabLuong" onclick="switchTab('tabLuong')">💰 Tính Lương</button>
       <button type="button" class="tab-btn" id="btnTabChamCong" onclick="switchTab('tabChamCong')">📅 Chấm Công</button>
+	  <button type="button" class="btn-share-app" onclick="handleShareApp()" title="Chia sẻ ứng dụng">🔗 Chia sẻ</button>
     </div>
 
-    <div id="authContainer">
+    <div id="authContainer" style="display: none;">
       <div id="loginFormArea" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
         <span style="font-weight: bold; color: #007bff; font-size: 14px;">👤 Tài khoản chấm công:</span>
         <input type="text" id="authUsername" placeholder="Tên đăng nhập" style="width: 120px; height: 26px; font-size: 13px; padding: 2px 6px; border: 1px solid #ccc; border-radius: 4px;" />
@@ -736,27 +982,28 @@
       <div class="left-column">
         <div class="input-row">
           <div class="group">
-            <label for="luongCoBan"><strong>LCB:</strong></label>
-            <input type="text" id="luongCoBan" inputmode="numeric" placeholder="lương cơ bản" style="height: 20px;" />
-          </div>
+	  <label for="luongCoBan"><strong>LCB:</strong></label>
+	  <input type="text" id="luongCoBan" inputmode="numeric" placeholder="lương cơ bản" style="height: 20px;" list="list_lcb" autocomplete="off" />
+	  <datalist id="list_lcb"></datalist>
+	</div>
 
           <!-- DROPDOWN THÁNG, NĂM CẠNH NHAU NHƯ GỐC KÈM NÚT XÓA TAB 1 -->
           <div class="group date-group">
             <label style="margin-left: 5px;"></label>
-            <div id="btnThangLuong" class="btn-dropdown-select" onclick="openDateMenu('month', false)" style="width: 44px;">
-              <span id="txtThangLuong">--</span>&nbsp;▾
+            <div id="btnThangLuong" class="btn-dropdown-select" onclick="openDateMenu('month', false)" style="width: 34px;">
+              <span id="txtThangLuong">--</span>
             </div>
 
             <label style="margin-left: 2px;">/</label>
-            <div id="btnNamLuong" class="btn-dropdown-select" onclick="openDateMenu('year', false)" style="width: 60px;">
-              <span id="txtNamLuong">----</span>&nbsp;▾
+            <div id="btnNamLuong" class="btn-dropdown-select" onclick="openDateMenu('year', false)" style="width: 48px;">
+              <span id="txtNamLuong">----</span>
             </div>
 
             <button type="button" class="btn-xoa-tab" onclick="clearDataTabLuong()" title="Chỉ xóa dữ liệu của bảng tính lương" style="margin-left: 4px;">
               🗑 Xóa
             </button>
             <button type="button" class="btn-install-app" onclick="handleInstallApp()" title="Cài ứng dụng / mở bằng trình duyệt Chrome hoặc Safari">
-              📲 Cài đặt
+              📲 Tải app
             </button>
           </div>
         </div>
@@ -782,8 +1029,14 @@
               <tr style="color:red;"><td>Thông ca 380%</td><td><input type="number" inputmode="decimal" id="thongca380" placeholder="giờ" /></td><td id="tienthongca380">0</td></tr>
               <tr><td>Phép năm</td><td><input type="number" inputmode="decimal" id="phepNam" placeholder="ngày" /></td><td id="tienPhepNam">0</td></tr>
               <tr><td>Ngày lễ</td><td><input type="number" inputmode="decimal" id="le" placeholder="ngày" /></td><td id="tienLe">0</td></tr>
-              <tr><td colspan="2">Phụ cấp kỹ năng ABC</td><td><input type="text" inputmode="numeric" id="pcABC" /></td></tr>
-              <tr><td colspan="2">Phụ cấp Chuyên cần</td><td>
+              <tr>
+  	<td colspan="2">Phụ cấp kỹ năng ABC</td>
+ 	 <td>
+    	<input type="text" inputmode="numeric" id="pcABC" list="list_pcABC" />
+    	<datalist id="list_pcABC"></datalist>
+  	</td>
+            </tr>
+              <tr><td colspan="2">Phụ cấp chuyên cần</td><td>
                 <select id="pcChuyenCan">
                   <option value="0">0</option>
                   <option value="200.000" selected>200.000</option>
@@ -796,7 +1049,7 @@
                   <option value="600.000">600.000</option>
                 </select>
               </td></tr>
-              <tr><td colspan="2">Phụ cấp lương, chức vụ</td><td><input type="text" inputmode="numeric" id="pcChucVu" /></td></tr>
+              <tr><td colspan="2">PC lương, kỹ thuật, ngoại ngữ</td><td><input type="text" inputmode="numeric" id="pcChucVu" /></td></tr>
               <tr><td colspan="2">Hỗ trợ đi lại</td><td><input type="text" inputmode="numeric" id="pcDiLai" /></td></tr>
               <tr><td colspan="2">Hỗ trợ điện thoại</td><td>
                 <select id="pcDienThoai">
@@ -817,7 +1070,7 @@
                   <option value="200.000">200.000</option>
                 </select>
               </td></tr>
-              <tr><td colspan="2">Phụ cấp khác (ngoại ngữ, kỹ thuật...)</td><td><input type="text" inputmode="numeric" id="pcKhac" /></td></tr>
+              <tr><td colspan="2">PC khác (không đóng BHXH)</td><td><input type="text" inputmode="numeric" id="pcKhac" /></td></tr>
               <tr><td colspan="2">Tổng lương ngày lễ, tết</td><td id="tienNgayLeTet">0</td></tr>
               <tr style="background-color: yellow;"><td colspan="2">💰 Tổng thu nhập</td><td id="tongLuong">0</td></tr>
               <tr style="color:red;"><td colspan="2">Khấu trừ BHXH 10.5%</td><td id="tienTruBHXH">0</td></tr>
@@ -887,8 +1140,8 @@
         <div style="margin: 5px 0; padding: 6px 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; line-height: 1.4;">
           <h4 style="margin: 4px 0 2px;">📌 Quy tắc tính lương</h4>
           <ul style="margin: 0 0 6px 16px; padding-left: 0;">
-            <li><b>Bảo hiểm:</b> (Lương cơ bản + PC thâm niên, PC lương, PC chức vụ) x 10.5%</li>
-            <li><b>Tăng ca, trợ cấp đêm:</b> (Lương cơ bản + PC thâm niên, PC lương, PC chức vụ, PC đi lại) / (Ngày công chuẩn x 8) x % lương</li>
+            <li><b>Bảo hiểm:</b> (Lương cơ bản + PC thâm niên, PC lương, PC chức vụ, PC kỹ thuật, PC ngoại ngữ, Thưởng thâm niên phiên dịch) x 10.5%</li>
+            <li><b>Tăng ca, trợ cấp đêm:</b> (Lương cơ bản + PC thâm niên, PC lương, PC chức vụ, PC đi lại, PC kỹ thuật, PC ngoại ngữ, Thưởng thâm niên phiên dịch) / (Ngày công chuẩn x 8) x % lương</li>
             <li><b>Ngày công chuẩn:</b> Số ngày trong tháng – số ngày Chủ nhật (tối đa 26 ngày)</li>
             <li><b>Chuyên cần:</b> Mất nếu nghỉ việc riêng, ốm, đi muộn, về sớm > 1 ngày công (8 tiếng)</li>
             <li><b>PC thâm niên:</b>
@@ -930,11 +1183,11 @@
               <p class="contact-links">
                 <span>Liên hệ:</span>
                 <a href="https://m.facebook.com/tdt93/" target="_blank" class="social-link">
-                  <img src="https://raw.githubusercontent.com/o0oS2/Tinh-luong/main/Image/Facebook.png" width="20" height="20" class="social-icon">
+                  <img src="Image/Facebook.png" width="20" height="20" class="social-icon">
                   <span class="facebook-text">Facebook</span>
                 </a>
                 <a href="http://zalo.me/trungpl" target="_blank" class="social-link">
-                  <img src="https://raw.githubusercontent.com/o0oS2/Tinh-luong/main/Image/Zalo.png" alt="Zalo" width="20" height="20" class="social-icon">
+                  <img src="Image/Zalo.png" alt="Zalo" width="20" height="20" class="social-icon">
                   <span class="zalo-text">Zalo</span>
                 </a>
               </p>
@@ -951,11 +1204,18 @@
               </div>
             </div>
             <div class="qr-section">
-              <img src="https://raw.githubusercontent.com/o0oS2/Tinh-luong/main/Image/ViettinbankQR.jpg" alt="Vietinbank QR" class="qr-image">
+              <img src="Image/ViettinbankQR.jpg" alt="Vietinbank QR" class="qr-image">
             </div>
           </div>
         </div>
-        
+
+		 <div style="text-align: center; margin: 3px 0; padding: 4px 8px; border: 1px solid #ccc; border-radius: 6px;">
+          <h4 style="margin: 3px 0 8px;">📥 <a href="Files/Tinh_luong.xlsx" download> Tải file Excel tính lương - chấm công</a> 📥</h4>
+          <p style="margin: 0 0 8px; color: #d00; font-size: 14px;">
+            ⚠ Mở bằng trình duyệt: <strong>Safari</strong>, <strong>Chrome</strong>...Không mở bằng <strong>Zalo</strong> hoặc <strong>Messenger</strong> vì bị lỗi không tải được.
+          </p>
+        </div> 
+		  
         <div style="margin: 5px 0; padding: 6px 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; line-height: 1.4;">
           <div style="margin-top: 2px;">
             <p>📥 <a href="Files/In_cham_cong.xlsx" download style="color: #080;"> Tải file in chấm công</a>, <a href="Files/Thiep_Cuoi.docx" download style="color: #080;"> Tải file in thiệp cưới</a> 📥</p>
@@ -963,15 +1223,10 @@
           </div>
         </div>
 
-        <div style="text-align: center; margin: 3px 0; padding: 4px 8px; border: 1px solid #ccc; border-radius: 6px;">
-          <h4 style="margin: 3px 0 8px;">📥 <a href="Files/Tinh_luong.xlsx" download> Tải file Excel tính lương - chấm công</a> 📥</h4>
-          <p style="margin: 0 0 8px; color: #d00; font-size: 14px;">
-            ⚠ Mở bằng trình duyệt: <strong>Safari</strong>, <strong>Chrome</strong>...Không mở bằng <strong>Zalo</strong> hoặc <strong>Messenger</strong> vì bị lỗi không tải được.
-          </p>
-          <p style="margin: 0; color: #888; font-size: 12px;">Dừng hỗ trợ từ 09/2026</p>
-        </div>
-
-        <div class="footer">• Phiên bản 2.0, cập nhật ngày 09.09.2026 •</div>
+       <div class="footer">
+   cập nhật ngày 09.09.2026 
+          <span style="margin-left: 8px;">👁 Lượt truy cập: <b id="visitCount">...</b></span>
+     </div>
       </div>
     </div>
   </div>
@@ -983,41 +1238,46 @@
 
         <!-- CẢNH BÁO: cần đăng nhập để lưu dữ liệu chấm công lên máy chủ -->
         <div id="ccLoginNotice" class="cc-login-notice">
-          <span class="notice-text">🔒 Đăng nhập để lưu thông tin chấm công. Dữ liệu được lưu trên máy chủ, có thể đăng nhập lại ở mọi nơi, mọi thiết bị.</span>
+          <span class="notice-text">🔒 Đăng nhập để lưu thông tin chấm công. Dữ liệu được lưu tự động lên máy chủ, có thể đăng nhập lại ở mọi nơi, mọi thiết bị. An toàn, bảo mật theo từng tài khoản, không lo mất dữ liệu</span>
           <button type="button" class="notice-close" onclick="document.getElementById('ccLoginNotice').style.display='none';" title="Đóng">✕</button>
         </div>
 
         <!-- HÀNG LCB, THÁNG, NĂM, XÓA, CÀI ĐẶT, ĐỔI CA, NHÃN CA CÙNG 1 DÒNG -->
         <div class="input-row">
-          <div class="group">
-            <label for="cc_luongCoBan"><strong>LCB:</strong></label>
-            <input type="text" id="cc_luongCoBan" inputmode="numeric" class="lcb-input" placeholder="lương cơ bản" />
-          </div>
+	<div class="group">
+	  <label for="cc_luongCoBan"><strong>LCB:</strong></label>
+	  <input type="text" id="cc_luongCoBan" inputmode="numeric" class="lcb-input" placeholder="lương cơ bản" list="list_cc_lcb" autocomplete="off" />
+	  <datalist id="list_cc_lcb"></datalist>
+	</div>
           <div class="group date-group">
-            <div id="btnThangCC" class="btn-dropdown-select" onclick="openDateMenu('month', true)" style="width: 44px;">
-              <span id="txtThangCC">--</span>&nbsp;▾
+            <div id="btnThangCC" class="btn-dropdown-select" onclick="openDateMenu('month', true)" style="width: 34px;">
+              <span id="txtThangCC">--</span>
             </div>
             <label style="margin-left: 2px;">/</label>
-            <div id="btnNamCC" class="btn-dropdown-select" onclick="openDateMenu('year', true)" style="width: 60px;">
-              <span id="txtNamCC">----</span>&nbsp;▾
+            <div id="btnNamCC" class="btn-dropdown-select" onclick="openDateMenu('year', true)" style="width: 48px;">
+              <span id="txtNamCC">----</span>
             </div>
 
             <button type="button" class="btn-xoa-tab" onclick="clearDataTabChamCong()" title="Chỉ xóa lịch chấm công và bảng lương tạo từ chấm công" style="margin-left: 4px;">
               🗑 Xóa
             </button>
             <button type="button" class="btn-install-app" onclick="handleInstallApp()" title="Cài ứng dụng / mở bằng trình duyệt Chrome hoặc Safari">
-              📲 Cài đặt
+              📲 Tải app
             </button>
           </div>
-          <div class="group shift-group">
-            <!-- Nút bấm Đổi ca -->
-            <button type="button" class="btn-dao-ca" id="btnDaoCa" onclick="toggleDaoCa()" style="white-space: nowrap; margin: 0;">
-              <span>⇄</span> <span>Đổi ca</span>
+	<div class="group shift-group">
+            	  <!-- Nút bấm Đổi ca -->
+                  <button type="button" class="btn-dao-ca" id="btnDaoCa" onclick="toggleDaoCa()" style="white-space: nowrap; margin: 0;">
+                  <span>⇄</span> <span>Đổi ca</span>
+                 </button>
+                 <!-- Kết quả ca hiển thị ngay bên cạnh -->
+                 <span id="lblKetQuaCa" style="display: inline-flex; align-items: center; font-size: 13px; font-weight: bold; padding: 6px 10px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff; white-space: nowrap;">
+               Ca chuẩn
+                 </span>
+               <!-- THÊM NÚT LỊCH SỬ LƯƠNG TẠI ĐÂY -->
+                    <button type="button" class="btn-history-salary" onclick="openSalaryHistoryModal()" title="Xem lịch sử lương các năm">
+              📊 Lịch sử lương
             </button>
-            <!-- Kết quả ca hiển thị ngay bên cạnh -->
-            <span id="lblKetQuaCa" style="display: inline-flex; align-items: center; font-size: 13px; font-weight: bold; padding: 6px 10px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff; white-space: nowrap;">
-              Ca chuẩn
-            </span>
           </div>
         </div>
 
@@ -1025,11 +1285,12 @@
           <div class="legend-box">
             <div class="legend-item"><span class="dot-sample" style="background:#fffdf5; border-color:#fce7b2;"></span> Ca ngày</div>
             <div class="legend-item"><span class="dot-sample" style="background:#e2e8f0; border-color:#cbd5e1;"></span> Ca đêm</div>
-            <div class="legend-item"><span class="dot-sample" style="background:#fee2e2; border-color:#fca5a5;"></span> Chủ nhật, ngày lễ, tết</div>
+            <div class="legend-item"><span class="dot-sample" style="background:#fee2e2; border-color:#fca5a5;"></span> Chủ nhật, ngày lễ, ngày tết</div>
             <div class="legend-item"><span class="dot-sample" style="background:#dcfce7; border-color:#86efac;"></span> Đi làm đủ</div>
-            <div class="legend-item"><span class="dot-sample" style="background:#fee2e2; border-color:#fca5a5;"></span> Muộn / Về sớm / Nghỉ</div>
-            <div class="legend-item"><span class="dot-sample" style="background:#fff7ed; border-color:#fed7aa;"></span> Tăng ca</div>
-            <div class="legend-item"><span class="dot-sample" style="background:#f5f3ff; border-color:#ddd6fe;"></span> Tăng ca giữa giờ đêm</div>
+            <div class="legend-item"><span class="dot-sample" style="background:#fee2e2; border-color:#fca5a5;"></span> Đi làm muộn / Về sớm / Nghỉ việc riêng, phép năm</div>
+            <div class="legend-item"><span class="dot-sample" style="background:#e0f2fe; border-color:#7dd3fc;"></span> Tăng ca ngày (TC trưa + sau 17h), tăng ca đêm (sau 4h)</div>
+            <div class="legend-item"><span class="dot-sample" style="background:#f5f3ff; border-color:#ddd6fe;"></span> Tăng ca giữa giờ đêm (0h-1h)</div>
+            <div style="color: #e53935;">Lương lễ tết → sửa vào bảng tính lương, chấm công lễ ở bên dưới. Chuyển ca bất thường tải file Excel ở dưới cùng để chấm nhé!</div>
           </div>
         </div>
 
@@ -1044,7 +1305,7 @@
         </div>
         <div class="calendar-grid" id="chamCongGrid" style="margin-top: 3px;"></div>
       </div>
-
+    
       <div class="cc-col-right">
         <h3 style="margin: 0 0 8px 0; color: #007bff; font-size: 16px; text-align: center;">Bảng Lương Từ Chấm Công</h3>
         <div id="cc_luongContainer">
@@ -1068,8 +1329,14 @@
               <tr style="color:red;"><td>Thông ca 380%</td><td><input type="number" inputmode="decimal" id="cc_thongca380" placeholder="giờ" /></td><td id="cc_tienthongca380">0</td></tr>
               <tr><td>Phép năm</td><td><input type="number" inputmode="decimal" id="cc_phepNam" placeholder="ngày" /></td><td id="cc_tienPhepNam">0</td></tr>
               <tr><td>Ngày lễ</td><td><input type="number" inputmode="decimal" id="cc_le" placeholder="ngày" /></td><td id="cc_tienLe">0</td></tr>
-              <tr><td colspan="2">Phụ cấp kỹ năng ABC</td><td><input type="text" inputmode="numeric" id="cc_pcABC" /></td></tr>
-              <tr><td colspan="2">Phụ cấp Chuyên cần</td><td>
+             <tr>
+  	<td colspan="2">Phụ cấp kỹ năng ABC</td>
+  	<td>
+    		<input type="text" inputmode="numeric" id="cc_pcABC" list="list_cc_pcABC" />
+    		<datalist id="list_cc_pcABC"></datalist>
+  	</td>
+             </tr>
+              <tr><td colspan="2">Phụ cấp chuyên cần</td><td>
                 <select id="cc_pcChuyenCan">
                   <option value="0">0</option>
                   <option value="200.000" selected>200.000</option>
@@ -1082,7 +1349,7 @@
                   <option value="600.000">600.000</option>
                 </select>
               </td></tr>
-              <tr><td colspan="2">Phụ cấp lương, chức vụ</td><td><input type="text" inputmode="numeric" id="cc_pcChucVu" /></td></tr>
+              <tr><td colspan="2">PC lương, kỹ thuật, ngoại ngữ</td><td><input type="text" inputmode="numeric" id="cc_pcChucVu" /></td></tr>
               <tr><td colspan="2">Hỗ trợ đi lại</td><td><input type="text" inputmode="numeric" id="cc_pcDiLai" /></td></tr>
               <tr><td colspan="2">Hỗ trợ điện thoại</td><td>
                 <select id="cc_pcDienThoai">
@@ -1103,7 +1370,7 @@
                   <option value="200.000">200.000</option>
                 </select>
               </td></tr>
-              <tr><td colspan="2">Phụ cấp khác (ngoại ngữ, kỹ thuật...)</td><td><input type="text" inputmode="numeric" id="cc_pcKhac" /></td></tr>
+              <tr><td colspan="2">PC khác (không đóng BHXH)</td><td><input type="text" inputmode="numeric" id="cc_pcKhac" /></td></tr>
               <tr><td colspan="2">Tổng lương ngày lễ, tết</td><td id="cc_tienNgayLeTet">0</td></tr>
               <tr style="background-color: yellow;"><td colspan="2">💰 Tổng thu nhập</td><td id="cc_tongLuong">0</td></tr>
               <tr style="color:red;"><td colspan="2">Khấu trừ BHXH 10.5%</td><td id="cc_tienTruBHXH">0</td></tr>
@@ -1167,6 +1434,14 @@
             </tbody>
           </table>
         </div>
+
+		 <div style="text-align: center; margin: 3px 0; padding: 4px 8px; border: 1px solid #ccc; border-radius: 6px;">
+          <h4 style="margin: 3px 0 8px;">📥 <a href="Files/Tinh_luong.xlsx" download> Tải file Excel tính lương - chấm công</a> 📥</h4>
+          <p style="margin: 0 0 8px; color: #d00; font-size: 14px;">
+            ⚠ Mở bằng trình duyệt: <strong>Safari</strong>, <strong>Chrome</strong>...Không mở bằng <strong>Zalo</strong> hoặc <strong>Messenger</strong> vì bị lỗi không tải được.
+          </p>
+        </div> 
+		  
       </div>
     </div>
   </div>
@@ -1220,21 +1495,66 @@
       <span style="cursor:pointer;" onclick="closeForgotPwdModal()">✕</span>
     </div>
     <div style="padding: 16px; font-size: 14px; line-height: 1.6; text-align:center; color:#334155;">
-      <p style="margin: 0 0 10px;">Vui lòng liên hệ tôi qua Facebook hoặc Zalo bên dưới để được hỗ trợ lấy lại mật khẩu:</p>
+      <p style="margin: 0 0 10px;">Để lấy lại mật khẩu, vui lòng liên hệ:</p>
       <p class="contact-links" style="margin-top: 8px;">
+		  <span class="facebook-text">Đức Trung:</span>
         <a href="https://m.facebook.com/tdt93/" target="_blank" class="social-link">
-          <img src="https://raw.githubusercontent.com/o0oS2/Tinh-luong/main/Image/Facebook.png" width="20" height="20" class="social-icon">
+          <img src="Image/Facebook.png" width="20" height="20" class="social-icon">
           <span class="facebook-text">Facebook</span>
         </a>
         <a href="http://zalo.me/trungpl" target="_blank" class="social-link">
-          <img src="https://raw.githubusercontent.com/o0oS2/Tinh-luong/main/Image/Zalo.png" alt="Zalo" width="20" height="20" class="social-icon">
+          <img src="Image/Zalo.png" alt="Zalo" width="20" height="20" class="social-icon">
           <span class="zalo-text">Zalo</span>
         </a>
       </p>
     </div>
   </div>
 </div>
+<!-- CỬA SỔ POPUP MODAL: LỊCH SỬ LƯƠNG -->
+<div class="picker-overlay" id="salaryHistoryOverlay" onclick="closeSalaryHistoryModal(event)">
+  <div class="salary-history-modal">
+    <div class="picker-header" style="background:#0284c7;">
+      <span id="shModalTitle">📊 Lịch sử thu nhập các năm</span>
+      <span style="cursor:pointer;" onclick="closeSalaryHistoryModal()">✕</span>
+    </div>
+    <!-- Thanh chọn năm từ 2020 đến năm hiện tại -->
+    <div class="sh-years-bar" id="shYearsBar"></div>
+    <!-- Danh sách tháng & tổng lương -->
+    <div class="sh-months-list" id="shMonthsList"></div>
+  </div>
+</div>
+<!-- MODAL POPUP: CHIA SẺ ỨNG DỤNG -->
+<div class="picker-overlay" id="shareAppOverlay" onclick="closeShareModal(event)">
+  <div class="picker-modal" style="max-width: 320px;">
+    <div class="picker-header" style="background: #16a34a;">
+      <span>🔗 Chia sẻ Tính Lương</span>
+      <span style="cursor:pointer;" onclick="closeShareModal()">✕</span>
+    </div>
+    <div class="share-modal-body">
+      <!-- Link & nút copy 1 chạm -->
+      <div class="share-link-box">
+        <input type="text" id="shareAppUrl" class="share-input" value="https://tinhluong.pages.dev/" readonly />
+        <button type="button" class="share-copy-btn" onclick="copyShareLink()">Copy</button>
+      </div>
 
+      <!-- Phím tắt gửi nhanh qua Zalo & Facebook -->
+      <div class="share-quick-btns">
+        <a href="https://zalo.me/share?url=https%3A%2F%2Ftinhluong.pages.dev%2F" target="_blank" class="btn-quick-share" style="background:#0068ff;">
+          Gửi Zalo
+        </a>
+        <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ftinhluong.pages.dev%2F" target="_blank" class="btn-quick-share" style="background:#1877f2;">
+          Facebook
+        </a>
+      </div>
+
+      <!-- Mã QR tạo tự động từ link -->
+      <div style="font-size: 12px; color: #64748b;">Hoặc quét mã QR bên dưới:</div>
+      <div class="qr-container">
+        <img id="shareQrImg" src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://tinhluong.pages.dev/" width="160" height="160" alt="Mã QR" style="display:block; border-radius:4px;" />
+      </div>
+    </div>
+  </div>
+</div>
 <script>
   function showToast(message) {
     const existingToast = document.querySelector('.toast');
@@ -1322,42 +1642,70 @@
     const ua = navigator.userAgent || navigator.vendor || "";
     const isAndroid = /android/i.test(ua);
     const isIOS = /iphone|ipad|ipod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    const isWindows = /windows phone|windows nt/i.test(ua);
+    const isEdge = /edg\//i.test(ua);
+    const isChrome = /chrome|crios/i.test(ua) && !isEdge;
 
-    // Đang mở trong app Zalo/Messenger/Instagram: các app này chặn việc cài đặt,
-    // nên việc đầu tiên là phải mở bằng trình duyệt thật (Chrome/Safari) đã.
+    // 1. Mở trong app nhúng Zalo/Messenger -> tự nhảy sang trình duyệt ngoài
     if (isInAppBrowser()) {
       if (isAndroid) {
-        showToast("Đang mở bằng Chrome...");
+        showToast("Đang mở bằng Chrome để tải app...");
         const url = window.location.href.replace(/^https?:\/\//, "");
         window.location.href = `intent://${url}#Intent;scheme=https;package=com.android.chrome;end`;
       } else if (isIOS) {
-        showToast("Đang mở bằng Safari...");
+        showToast("Đang mở bằng Safari để tải app...");
         window.location.href = "x-safari-" + window.location.href;
       } else {
-        alert("Vui lòng mở link này bằng Chrome hoặc Safari để cài đặt ứng dụng.");
+        alert("Vui lòng mở liên kết bằng Google Chrome hoặc Safari để tải app.");
       }
       return;
     }
 
+    // 2. Nhận diện máy tính Windows (Chrome / Edge)
+    if (isWindows) {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        try { await deferredInstallPrompt.userChoice; } catch (e) {}
+        deferredInstallPrompt = null;
+        return;
+      }
+
+      if (isChrome) {
+        alert("💻 Cài đặt trên Windows (Google Chrome):\n\n1. Nhìn vào thanh địa chỉ (URL) ở trên cùng bên phải, bấm vào biểu tượng [Cài đặt / Tải xuống] ⊞ hoặc ⬇\n2. Hoặc bấm dấu [⋮] ở góc trên bên phải → chọn 'Lưu và chia sẻ' → 'Cài đặt Tính Lương - Chấm Công'.");
+      } else if (isEdge) {
+        alert("💻 Cài đặt trên Windows (Microsoft Edge):\n\n1. Bấm vào biểu tượng App trên thanh địa chỉ hoặc dấu [···]\n2. Chọn 'Ứng dụng' (Apps) → 'Cài đặt trang web này dưới dạng ứng dụng'.");
+      } else {
+        alert("Vui lòng mở trang web trên Google Chrome hoặc Microsoft Edge để cài đặt ứng dụng về máy tính.");
+      }
+      return;
+    }
+
+    // 3. Android
     if (isAndroid) {
       if (deferredInstallPrompt) {
-        // Trình duyệt đã sẵn sàng cài thật -> hiện hộp thoại cài đặt của Chrome
         deferredInstallPrompt.prompt();
         try { await deferredInstallPrompt.userChoice; } catch (e) {}
         deferredInstallPrompt = null;
       } else {
-        alert("Chưa thể tự bật hộp thoại cài đặt (có thể ứng dụng đã được cài, hoặc cần tải lại trang).\n\nBạn có thể cài thủ công: bấm menu ⋮ ở góc trên bên phải Chrome → chọn 'Cài đặt ứng dụng' hoặc 'Thêm vào Màn hình chính'.");
+        alert("📱 Hướng dẫn tải app trên Android:\n\nBấm vào dấu 3 chấm [⋮] ở góc trên bên phải trình duyệt Chrome → chọn 'Cài đặt ứng dụng' (hoặc 'Thêm vào Màn hình chính').");
       }
       return;
     }
 
+    // 4. iOS (iPhone / iPad)
     if (isIOS) {
-      // iOS không cho phép JS tự bật hộp thoại cài đặt, phải làm thủ công qua Share
-      alert("Để cài ứng dụng trên iPhone/iPad:\n1. Bấm nút Chia sẻ (Share) ở thanh dưới Safari\n2. Chọn 'Thêm vào MH chính' (Add to Home Screen)");
+      alert("📱 Hướng dẫn tải app trên iPhone / iPad:\n\n1. Bấm vào nút [Chia sẻ] (biểu tượng hình vuông có mũi tên trỏ lên ở thanh dưới Safari)\n2. Cuộn xuống và chọn 'Thêm vào MH chính' (Add to Home Screen).");
       return;
     }
 
-    alert("Vui lòng mở trang này bằng Chrome (Android) hoặc Safari (iPhone/iPad) để cài đặt ứng dụng.");
+    // 5. Nền tảng khác (MacOS, Linux...)
+    if (deferredInstallPrompt) {
+      deferredInstallPrompt.prompt();
+      try { await deferredInstallPrompt.userChoice; } catch (e) {}
+      deferredInstallPrompt = null;
+    } else {
+      alert("Vui lòng mở web bằng trình duyệt Google Chrome để cài ứng dụng.");
+    }
   };
 
   // Hiện/ẩn cảnh báo "Đăng nhập để lưu thông tin chấm công" tùy trạng thái đăng nhập
@@ -1371,22 +1719,112 @@
   function switchTab(tabId) {
     document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    
+
+    const authEl = document.getElementById('authContainer');
+
     if (tabId === 'tabLuong') {
       document.getElementById('paneLuong').classList.add('active');
       document.getElementById('btnTabLuong').classList.add('active');
+      if (authEl) authEl.style.display = 'none';
       if (typeof tinhLuong === 'function') tinhLuong();
     } else {
       document.getElementById('paneChamCong').classList.add('active');
       document.getElementById('btnTabChamCong').classList.add('active');
+      if (authEl) authEl.style.display = 'flex';
       if (typeof window.updateDaoCaButtonUI === 'function') window.updateDaoCaButtonUI();
       if (typeof syncChamCongToTinhLuong === 'function') syncChamCongToTinhLuong();
       window.updateCcLoginNotice();
+    }	
+  }
+	// ==== XỬ LÝ CHIA SẺ ỨNG DỤNG ====
+  const APP_SHARE_URL = "https://tinhluong.pages.dev/";
+
+  window.handleShareApp = async function () {
+    // 1. Nếu trình duyệt/thiết bị hỗ trợ chia sẻ gốc của máy (rất mượt trên điện thoại)
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "Tính Lương - Chấm Công",
+          text: "Ứng dụng Tính Lương & Chấm Công tự động dành cho công nhân, nhân viên:",
+          url: APP_SHARE_URL
+        });
+        return;
+      } catch (err) {
+        // Nếu người dùng bấm Hủy chia sẻ thì dừng lại
+        if (err.name === "AbortError") return;
+      }
+    }
+
+    // 2. Mở popup modal chia sẻ nếu dùng máy tính hoặc trình duyệt chặn Web Share
+    openShareModal();
+  };
+
+  function openShareModal() {
+    const overlay = document.getElementById("shareAppOverlay");
+    if (overlay) overlay.style.display = "flex";
+  }
+
+  function closeShareModal(e) {
+    if (e && e.target && e.target.id !== "shareAppOverlay") return;
+    const overlay = document.getElementById("shareAppOverlay");
+    if (overlay) overlay.style.display = "none";
+  }
+  window.openShareModal = openShareModal;
+  window.closeShareModal = closeShareModal;
+
+  function copyShareLink() {
+    const input = document.getElementById("shareAppUrl");
+    if (!input) return;
+    
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(input.value).then(() => {
+        showToast("Đã sao chép liên kết!");
+      }).catch(() => {
+        fallbackCopyText(input);
+      });
+    } else {
+      fallbackCopyText(input);
     }
   }
+  window.copyShareLink = copyShareLink;
+
+  function fallbackCopyText(input) {
+    input.select();
+    input.setSelectionRange(0, 99999);
+    try {
+      document.execCommand("copy");
+      showToast("Đã sao chép liên kết!");
+    } catch (e) {
+      showToast("Không thể sao chép tự động!");
+    }
+  }
+// ==== ĐẾM LƯỢT TRUY CẬP ====
+async function updateVisitorCount() {
+  const el = document.getElementById("visitCount");
+  if (!el) return;
+
+  try {
+    // Gửi yêu cầu đến Worker: mỗi lần mở trang sẽ tự động tăng 1 lượt
+    const res = await fetch("https://tinhluong.o0os2.workers.dev?action=visit&count=1");
+    const data = await res.json();
+    
+    // Hiển thị số lượt truy cập lên màn hình
+    if (data && typeof data.count !== "undefined") {
+      el.textContent = Number(data.count).toLocaleString("vi-VN");
+    }
+  } catch (err) {
+    console.warn("Lỗi tải lượt truy cập:", err);
+    el.textContent = "1.250+";
+  }
+}
+
+// Chạy hàm đếm
+updateVisitorCount();
 </script>
+<script src="salary-data.js"></script>
 <script src="tinhluong.js"></script>
 <script src="chamcong.js"></script>
 <script src="github-sync.js"></script>
+<script src="lichsuluong.js"></script>
 </body>
 </html>
