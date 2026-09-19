@@ -85,6 +85,33 @@ function calculateTotalSalaryFromRecord(record, month, year) {
   return thucLinh > 0 ? thucLinh : 0;
 }
 
+// Hàm tính riêng tiền PHÉP NĂM từ 1 payload (dùng chung logic ngày công chuẩn)
+function calculatePhepNamFromRecord(record, month, year) {
+  if (!record) return 0;
+
+  const getVal = (v) => parseInt((v || "0").toString().replace(/\./g, "")) || 0;
+  const getFloat = (v) => parseFloat(v || "0") || 0;
+
+  const lcb = getVal(record.base_salary);
+  if (lcb === 0) return 0;
+
+  const ef = record.extra_fields || {};
+
+  const m = month || 1;
+  const y = year || new Date().getFullYear();
+  const soNgayTrongThang = new Date(y, m, 0).getDate();
+  let soNgayChuNhat = 0;
+  for (let d = 1; d <= soNgayTrongThang; d++) {
+    if (new Date(y, m - 1, d).getDay() === 0) soNgayChuNhat++;
+  }
+  let ncChuandef = soNgayTrongThang - soNgayChuNhat;
+  if (ncChuandef === 27) ncChuandef = 26;
+
+  const luongNgayCong = ncChuandef > 0 ? lcb / ncChuandef : 0;
+
+  return Math.round(luongNgayCong * getFloat(ef["cc_phepNam"]));
+}
+
 // Lấy dữ liệu 12 tháng của 1 năm (có cache để không gọi API lặp lại)
 async function fetchYearSalaryData(year) {
   if (shYearDataCache[year]) return shYearDataCache[year];
@@ -182,6 +209,7 @@ async function renderSalaryHistoryYears() {
 }
 
 // Tải lương của 12 tháng trong năm — chỉ hiện tháng có thực lĩnh > 0
+// Hiển thị dạng bảng: Tháng / Phép Năm / Thu nhập
 async function loadSalaryHistoryForYear(year) {
   const listEl = document.getElementById("shMonthsList");
   if (!listEl) return;
@@ -191,26 +219,25 @@ async function loadSalaryHistoryForYear(year) {
   const formatFn = window.formatSalaryNumber || function(v) { return (v || 0).toLocaleString("vi-VN"); };
   const { monthsData, total: totalYearSalary } = await fetchYearSalaryData(year);
 
-  listEl.innerHTML = "";
   let hasAnyMonth = false;
+  let totalPhepNamYear = 0;
+  let rowsHtml = "";
 
   for (let m = 1; m <= 12; m++) {
     const totalMonth = calculateTotalSalaryFromRecord(monthsData[m], m, year);
     if (totalMonth <= 0) continue;
 
     hasAnyMonth = true;
+    const phepNamMonth = calculatePhepNamFromRecord(monthsData[m], m, year);
+    totalPhepNamYear += phepNamMonth;
 
-    const row = document.createElement("div");
-    row.className = "sh-month-item";
-    row.title = `Bấm để xem chi tiết chấm công Tháng ${m}/${year}`;
-    row.onclick = () => selectHistoryMonth(m, year);
-
-    const mText = `Tháng ${m.toString().padStart(2, '0')}/${year}`;
-    row.innerHTML = `
-      <span class="m-name">📅 ${mText}</span>
-      <span class="m-val">${formatFn(totalMonth)} đ</span>
-    `;
-    listEl.appendChild(row);
+    const mText = `Tháng ${m.toString().padStart(2, '0')}`;
+    rowsHtml += `
+      <tr class="sh-month-item" onclick="selectHistoryMonth(${m}, ${year})" title="Bấm để xem chi tiết chấm công Tháng ${m}/${year}">
+        <td class="m-name">📅 ${mText}</td>
+        <td class="m-phep">${formatFn(phepNamMonth)} đ</td>
+        <td class="m-val">${formatFn(totalMonth)} đ</td>
+      </tr>`;
   }
 
   if (!hasAnyMonth) {
@@ -218,13 +245,26 @@ async function loadSalaryHistoryForYear(year) {
     return;
   }
 
-  const totalBox = document.createElement("div");
-  totalBox.className = "sh-total-box";
-  totalBox.innerHTML = `
-    <span>💵 Tổng thực lĩnh năm ${year}:</span>
-    <span>${formatFn(totalYearSalary)} đ</span>
-  `;
-  listEl.appendChild(totalBox);
+  listEl.innerHTML = `
+    <table class="sh-table" style="width:100%; border-collapse:collapse;">
+      <thead>
+        <tr>
+          <th style="text-align:left; padding:6px;">Tháng</th>
+          <th style="text-align:right; padding:6px;">Phép Năm</th>
+          <th style="text-align:right; padding:6px;">Thu nhập</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rowsHtml}
+      </tbody>
+      <tfoot>
+        <tr class="sh-total-box">
+          <td style="padding:6px;">💵 Tổng năm ${year}</td>
+          <td style="text-align:right; padding:6px;">${formatFn(totalPhepNamYear)} đ</td>
+          <td style="text-align:right; padding:6px;">${formatFn(totalYearSalary)} đ</td>
+        </tr>
+      </tfoot>
+    </table>`;
 }
 
 // Bấm vào tháng: đóng popup và tải lại tháng/năm đó
