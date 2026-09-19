@@ -469,3 +469,73 @@ window.loadUserDataFromCloud = async function() {
     if (statusEl) statusEl.textContent = "Lỗi nạp dữ liệu";
   }
 };
+
+// 7. THỐNG KÊ CHẤM CÔNG (footer): tổng tài khoản + số người đang dùng
+// - Khi đang mở Tab Chấm Công, cứ mỗi CC_PING_INTERVAL gửi 1 "nhịp tim" lên máy chủ.
+// - Máy chủ coi một thiết bị là "đang dùng" nếu có nhịp tim trong vài phút gần nhất.
+// - Chỉ gửi một mã ngẫu nhiên của trình duyệt, không gửi tên tài khoản hay dữ liệu chấm công.
+const CC_PING_INTERVAL = 60 * 1000;
+let ccStatsTimer = null;
+
+function getCcSessionId() {
+  let sid = null;
+  try { sid = localStorage.getItem("cc_sid"); } catch {}
+  if (!sid) {
+    sid = (window.crypto && crypto.randomUUID)
+      ? crypto.randomUUID()
+      : Math.random().toString(36).slice(2) + Date.now().toString(36);
+    try { localStorage.setItem("cc_sid", sid); } catch {}
+  }
+  return sid;
+}
+
+function renderCcStats(data) {
+  const totalEl = document.getElementById("ccTotalUsers");
+  const onlineEl = document.getElementById("ccOnlineUsers");
+  if (totalEl && typeof data.totalUsers !== "undefined") {
+    totalEl.textContent = Number(data.totalUsers).toLocaleString("vi-VN");
+  }
+  if (onlineEl && typeof data.online !== "undefined") {
+    onlineEl.textContent = Number(data.online).toLocaleString("vi-VN");
+  }
+}
+
+function markCcStatsUnavailable() {
+  // Chỉ đổi những ô chưa có số, giữ nguyên số cũ nếu đã hiển thị trước đó
+  ["ccTotalUsers", "ccOnlineUsers"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.textContent === "...") el.textContent = "—";
+  });
+}
+
+async function pingCcStats() {
+  if (document.hidden) return; // tab trình duyệt đang ẩn thì không tính là đang dùng
+  try {
+    const res = await fetch(`${API_URL}?action=ping`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sid: getCcSessionId() })
+    });
+    const data = await res.json();
+    if (res.ok && data && data.ok) renderCcStats(data);
+    else markCcStatsUnavailable();
+  } catch {
+    markCcStatsUnavailable();
+  }
+}
+
+window.startCcStats = function() {
+  if (ccStatsTimer) clearInterval(ccStatsTimer);
+  pingCcStats();
+  ccStatsTimer = setInterval(pingCcStats, CC_PING_INTERVAL);
+};
+
+window.stopCcStats = function() {
+  if (ccStatsTimer) clearInterval(ccStatsTimer);
+  ccStatsTimer = null;
+};
+
+// Quay lại tab trình duyệt khi đang ở Tab Chấm Công thì cập nhật ngay
+document.addEventListener("visibilitychange", function () {
+  if (!document.hidden && ccStatsTimer) pingCcStats();
+});
